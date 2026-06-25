@@ -106,7 +106,21 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
 .audit-box.show{display:block}
 .audit-ok{color:var(--g)}
 .audit-warn{color:var(--am)}
-@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.kpi-strip{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr}.alerts-row{grid-template-columns:1fr}}
+/* ── ABAS ── */
+.tabs-bar{display:flex;gap:4px;margin-bottom:22px;border-bottom:1px solid var(--s3);padding-bottom:0}
+.tab-btn{background:none;border:none;padding:10px 20px;font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:var(--transition)}
+.tab-btn:hover{color:var(--t2)}
+.tab-btn.active{color:var(--g);border-bottom-color:var(--g)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.ano-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.ano-btn{background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:7px 14px;font-family:var(--fm);font-size:11px;font-weight:700;color:var(--t3);cursor:pointer;transition:var(--transition)}
+.ano-btn:hover{border-color:var(--g);color:var(--t2)}
+.ano-btn.active{background:var(--g3);border-color:var(--g);color:var(--g)}
+.ano-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.kpi-strip-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.ano-charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.kpi-strip{grid-template-columns:repeat(3,1fr)}.kpi-strip-4{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.alerts-row{grid-template-columns:1fr}.ano-charts{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -269,36 +283,81 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
   </div>
 
   <div id="painel-resultado" style="display:none">
-    <div class="kpi-strip fade-in" id="kpi-strip"></div>
-    <div class="charts-row fade-in">
-      <div class="card">
+
+    <!-- ABAS -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('consolidado')">📊 Consolidado</button>
+      <button class="tab-btn" onclick="switchTab('porano')">📅 Por Ano</button>
+    </div>
+
+    <!-- ABA CONSOLIDADO -->
+    <div id="tab-consolidado" class="tab-pane active">
+      <div class="kpi-strip fade-in" id="kpi-strip"></div>
+      <div class="charts-row fade-in">
+        <div class="card">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--g)"></div>
+            <span class="ct-text">Composição Tributária por Ano</span>
+          </div>
+          <div class="card-note" id="chart-note"></div>
+          <canvas id="barChart" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--g)"></div>
+            <span class="ct-text">Carga Efetiva vs. Custo Líquido %</span>
+          </div>
+          <div class="card-note">
+            <span style="color:var(--g)">●</span> Carga bruta &nbsp;·&nbsp;
+            <span style="color:var(--pu)">●</span> Custo líquido (pós crédito CBS)
+          </div>
+          <canvas id="lineChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="card fade-in" style="margin-bottom:14px">
         <div class="card-title">
           <div class="ct-bar" style="background:var(--g)"></div>
-          <span class="ct-text">Composição Tributária por Ano</span>
+          <span class="ct-text">Detalhe Tributário Ano a Ano — Discriminado por Imposto</span>
         </div>
-        <div class="card-note" id="chart-note"></div>
-        <canvas id="barChart" height="200"></canvas>
+        <div class="tbl-wrap" id="tbl-container"></div>
       </div>
-      <div class="card">
-        <div class="card-title">
-          <div class="ct-bar" style="background:var(--g)"></div>
-          <span class="ct-text">Carga Efetiva vs. Custo Líquido %</span>
+      <div class="alerts-row fade-in" id="alerts-row"></div>
+    </div>
+
+    <!-- ABA POR ANO -->
+    <div id="tab-porano" class="tab-pane">
+      <div class="ano-selector" id="ano-selector"></div>
+      <div id="porano-empty" style="display:none;color:var(--t3);font-size:12px;padding:40px 0;text-align:center">
+        Selecione um ano acima para ver o detalhamento.
+      </div>
+      <div id="porano-conteudo" style="display:none">
+        <div class="kpi-strip-4 fade-in" id="kpi-ano"></div>
+        <div class="ano-charts fade-in">
+          <div class="card">
+            <div class="card-title">
+              <div class="ct-bar" style="background:var(--g)"></div>
+              <span class="ct-text" id="ano-chart-title">Composição dos Tributos</span>
+            </div>
+            <canvas id="pieChartAno" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-title">
+              <div class="ct-bar" style="background:var(--g)"></div>
+              <span class="ct-text">Regime Atual vs. Novo Regime</span>
+            </div>
+            <canvas id="barChartAno" height="220"></canvas>
+          </div>
         </div>
-        <div class="card-note">
-          <span style="color:var(--g)">●</span> Carga bruta &nbsp;·&nbsp;
-          <span style="color:var(--pu)">●</span> Custo líquido (pós crédito CBS)
+        <div class="card fade-in" style="margin-bottom:14px">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--g)"></div>
+            <span class="ct-text" id="ano-tbl-title">Detalhamento do Ano</span>
+          </div>
+          <div class="tbl-wrap" id="tbl-ano"></div>
         </div>
-        <canvas id="lineChart" height="200"></canvas>
       </div>
     </div>
-    <div class="card fade-in" style="margin-bottom:14px">
-      <div class="card-title">
-        <div class="ct-bar" style="background:var(--g)"></div>
-        <span class="ct-text">Detalhe Tributário Ano a Ano — Discriminado por Imposto</span>
-      </div>
-      <div class="tbl-wrap" id="tbl-container"></div>
-    </div>
-    <div class="alerts-row fade-in" id="alerts-row"></div>
+
   </div>
 </div>
 </div>
@@ -353,6 +412,127 @@ const C={g:'#6DC93B',bg:'#111111',s1:'#1A1A1A',s2:'#222222',s3:'#2E2E2E',s4:'#3A
          pi:'#E91E8C',co:'#FF6B35',cs:'#00BCD4'};
 
 let barChartInst=null,lineChartInst=null,lastResult=null;
+let pieChartAnoInst=null,barChartAnoInst=null;
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0&&tab==='consolidado')||(i===1&&tab==='porano'));
+  });
+  document.getElementById('tab-consolidado').classList.toggle('active', tab==='consolidado');
+  document.getElementById('tab-porano').classList.toggle('active', tab==='porano');
+}
+
+function renderAno(ano){
+  if(!lastResult) return;
+  const row = lastResult.rows.find(r=>r.y===ano);
+  if(!row||!row.active||row.valBase===0){
+    document.getElementById('porano-empty').style.display='block';
+    document.getElementById('porano-conteudo').style.display='none';
+    return;
+  }
+  document.getElementById('porano-empty').style.display='none';
+  document.getElementById('porano-conteudo').style.display='block';
+
+  // Atualizar botões
+  document.querySelectorAll('.ano-btn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.dataset.ano)===ano);
+  });
+
+  const isBRL = lastResult.moeda==='BRL';
+  const isCedente = lastResult.posicao==='cedente';
+  const moedaImposto='BRL';
+  const r = row;
+  const confirmed = RATES[ano].confirmed;
+  const estLabel = confirmed
+    ? `<span class="badge" style="background:var(--g3);color:var(--g)">✔ LEI</span>`
+    : `<span class="badge" style="background:#1E1200;color:${C.am}">⚠ EST</span>`;
+
+  document.getElementById('ano-chart-title').textContent = `Composição dos Tributos — ${ano}`;
+  document.getElementById('ano-tbl-title').textContent = `Detalhamento ${ano} ${confirmed?'(Lei confirmada)':'(Estimativa)'}`;
+
+  // KPIs do ano
+  const kpisAno=[
+    {lbl:'Valor do Contrato', val:fmt(r.valBase, lastResult.moeda), sub:isBRL?'em R$':`≈ ${fmt(r.valBRL,'BRL')}`, color:'var(--t1)'},
+    {lbl:'Tributos Regime Atual', val:fmt(r.total_atual, moedaImposto), sub:'IRRF+PIS+COFINS+ISS', color: confirmed?'var(--t1)':'#FFD580'},
+    {lbl:'Tributos Novo Regime', val:fmt(r.total_novo, moedaImposto), sub:'IRRF+ISS+CBS+IBS', color: confirmed?'var(--t1)':'#FFD580'},
+    {lbl:'Custo Líquido', val:fmt(r.custo_liq, moedaImposto), sub: isCedente?'Sem crédito CBS':'Após crédito CBS', color: isCedente?'var(--re)':'var(--g)'},
+  ];
+  document.getElementById('kpi-ano').innerHTML = kpisAno.map(k=>`
+    <div class="kpi" style="border-top-color:${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // Gráfico de pizza — composição dos tributos do ano
+  const pieLabels=[], pieData=[], pieColors=[];
+  if(r.irrf_v>0){pieLabels.push('IRRF');pieData.push(r.irrf_v);pieColors.push(C.bl);}
+  if(r.pis_v>0){pieLabels.push('PIS');pieData.push(r.pis_v);pieColors.push(C.pi);}
+  if(r.cof_v>0){pieLabels.push('COFINS');pieData.push(r.cof_v);pieColors.push(C.co);}
+  if(r.iss_v>0){pieLabels.push('ISS');pieData.push(r.iss_v);pieColors.push(C.or);}
+  if(r.cbs_efetiva>0){pieLabels.push('CBS');pieData.push(r.cbs_efetiva);pieColors.push(C.g2);}
+  if(r.ibs_efetivo>0){pieLabels.push('IBS');pieData.push(r.ibs_efetivo);pieColors.push(C.g);}
+
+  if(pieChartAnoInst)pieChartAnoInst.destroy();
+  pieChartAnoInst=new Chart(document.getElementById('pieChartAno'),{
+    type:'doughnut',
+    data:{labels:pieLabels,datasets:[{data:pieData,backgroundColor:pieColors,borderColor:C.bg,borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{position:'bottom',labels:{color:C.t2,font:{size:10},padding:12}},
+        tooltip:{...TIP,callbacks:{label:ctx=>{
+          const total=ctx.dataset.data.reduce((a,b)=>a+b,0);
+          return ` ${ctx.label}: ${fmt(ctx.raw,moedaImposto)} (${(ctx.raw/total*100).toFixed(1)}%)`;
+        }}}}}
+  });
+
+  // Gráfico de barras — regime atual vs novo
+  if(barChartAnoInst)barChartAnoInst.destroy();
+  barChartAnoInst=new Chart(document.getElementById('barChartAno'),{
+    type:'bar',
+    data:{
+      labels:['Regime Atual','Novo Regime','Custo Líquido'],
+      datasets:[{
+        data:[r.total_atual, r.total_novo, r.custo_liq],
+        backgroundColor:[C.bl, confirmed?C.g:C.am, isCedente?C.re:C.g],
+        borderRadius:6,
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:ctx=>` ${fmt(ctx.raw,moedaImposto)}`}}},
+      scales:{x:{...SCALE.x},y:{...SCALE.y,ticks:{...SCALE.y.ticks,callback:v=>fmt(v,moedaImposto)}}}}
+  });
+
+  // Tabela do ano
+  const delta_abs = r.total_novo - r.total_atual;
+  const delta_pct = r.total_atual>0 ? delta_abs/r.total_atual : 0;
+  document.getElementById('tbl-ano').innerHTML=`
+    <table class="tbl">
+      <thead><tr>
+        <th style="text-align:left">Tributo</th>
+        <th>Alíquota</th>
+        <th>Base de Cálculo</th>
+        <th>Valor</th>
+        <th>Regime</th>
+      </tr></thead>
+      <tbody>
+        ${r.irrf_v>0?`<tr><td style="color:${C.bl}">IRRF</td><td>${(lastResult.irrf*100).toFixed(0)}%</td><td>${fmt(r.valBRL,moedaImposto)}</td><td>${fmt(r.irrf_v,moedaImposto)}</td><td><span style="color:${C.bl}">Atual</span></td></tr>`:''}
+        ${r.pis_v>0?`<tr><td style="color:${C.pi}">PIS</td><td>1,65%</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.pis_v,moedaImposto)}</td><td><span style="color:${C.pi}">Atual</span></td></tr>`:''}
+        ${r.cof_v>0?`<tr><td style="color:${C.co}">COFINS</td><td>7,60%</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.cof_v,moedaImposto)}</td><td><span style="color:${C.co}">Atual</span></td></tr>`:''}
+        ${r.iss_v>0?`<tr><td style="color:${C.or}">ISS</td><td>${fmtPct(RATES[ano].iss)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.iss_v,moedaImposto)}</td><td><span style="color:${C.or}">Atual/Transição</span></td></tr>`:''}
+        ${r.cbs_efetiva>0?`<tr><td style="color:${C.g2}">CBS</td><td>${fmtPct(RATES[ano].cbs)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.cbs_efetiva,moedaImposto)}</td><td><span style="color:${confirmed?C.g:C.am}">Novo ${confirmed?'✔':'⚠Est'}</span></td></tr>`:''}
+        ${r.ibs_efetivo>0?`<tr><td style="color:${C.g}">IBS</td><td>${fmtPct(RATES[ano].ibs)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.ibs_efetivo,moedaImposto)}</td><td><span style="color:${C.am}">Novo ⚠Est</span></td></tr>`:''}
+      </tbody>
+      <tfoot>
+        <tr class="tbl-total"><td>Total Atual</td><td>—</td><td>—</td><td>${fmt(r.total_atual,moedaImposto)}</td><td>—</td></tr>
+        <tr class="tbl-total"><td>Total Novo Regime</td><td>—</td><td>—</td><td style="color:${confirmed?C.t1:'#FFD580'}">${fmt(r.total_novo,moedaImposto)}</td><td>${estLabel}</td></tr>
+        <tr class="tbl-total"><td>Δ Impacto Reforma</td><td>—</td><td>—</td>
+          <td style="color:${delta_abs>0?'#FF8080':C.g};font-weight:700">${(delta_abs>=0?'+':'')+fmt(delta_abs,moedaImposto)} (${(delta_pct>=0?'+':'')+fmtPct(delta_pct)})</td><td>—</td></tr>
+        <tr class="tbl-total"><td style="color:${isCedente?C.re:C.g}">Custo Líquido</td><td>—</td><td>—</td>
+          <td style="color:${isCedente?C.re:C.g};font-weight:700">${fmt(r.custo_liq,moedaImposto)}</td>
+          <td style="color:${isCedente?C.re:C.g}">${isCedente?'Sem crédito CBS':'Crédito CBS aplicado'}</td></tr>
+      </tfoot>
+    </table>`;
+}
 
 // ── FORMATAÇÃO BRASILEIRA ─────────────────────────────────────────────────────
 function fmt(val, moeda){
@@ -760,6 +940,24 @@ function calcular(){
 
   document.getElementById('painel-empty').style.display='none';
   document.getElementById('painel-resultado').style.display='block';
+
+  // Montar seletor de anos na aba Por Ano
+  const activeYears = rows.filter(r=>r.active&&r.valBase>0).map(r=>r.y);
+  document.getElementById('ano-selector').innerHTML =
+    `<span style="font-size:10px;color:var(--t3);font-family:var(--fm);letter-spacing:1px;margin-right:4px">ANO:</span>` +
+    YEARS.map(y=>{
+      const isActive = activeYears.includes(y);
+      return `<button class="ano-btn ${isActive?'':'disabled'}" data-ano="${y}" onclick="renderAno(${y})">${y}</button>`;
+    }).join('');
+
+  // Selecionar automaticamente o primeiro ano ativo
+  if(activeYears.length>0){
+    document.getElementById('porano-empty').style.display='none';
+    renderAno(activeYears[0]);
+  } else {
+    document.getElementById('porano-empty').style.display='block';
+    document.getElementById('porano-conteudo').style.display='none';
+  }
 
 }
 
