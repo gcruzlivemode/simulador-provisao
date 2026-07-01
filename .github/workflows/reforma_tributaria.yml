@@ -2,8 +2,11 @@ name: Reforma Tributária — Portfólio Livemode
 
 on:
   workflow_dispatch:
+  # Acionado pelo Airtable Automation via GitHub API
+  repository_dispatch:
+    types: [airtable_update]
   schedule:
-    # Diariamente às 6h BRT (9h UTC)
+    # Diariamente às 6h BRT (9h UTC) como fallback
     - cron: '0 9 * * *'
 
 jobs:
@@ -21,10 +24,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Gerar dashboard da reforma tributária
+      - name: Gerar dashboard + detectar mudanças + notificar
         env:
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: python reforma_tributaria.py
+
+      - name: Salvar snapshot no repositório
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add reforma_cache.json
+          git diff --cached --quiet || git commit -m "cache: snapshot reforma $(date +%Y-%m-%d)"
+          git push
 
       - name: Publicar como artifact
         uses: actions/upload-artifact@v4
@@ -37,7 +54,6 @@ jobs:
         run: |
           mkdir -p _site
           cp REFORMA_TRIBUTARIA.html _site/reforma.html
-          # Preserva o simulador manual existente
           if [ -f simulador-provisao.html ]; then
             cp simulador-provisao.html _site/simulador.html
             cp simulador-provisao.html _site/index.html
