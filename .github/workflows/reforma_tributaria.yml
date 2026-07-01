@@ -2,12 +2,9 @@ name: Reforma Tributária — Portfólio Livemode
 
 on:
   workflow_dispatch:
-  # Acionado pelo Airtable Automation via GitHub API
-  repository_dispatch:
-    types: [airtable_update]
   schedule:
-    # Diariamente às 6h BRT (9h UTC) como fallback
-    - cron: '0 9 * * *'
+    # A cada 2 horas das 8h às 22h BRT (11h–01h UTC), dias úteis
+    - cron: '0 11,13,15,17,19,21,23,1 * * 1-5'
 
 jobs:
   reforma:
