@@ -209,9 +209,9 @@ footer{padding:11px 28px;border-top:1px solid var(--s3);display:flex;
     </div>
     <div class="panel-body">
       <div class="legend">
-        <div class="leg"><div class="leg-sq" style="background:rgba(74,159,212,.7)"></div>Regime Atual</div>
-        <div class="leg"><div class="leg-sq" style="background:rgba(232,69,60,.65)"></div>Novo Regime (CBS+IBS)</div>
-        <div class="leg"><div class="leg-line" style="background:var(--am)"></div>Δ Impacto (eixo direito)</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(109,201,59,.75)"></div>Regime Atual</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.3)"></div>Novo Regime (CBS+IBS)</div>
+        <div class="leg"><div class="leg-line" style="background:var(--am)"></div>Δ Impacto (eixo direito · ponto maior = ano selecionado)</div>
         <div class="leg" style="margin-left:auto;font-style:italic;color:var(--am)">⚠ barra tracejada = estimativa</div>
       </div>
       <canvas id="evoChart" height="75"></canvas>
@@ -445,28 +445,53 @@ function drawChart() {
   const ctx = document.getElementById('evoChart').getContext('2d');
   if (_chart) _chart.destroy();
 
+  const yrHighlight = {
+    id: 'yrHighlight',
+    beforeDraw(chart) {
+      const idx = D.anos.indexOf(yr);
+      if (idx < 0) return;
+      const meta = chart.getDatasetMeta(0);
+      const bar = meta.data[idx];
+      if (!bar) return;
+      const {ctx: c, chartArea} = chart;
+      const hw = (bar.width || 32) * 0.8;
+      c.save();
+      c.fillStyle = 'rgba(109,201,59,.10)';
+      c.fillRect(bar.x - hw, chartArea.top, hw * 2, chartArea.height);
+      c.strokeStyle = 'rgba(109,201,59,.25)';
+      c.lineWidth = 1;
+      c.setLineDash([3, 3]);
+      c.beginPath(); c.moveTo(bar.x - hw, chartArea.top);    c.lineTo(bar.x - hw, chartArea.bottom); c.stroke();
+      c.beginPath(); c.moveTo(bar.x + hw, chartArea.top);    c.lineTo(bar.x + hw, chartArea.bottom); c.stroke();
+      c.restore();
+    }
+  };
+
   _chart = new Chart(ctx, {
+    plugins: [yrHighlight],
     data: {
       labels: lbls,
       datasets: [
         {
           type:'bar', label:'Regime Atual', data:dAtual, order:2,
-          backgroundColor: conf.map(c => c ? 'rgba(74,159,212,.65)' : 'rgba(74,159,212,.3)'),
-          borderColor:     conf.map(c => c ? '#4A9FD4' : 'rgba(74,159,212,.5)'),
+          backgroundColor: D.anos.map((a,i) => conf[i] ? 'rgba(109,201,59,.75)' : 'rgba(109,201,59,.35)'),
+          borderColor:     D.anos.map((a,i) => conf[i] ? '#6DC93B' : 'rgba(109,201,59,.5)'),
           borderWidth:1, borderRadius:3,
-          borderDash: conf.map(c => c ? [] : [4,2]),
         },
         {
           type:'bar', label:'Novo Regime', data:dNovo, order:2,
-          backgroundColor: conf.map(c => c ? 'rgba(232,69,60,.65)' : 'rgba(232,69,60,.28)'),
-          borderColor:     conf.map(c => c ? '#E8453C' : 'rgba(232,69,60,.45)'),
+          backgroundColor: D.anos.map((a,i) => conf[i] ? 'rgba(255,255,255,.65)' : 'rgba(255,255,255,.22)'),
+          borderColor:     D.anos.map((a,i) => conf[i] ? 'rgba(255,255,255,.9)' : 'rgba(255,255,255,.35)'),
           borderWidth:1, borderRadius:3,
         },
         {
           type:'line', label:'Δ Impacto', data:dDelta, order:1,
           borderColor:'#F0A030', backgroundColor:'rgba(240,160,48,.07)',
-          borderWidth:2, pointRadius:4, pointBackgroundColor:'#F0A030',
-          pointBorderColor:'#0E0E11', pointBorderWidth:2,
+          borderWidth:2,
+          pointRadius:     D.anos.map(a => a === yr ? 8 : 4),
+          pointBackgroundColor: D.anos.map(a => a === yr ? '#FFFFFF' : '#F0A030'),
+          pointBorderColor:     D.anos.map(a => a === yr ? '#F0A030' : '#0E0E11'),
+          pointBorderWidth:     D.anos.map(a => a === yr ? 3 : 1.5),
           fill:true, tension:0.3, yAxisID:'y2',
         },
       ]
@@ -551,7 +576,7 @@ function buildYrKpis(projetos) {
   ).join('');
 }
 
-function selYr(a) { yr = a; buildYrStrip(); renderYr(); }
+function selYr(a) { yr = a; buildYrStrip(); renderYr(); drawChart(); }
 
 // ── Tabela ───────────────────────────────────────────────────────────────────
 function buildTable(projetos) {
