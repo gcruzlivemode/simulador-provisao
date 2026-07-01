@@ -282,6 +282,9 @@ projetos_todos, por_empresa = [], {"LMS": [], "CZTV": []}
 for rec in projetos_recs:
     f     = rec["fields"]
     nome  = f.get("Projeto", "—") or "—"
+    if "ESTRELAS" in nome.upper():
+        print(f"  [SKIP] {nome} — casting, ignorado.")
+        continue
     valor = float(f.get("Valor Total Líquido", 0) or 0)
     if valor <= 0:
         continue
