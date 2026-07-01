@@ -6,106 +6,174 @@
 <title>Reforma Tributária · Portfólio Livemode</title>
 <style>
 :root{
-  --bg:#111111;--s1:#1A1A1A;--s2:#222222;--s3:#2E2E2E;--s4:#3A3A3A;
-  --g:#6DC93B;--g2:#4EA828;--g3:#1A3A0A;
-  --t1:#FFFFFF;--t2:#BBBBBB;--t3:#666666;--t4:#3A3A3A;
-  --re:#E53935;--am:#F5A623;--bl:#4A9FD4;--pu:#9B59B6;
-  --fs:'system-ui',-apple-system,sans-serif;--fm:'ui-monospace','Cascadia Code','Fira Code',monospace;
-  --radius:10px;
+  --bg:#0E0E11;--s1:#15151A;--s2:#1C1C23;--s3:#272730;--s4:#38383F;
+  --g:#6DC93B;--g2:#4EA828;--g3:#152B07;
+  --t1:#EEEFF5;--t2:#A0A0B4;--t3:#585868;
+  --re:#E8453C;--am:#F0A030;--bl:#4A9FD4;
+  --fm:ui-monospace,'Cascadia Code','Fira Code',Consolas,monospace;
+  --ff:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --r:8px
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:13px}
-body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--s4);border-radius:3px}
+body{background:var(--bg);color:var(--t1);font-family:var(--ff);min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:4px}
 
-/* Header */
-header{display:flex;align-items:center;justify-content:space-between;
-  padding:14px 28px;background:var(--s1);border-bottom:1px solid var(--s3);
-  position:sticky;top:0;z-index:100}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-box{background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:7px 10px;position:relative}
-.logo-box::after{content:'';position:absolute;bottom:-1px;left:10px;width:14px;height:3px;background:var(--g);border-radius:2px}
-.logo-live{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--t1);letter-spacing:1px}
-.logo-mode{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--g);letter-spacing:1px}
-.hd-title{font-family:var(--fm);font-size:15px;font-weight:700;letter-spacing:1px}
-.hd-sub{font-size:10px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-.hd-meta{text-align:right;font-size:10px;color:var(--t3);line-height:1.8}
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 28px;background:var(--s1);border-bottom:1px solid var(--s3);
+  position:sticky;top:0;z-index:200}
+.logo-box{background:var(--s2);border:1px solid var(--s3);border-radius:6px;
+  padding:6px 10px;position:relative}
+.logo-box::after{content:'';position:absolute;bottom:-1px;left:50%;
+  transform:translateX(-50%);width:24px;height:2px;background:var(--g);border-radius:2px}
+.logo-live{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--t1);letter-spacing:1px}
+.logo-mode{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--g);letter-spacing:1px}
+.hd-center{text-align:center}
+.hd-title{font-family:var(--fm);font-size:13px;font-weight:700;letter-spacing:2px}
+.hd-sub{font-size:10px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;
+  margin-top:2px;text-align:center}
+.hd-meta{text-align:right;font-size:10px;color:var(--t3);line-height:1.9;font-family:var(--fm)}
 .hd-meta b{color:var(--t2)}
 
-/* KPI strip */
-.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:18px 28px;background:var(--s1);border-bottom:1px solid var(--s3)}
-.kpi{background:var(--s2);border:1px solid var(--s3);border-radius:var(--radius);padding:14px 16px;border-top:3px solid var(--g)}
-.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);margin-bottom:5px}
-.kpi-val{font-family:var(--fm);font-size:18px;font-weight:700;line-height:1;margin-bottom:3px;word-break:break-all}
-.kpi-sub{font-size:9px;color:var(--t3);line-height:1.4}
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);background:var(--s3);gap:1px;
+  border-bottom:1px solid var(--s3)}
+.kpi{background:var(--s1);padding:16px 20px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--s4))}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);margin-bottom:7px}
+.kpi-val{font-family:var(--fm);font-size:22px;font-weight:700;line-height:1;
+  color:var(--c,var(--t1));margin-bottom:5px;font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-sub{font-size:10px;color:var(--t3);line-height:1.5}
 
-/* Nav bars */
-.co-bar{display:flex;gap:6px;padding:10px 28px;background:var(--s1);border-bottom:1px solid var(--s3)}
-.co-btn{padding:6px 18px;border-radius:20px;border:1px solid var(--s3);background:transparent;
-  color:var(--t3);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fm);letter-spacing:.5px;transition:all .15s}
-.co-btn:hover{color:var(--t2);border-color:var(--s4)}
-.co-btn.active{background:var(--g);color:#111;border-color:var(--g)}
+/* INSIGHT ROW */
+.insight-row{display:grid;grid-template-columns:repeat(3,1fr);background:var(--s3);gap:1px;
+  border-bottom:1px solid var(--s3)}
+.insight{background:var(--s2);padding:14px 20px;display:flex;gap:12px;align-items:flex-start}
+.ins-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;margin-top:1px}
+.ins-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);margin-bottom:4px}
+.ins-text{font-size:11.5px;color:var(--t2);line-height:1.65}
+.ins-text strong{color:var(--t1)}
+.ins-text em{color:var(--am);font-style:normal;font-weight:600}
 
-.yr-bar{display:flex;gap:4px;padding:8px 28px;background:var(--bg);border-bottom:1px solid var(--s3);overflow-x:auto;scrollbar-width:none}
-.yr-bar::-webkit-scrollbar{display:none}
-.yr-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--s3);background:transparent;
-  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);white-space:nowrap;transition:all .15s}
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:6px;padding:10px 28px;
+  background:var(--s1);border-bottom:1px solid var(--s3);flex-wrap:wrap}
+.co-btn{padding:5px 16px;border-radius:4px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);
+  letter-spacing:.5px;transition:all .12s}
+.co-btn:hover{color:var(--t2);border-color:var(--s4);background:var(--s2)}
+.co-btn.active{background:var(--g3);color:var(--g);border-color:var(--g2)}
+
+/* MAIN */
+.main{padding:18px 28px;max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* PANELS */
+.panel{background:var(--s1);border:1px solid var(--s3);border-radius:var(--r);overflow:hidden}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 18px;border-bottom:1px solid var(--s3)}
+.panel-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--g);flex-shrink:0}
+.panel-note{font-size:10px;color:var(--t3);font-family:var(--fm)}
+.panel-body{padding:18px}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.leg{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);font-family:var(--fm)}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.leg-line{width:16px;height:3px;border-radius:4px;flex-shrink:0}
+
+/* YEAR STRIP */
+.yr-strip{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:10px 18px;border-bottom:1px solid var(--s3)}
+.yr-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);flex-shrink:0;margin-right:2px}
+.yr-btn{padding:4px 13px;border-radius:4px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);
+  white-space:nowrap;transition:all .12s}
 .yr-btn:hover{color:var(--t2);border-color:var(--s4)}
-.yr-btn.active{background:var(--g3);color:var(--g);border-color:var(--g)}
+.yr-btn.active{background:var(--g3);color:var(--g);border-color:var(--g2)}
 .yr-btn.est{border-style:dashed}
+.yr-btn.est:not(.active){color:var(--am);border-color:rgba(240,160,48,.4)}
+.yr-btn.est.active{background:rgba(240,160,48,.1);color:var(--am);border-color:var(--am)}
 
-/* Content */
-.content{padding:20px 28px;max-width:1600px;margin:0 auto}
+/* YEAR KPIS */
+.yr-kpis{display:grid;grid-template-columns:repeat(4,1fr);background:var(--s3);gap:1px}
+.yr-kpi{background:var(--s2);padding:12px 16px;position:relative}
+.yr-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--s4))}
+.yr-kpi .kpi-val{font-size:16px}
 
-/* Year KPI mini-strip */
-.yr-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.yr-kpi .kpi{padding:10px 14px}
-.yr-kpi .kpi-val{font-size:15px}
-
-/* Contracts table */
-.tbl-wrap{background:var(--s1);border:1px solid var(--s3);border-radius:var(--radius);overflow:hidden;margin-bottom:18px}
-.tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--s3)}
-.tbl-hdr-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px}
-.tbl-hdr-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--g);flex-shrink:0}
-.tbl-count{font-size:10px;color:var(--t3)}
-.tbl-scroll{overflow-x:auto}
+/* TABLE */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.ct{width:100%;border-collapse:collapse;font-size:11px}
-table.ct th{background:#151515;padding:8px 10px;text-align:right;font-size:9px;font-weight:700;
-  letter-spacing:.5px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);
-  border-bottom:1px solid var(--s3);white-space:nowrap;position:sticky;top:0}
-table.ct th:first-child,table.ct th:nth-child(2){text-align:left}
-table.ct td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.03);text-align:right;white-space:nowrap}
-table.ct td:first-child{text-align:left;max-width:240px;overflow:hidden;text-overflow:ellipsis}
-table.ct td:nth-child(2){text-align:left;font-weight:700}
-table.ct tr:hover td{background:rgba(255,255,255,.025)}
-table.ct tr.total-row td{font-weight:700;background:#0A1A0A;color:var(--g);border-top:1px solid #1A3020;font-size:11px}
+table.ct thead th{background:#0F0F13;padding:9px 12px;text-align:right;
+  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);border-bottom:1px solid var(--s3);
+  white-space:nowrap;cursor:pointer;user-select:none;transition:color .1s}
+table.ct thead th:hover{color:var(--t2)}
+table.ct thead th.left{text-align:left}
+table.ct thead th.sort-asc::after{content:' ↑';color:var(--g)}
+table.ct thead th.sort-desc::after{content:' ↓';color:var(--g)}
+table.ct tbody td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.025);
+  text-align:right;white-space:nowrap;vertical-align:middle}
+table.ct tbody td.left{text-align:left}
+table.ct tbody tr:hover td{background:rgba(255,255,255,.018)}
+.total-row td{background:#0C160C !important;color:var(--g) !important;
+  font-weight:700;border-top:1px solid var(--g3) !important}
 .num{font-family:var(--fm);font-variant-numeric:tabular-nums}
-.badge-emp{display:inline-block;font-size:8px;font-weight:700;font-family:var(--fm);padding:2px 6px;border-radius:10px;letter-spacing:.5px}
-.badge-lms{background:#0A1A30;color:#4A9FD4;border:1px solid #4A9FD4}
-.badge-cztv{background:#1A0A30;color:#9B59B6;border:1px solid #9B59B6}
-.delta-pos{color:var(--re)}
-.delta-neg{color:var(--g)}
-.delta-zero{color:var(--t3)}
-.est-mark{color:var(--am);font-size:9px}
+.up{color:var(--re)}
+.dn{color:var(--g)}
+.nt{color:var(--t3)}
 
-/* Chart */
-.chart-wrap{background:var(--s1);border:1px solid var(--s3);border-radius:var(--radius);padding:18px;margin-bottom:18px}
-.chart-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.chart-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--g);flex-shrink:0}
-.chart-note{font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.8}
-canvas{display:block}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  font-family:var(--fm);padding:2px 7px;border-radius:3px;letter-spacing:.5px;
+  text-transform:uppercase;white-space:nowrap}
+.badge-lms{background:rgba(74,159,212,.1);color:#5CAEE0;border:1px solid rgba(74,159,212,.25)}
+.badge-cztv{background:rgba(180,127,212,.1);color:#C090E0;border:1px solid rgba(180,127,212,.25)}
+.sev{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  font-family:var(--fm);padding:2px 9px;border-radius:10px;letter-spacing:.5px;
+  text-transform:uppercase;white-space:nowrap}
+.sev-c{background:rgba(232,69,60,.12);color:#F06050;border:1px solid rgba(232,69,60,.3)}
+.sev-a{background:rgba(240,160,48,.1);color:#F0A030;border:1px solid rgba(240,160,48,.3)}
+.sev-m{background:rgba(74,159,212,.1);color:#5CAEE0;border:1px solid rgba(74,159,212,.25)}
+.sev-b{background:rgba(109,201,59,.1);color:#6DC93B;border:1px solid rgba(109,201,59,.25)}
+.sev-n{background:var(--s3);color:var(--t3);border:1px solid var(--s3)}
 
-/* Empty */
-.empty{text-align:center;padding:50px;color:var(--t3);font-size:12px}
+/* TIMELINE */
+.timeline{padding:14px 28px;background:var(--s1);border-top:1px solid var(--s3);
+  overflow-x:auto;display:flex;gap:0;align-items:stretch}
+.tl-item{flex-shrink:0;padding-right:24px;margin-right:24px;border-right:1px solid var(--s3)}
+.tl-item:last-child{border-right:none;margin-right:0;padding-right:0}
+.tl-year{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--g);margin-bottom:3px}
+.tl-text{font-size:10px;color:var(--t2);line-height:1.55;max-width:155px}
+.tl-est .tl-year{color:var(--am)}
+.tl-est .tl-text{color:var(--t3)}
 
-/* Footer */
-footer{padding:14px 28px;border-top:1px solid var(--s3);color:var(--t3);font-size:10px;text-align:center;font-family:var(--fm)}
+/* FOOTER */
+footer{padding:11px 28px;border-top:1px solid var(--s3);display:flex;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  font-size:10px;color:var(--t3);font-family:var(--fm)}
+.empty{text-align:center;padding:40px;color:var(--t3);font-size:12px}
 
-@media(max-width:1000px){
+@media(max-width:1200px){
   .kpi-strip{grid-template-columns:repeat(3,1fr)}
-  .yr-kpi{grid-template-columns:repeat(2,1fr)}
+  .insight-row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+  .yr-kpis{grid-template-columns:repeat(2,1fr)}
+  header{flex-wrap:wrap}
+  .main{padding:14px 16px}
+  .toolbar,.timeline{padding:10px 16px}
+  .kpi-strip,.insight-row{padding:0}
 }
 </style>
 </head>
@@ -113,293 +181,489 @@ footer{padding:14px 28px;border-top:1px solid var(--s3);color:var(--t3);font-siz
 <script>const D=/*INJECT_DATA*/;</script>
 
 <header>
-  <div class="logo">
+  <div style="display:flex;align-items:center;gap:12px">
     <div class="logo-box">
       <div class="logo-live">LIVE</div>
       <div class="logo-mode">MODE</div>
     </div>
-    <div>
+    <div class="hd-center">
       <div class="hd-title">REFORMA TRIBUTÁRIA</div>
-      <div class="hd-sub">Portfólio · Impacto 2026–2033</div>
+      <div class="hd-sub">Portfólio · LC 214/2025 · 2026–2033</div>
     </div>
   </div>
   <div class="hd-meta">
-    <b id="hd-total"></b> contratos &nbsp;·&nbsp; Gerado <b id="hd-gerado"></b>
+    <b id="hd-total">—</b> contratos &nbsp;|&nbsp; Atualizado <b id="hd-gerado">—</b>
   </div>
 </header>
 
 <div class="kpi-strip" id="kpi-strip"></div>
+<div class="insight-row" id="insight-row"></div>
+<div class="toolbar" id="toolbar"></div>
 
-<div class="co-bar" id="co-bar"></div>
-<div class="yr-bar" id="yr-bar"></div>
+<div class="main">
 
-<div class="content" id="content"></div>
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-title">Evolução do Impacto Tributário 2026–2033</div>
+      <div class="panel-note" id="chart-note"></div>
+    </div>
+    <div class="panel-body">
+      <div class="legend">
+        <div class="leg"><div class="leg-sq" style="background:rgba(74,159,212,.7)"></div>Regime Atual</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(232,69,60,.65)"></div>Novo Regime (CBS+IBS)</div>
+        <div class="leg"><div class="leg-line" style="background:var(--am)"></div>Δ Impacto (eixo direito)</div>
+        <div class="leg" style="margin-left:auto;font-style:italic;color:var(--am)">⚠ barra tracejada = estimativa</div>
+      </div>
+      <canvas id="evoChart" height="75"></canvas>
+    </div>
+  </div>
 
-<footer id="footer"></footer>
+  <div class="panel" id="year-panel">
+    <div class="yr-strip" id="yr-strip"></div>
+    <div class="yr-kpis" id="yr-kpis"></div>
+    <div class="panel-hdr" style="border-top:1px solid var(--s3)">
+      <div class="panel-title" id="tbl-title">Contratos</div>
+      <div class="panel-note" id="tbl-count"></div>
+    </div>
+    <div class="tbl-scroll">
+      <table class="ct" id="ct"></table>
+    </div>
+  </div>
 
+</div>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="tl-year">2026</div>
+    <div class="tl-text">CBS declaratório — não gera pagamento. PIS+COFINS e ISS vigentes.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2027 ⚠</div>
+    <div class="tl-text">CBS 8,8% substitui PIS+COFINS. IBS declaratório (0,1%). Cedente sem crédito.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2028 ⚠</div>
+    <div class="tl-text">CBS 8,8% + ISS 3%. IBS ainda declaratório.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2029 ⚠</div>
+    <div class="tl-text">IBS efetivo: 3,2%. ISS reduz para 2,7%. Ponto de aceleração da carga.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2033 ⚠</div>
+    <div class="tl-text">ISS zerado. CBS 8,8% + IBS 17,7% = 26,5% sobre a base de serviços.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year" style="color:var(--t3)">Posição Cedente</div>
+    <div class="tl-text" style="color:var(--t3)">Livemode vende direitos. Sem recuperação de crédito CBS/IBS. Carga é custo líquido.</div>
+  </div>
+</div>
+
+<footer>
+  <span>LIVEMODE · Reforma Tributária · LC 214/2025 · Posição: Cedente</span>
+  <span id="footer-meta"></span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ── Formatação ─────────────────────────────────────────────────
-const fmtR = v => {
-  if(v==null||isNaN(v)) return '—';
-  const a=Math.abs(v), s=v<0?'−':'';
-  if(a>=1e6) return s+'R$ '+(a/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'M';
-  if(a>=1e3) return s+'R$ '+(a/1e3).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})+'k';
-  return s+'R$ '+a.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+// ── Formatação ───────────────────────────────────────────────────────────────
+const fR = v => {
+  if (v == null || isNaN(v)) return '—';
+  const neg = v < 0, a = Math.abs(v), s = neg ? '−' : '';
+  if (a >= 1e6) return s + 'R$ ' + (a/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) + 'M';
+  if (a >= 1e3) return s + 'R$ ' + (a/1e3).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) + 'k';
+  return s + 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
 };
-const fmtPct = v => v==null?'—':(v>=0?'+':'')+( v*100).toFixed(1)+'%';
-const fmtN = v => v==null?'—':'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fN = v => {
+  if (v == null || isNaN(v) || v === 0) return '—';
+  return (v < 0 ? '−' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fNS = v => {
+  if (v == null || isNaN(v)) return '—';
+  return (v < 0 ? '−' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fPct = v => v == null ? '—' : (v >= 0 ? '+' : '') + (v*100).toFixed(1) + '%';
+const fDate = s => { try { return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); } catch(e){return s;} };
+const clsDelta = v => v > 100 ? 'up' : v < -100 ? 'dn' : 'nt';
 
-// ── State ──────────────────────────────────────────────────────
-let co = 'todos', yr = D.anos[0];
-
-// ── Helpers ────────────────────────────────────────────────────
-function projetosPara(coKey){
-  if(coKey==='lms')   return D.lms;
-  if(coKey==='cztv')  return D.cztv;
-  return D.projetos;
-}
-
-function resumoAnos(projetos){
-  const out={};
-  D.anos.forEach(a=>{
-    let valor=0,atual=0,novo=0,pis=0,cof=0,iss=0,cbs=0,ibs=0,irrf=0;
-    projetos.forEach(p=>{
-      const r=p.impacto[String(a)];
-      if(!r) return;
-      valor+=r.valor; atual+=r.total_atual; novo+=r.total_novo;
-      pis+=r.pis; cof+=r.cof; iss+=r.iss;
-      cbs+=r.cbs; ibs+=r.ibs; irrf+=r.irrf;
+// ── Cálculo auxiliar ─────────────────────────────────────────────────────────
+function resumo(projetos) {
+  const out = {};
+  D.anos.forEach(a => {
+    let valor = 0, atual = 0, novo = 0;
+    projetos.forEach(p => {
+      const r = p.impacto[String(a)];
+      if (!r) return;
+      valor += r.valor; atual += r.total_atual; novo += r.total_novo;
     });
-    out[a]={valor,atual,novo,pis,cof,iss,cbs,ibs,irrf,
-      delta:novo-atual,
-      confirmed: D.rates[String(a)]?.confirmed ?? false};
+    out[a] = {valor, atual, novo, delta: novo - atual, confirmed: D.rates[String(a)]?.confirmed ?? false};
   });
   return out;
 }
 
-// ── KPI strip global ───────────────────────────────────────────
-function buildKPIStrip(){
-  const all=D.projetos;
-  const totalValor=all.reduce((s,p)=>s+p.valor_total,0);
-  const n=all.length;
-  const r26=resumoAnos(all)[2026];
-  const r33=resumoAnos(all)[2033];
-  const totAtual=Object.values(resumoAnos(all)).reduce((s,r)=>s+(r?.atual||0),0);
-  const totNovo =Object.values(resumoAnos(all)).reduce((s,r)=>s+(r?.novo||0),0);
-  const delta=totNovo-totAtual;
-  const items=[
-    {lbl:'Total Portfólio',       val:fmtR(totalValor), sub:`${n} contratos fechados`,color:'var(--t1)'},
-    {lbl:'Tributos 2026 (Atual)', val:fmtR(r26?.atual), sub:'PIS+COFINS+ISS',         color:'var(--bl)'},
-    {lbl:'Tributos 2033 (Novo)',  val:fmtR(r33?.novo),  sub:'IBS 17,7% + ISS→0',      color:delta>0?'var(--re)':'var(--g)'},
-    {lbl:'Δ Impacto Total 2026–2033', val:(delta>=0?'+':'')+fmtR(delta),
-      sub:fmtPct(totAtual>0?delta/totAtual:0)+' sobre regime atual',
-      color:delta>0?'var(--re)':'var(--g)'},
-    {lbl:'Contratos Ativos',      val:n,                sub:'status Fechamento',       color:'var(--t1)'},
+function contractStats(proj) {
+  let totalOld = 0, totalNew = 0;
+  D.anos.forEach(a => {
+    const r = proj.impacto[String(a)];
+    if (!r) return;
+    totalOld += r.total_atual;
+    totalNew += r.total_novo;
+  });
+  const deltaAcum = totalNew - totalOld;
+  const pctAcum = totalOld > 0 ? deltaAcum / totalOld : (deltaAcum > 0 ? 1 : 0);
+  let sev;
+  if (proj.ano_fim < 2027)       sev = 'n';
+  else if (pctAcum >= 0.40)      sev = 'c';
+  else if (pctAcum >= 0.20)      sev = 'a';
+  else if (pctAcum >= 0.05)      sev = 'm';
+  else                           sev = 'b';
+  return {totalOld, totalNew, deltaAcum, pctAcum, sev};
+}
+
+// ── Estado global ────────────────────────────────────────────────────────────
+let co = 'todos', yr = D.anos[0];
+let sortCol = 'acum', sortDir = -1;
+let _chart = null;
+
+function getProj() {
+  return co === 'lms' ? D.lms : co === 'cztv' ? D.cztv : D.projetos;
+}
+
+// ── KPI Strip ────────────────────────────────────────────────────────────────
+function buildKPIStrip() {
+  const all = D.projetos;
+  const totalVal = all.reduce((s,p) => s + p.valor_total, 0);
+  const res = resumo(all);
+  const r26 = res[2026] || {};
+  const r33 = res[2033] || {};
+  const acumOld  = Object.values(res).reduce((s,r) => s + r.atual, 0);
+  const acumNew  = Object.values(res).reduce((s,r) => s + r.novo, 0);
+  const acumDelta = acumNew - acumOld;
+  const ativos33 = all.filter(p => p.ano_fim >= 2033).length;
+
+  const kpis = [
+    {lbl:'Total Portfólio',       val:fR(totalVal),      sub:`${all.length} contratos em Fechamento`,            c:'var(--t2)'},
+    {lbl:'Carga Tributária 2026', val:fR(r26.atual),     sub:'PIS 1,65% + COFINS 7,6% + ISS 3% vigentes',       c:'var(--bl)'},
+    {lbl:'Carga Projetada 2033',  val:fR(r33.novo),      sub:'CBS 8,8% + IBS 17,7% · ISS zerado ⚠ est.',        c:'var(--re)'},
+    {lbl:'Δ Acumulado 2026–2033', val:(acumDelta>=0?'+':'')+fR(acumDelta),
+      sub:fPct(acumOld>0?acumDelta/acumOld:0)+' sobre regime atual acumulado',
+      c: acumDelta > 0 ? 'var(--re)' : 'var(--g)'},
+    {lbl:'Contratos Expostos 2033', val:ativos33,
+      sub:`de ${all.length} atingem o ano terminal · ISS zero`,
+      c: ativos33 > 0 ? 'var(--am)' : 'var(--t2)'},
   ];
-  document.getElementById('kpi-strip').innerHTML=items.map(k=>
-    `<div class="kpi" style="border-top-color:${k.color}">
+
+  document.getElementById('kpi-strip').innerHTML = kpis.map(k =>
+    `<div class="kpi" style="--c:${k.c}">
        <div class="kpi-lbl">${k.lbl}</div>
-       <div class="kpi-val num" style="color:${k.color}">${k.val}</div>
+       <div class="kpi-val num">${k.val}</div>
        <div class="kpi-sub">${k.sub}</div>
      </div>`
   ).join('');
 }
 
-// ── Co bar ─────────────────────────────────────────────────────
-function buildCoBar(){
-  const tabs=[
-    {key:'todos', label:`Todos (${D.projetos.length})`},
-    {key:'lms',   label:`Livemode (${D.lms.length})`},
-    {key:'cztv',  label:`CazéTV (${D.cztv.length})`},
+// ── Insights ─────────────────────────────────────────────────────────────────
+function buildInsights() {
+  const all = D.projetos;
+  const totalVal = all.reduce((s,p) => s + p.valor_total, 0);
+
+  // 1 — contratos além de 2029 (IBS acelera)
+  const post2028 = all.filter(p => p.ano_fim >= 2029);
+  const valPost  = post2028.reduce((s,p) => s + p.valor_total, 0);
+  const pctPost  = totalVal > 0 ? valPost/totalVal : 0;
+
+  // 2 — distribuição de severidade
+  const stats   = all.map(p => contractStats(p));
+  const nCrit   = stats.filter(s => s.sev === 'c').length;
+  const nAlto   = stats.filter(s => s.sev === 'a').length;
+  const nNaoAf  = stats.filter(s => s.sev === 'n').length;
+  const bigImpact = all
+    .map((p,i) => ({p, st:stats[i]}))
+    .sort((a,b) => b.st.deltaAcum - a.st.deltaAcum)[0];
+
+  // 3 — exposição por empresa
+  const resLMS  = resumo(D.lms);
+  const resCZTV = resumo(D.cztv);
+  const dLMS    = Object.values(resLMS).reduce((s,r) => s+r.delta, 0);
+  const dCZTV   = Object.values(resCZTV).reduce((s,r) => s+r.delta, 0);
+  const dTotal  = dLMS + dCZTV;
+
+  const items = [
+    {
+      icon:'⚡', bg:'rgba(240,160,48,.15)',
+      lbl:'Aceleração do IBS a partir de 2029',
+      text:`<strong>${post2028.length} contrato${post2028.length!==1?'s':''}</strong> (${(pctPost*100).toFixed(0)}% do portfólio em valor) atravessam 2029, quando IBS sobe de <em>0,1%</em> para <em>3,2%</em> e continua crescendo até <em>17,7%</em> em 2033. Contratos curtos, que encerram antes de 2027, não são afetados pelo novo regime.`
+    },
+    {
+      icon:'🔴', bg:'rgba(232,69,60,.12)',
+      lbl:`${nCrit+nAlto} contrato${nCrit+nAlto!==1?'s':''} com risco alto ou crítico`,
+      text:`<strong>${nCrit} crítico${nCrit!==1?'s':''}</strong> (aumento acumulado ≥40%) e <strong>${nAlto} alto${nAlto!==1?'s':''}</strong> (20–40%). ${nNaoAf>0?`<strong>${nNaoAf}</strong> encerram antes de 2027 e não são afetados. `:''}Maior impacto: <strong>${bigImpact?bigImpact.p.nome.slice(0,40):'—'}</strong>${bigImpact?` (+${fR(bigImpact.st.deltaAcum)} acumulado)`:''}.`
+    },
+    {
+      icon:'📊', bg:'rgba(74,159,212,.1)',
+      lbl:'Distribuição do impacto por empresa',
+      text:`Livemode concentra <strong>${dTotal>0?(dLMS/dTotal*100).toFixed(0):0}%</strong> do impacto acumulado (${fR(dLMS)}). CazéTV concentra <strong>${dTotal>0?(dCZTV/dTotal*100).toFixed(0):0}%</strong> (${fR(dCZTV)}). Posição cedente: sem recuperação de crédito CBS/IBS — toda carga é custo líquido.`
+    },
   ];
-  document.getElementById('co-bar').innerHTML=tabs.map(t=>
-    `<button class="co-btn${co===t.key?' active':''}" onclick="selectCo('${t.key}')">${t.label}</button>`
+
+  document.getElementById('insight-row').innerHTML = items.map(i =>
+    `<div class="insight">
+       <div class="ins-icon" style="background:${i.bg}">${i.icon}</div>
+       <div>
+         <div class="ins-label">${i.lbl}</div>
+         <div class="ins-text">${i.text}</div>
+       </div>
+     </div>`
   ).join('');
 }
 
-function selectCo(key){ co=key; buildCoBar(); renderContent(); }
-
-// ── Year bar ───────────────────────────────────────────────────
-function buildYrBar(){
-  document.getElementById('yr-bar').innerHTML=D.anos.map(a=>{
-    const confirmed=D.rates[String(a)]?.confirmed;
-    return `<button class="yr-btn${yr===a?' active':''}${!confirmed?' est':''}" onclick="selectYr(${a})">${a}${!confirmed?' ⚠':''}</button>`;
-  }).join('');
+// ── Toolbar ──────────────────────────────────────────────────────────────────
+function buildToolbar() {
+  const tabs = [
+    {key:'todos', lbl:`Todos os Contratos (${D.projetos.length})`},
+    {key:'lms',   lbl:`Livemode (${D.lms.length})`},
+    {key:'cztv',  lbl:`CazéTV (${D.cztv.length})`},
+  ];
+  document.getElementById('toolbar').innerHTML = tabs.map(t =>
+    `<button class="co-btn${co===t.key?' active':''}" onclick="selCo('${t.key}')">${t.lbl}</button>`
+  ).join('');
 }
 
-function selectYr(a){ yr=a; buildYrBar(); renderContent(); }
+function selCo(key) { co = key; buildToolbar(); drawChart(); renderYr(); }
 
-// ── Content ────────────────────────────────────────────────────
-function renderContent(){
-  const projetos = projetosPara(co);
-  const res      = resumoAnos(projetos);
-  const ryear    = res[yr] || {};
-  const confirmed= D.rates[String(yr)]?.confirmed ?? false;
+// ── Gráfico ──────────────────────────────────────────────────────────────────
+function drawChart() {
+  if (typeof Chart === 'undefined') return;
+  const projetos = getProj();
+  const res   = resumo(projetos);
+  const lbls  = D.anos.map(String);
+  const dAtual = D.anos.map(a => Math.round(res[a]?.atual || 0));
+  const dNovo  = D.anos.map(a => Math.round(res[a]?.novo  || 0));
+  const dDelta = D.anos.map(a => Math.round(res[a]?.delta || 0));
+  const conf   = D.anos.map(a => D.rates[String(a)]?.confirmed ?? false);
 
-  // Mini KPIs do ano
-  const delta_yr = ryear.delta || 0;
-  const yrKpis=[
-    {lbl:'Valor no Ano '+yr,      val:fmtR(ryear.valor), sub:'base de cálculo',                          color:'var(--t1)'},
-    {lbl:'Regime Atual',          val:fmtR(ryear.atual), sub:ryear.atual?'PIS+COFINS+ISS':'—',            color:'var(--bl)'},
-    {lbl:'Novo Regime',           val:fmtR(ryear.novo),  sub:yr<=2028?'CBS+ISS (IBS declaratório)':'CBS+IBS+ISS', color:'var(--pu)'},
-    {lbl:'Δ Impacto '+yr,        val:(delta_yr>=0?'+':'')+fmtR(delta_yr),
-      sub:ryear.atual>0?fmtPct(delta_yr/ryear.atual):'—',
-      color:delta_yr>0?'var(--re)':'var(--g)'},
-  ];
-  let html=`<div class="yr-kpi">`+yrKpis.map(k=>
-    `<div class="kpi" style="border-top-color:${k.color}">
-       <div class="kpi-lbl">${k.lbl}${!confirmed?' <span class="est-mark">⚠ Est.</span>':''}</div>
-       <div class="kpi-val num" style="color:${k.color}">${k.val}</div>
-       <div class="kpi-sub">${k.sub}</div>
-     </div>`
-  ).join('')+'</div>';
+  const ctx = document.getElementById('evoChart').getContext('2d');
+  if (_chart) _chart.destroy();
 
-  // Tabela de contratos
-  const ativos = projetos.filter(p=>p.impacto[String(yr)]);
-  html+=`<div class="tbl-wrap">
-    <div class="tbl-hdr">
-      <div class="tbl-hdr-title">Contratos em ${yr}</div>
-      <div class="tbl-count">${ativos.length} contratos</div>
-    </div>
-    <div class="tbl-scroll">`;
-
-  if(ativos.length===0){
-    html+=`<div class="empty">Nenhum contrato ativo em ${yr}</div>`;
-  } else {
-    html+=`<table class="ct">
-      <thead><tr>
-        <th style="text-align:left">Marca / Contrato</th>
-        <th style="text-align:left">Empresa</th>
-        <th>Valor ${yr}</th>
-        <th>PIS+COF</th>
-        <th>ISS</th>
-        <th>IRRF</th>
-        <th>CBS</th>
-        <th>IBS</th>
-        <th>Total Atual</th>
-        <th>Total Novo</th>
-        <th>Δ</th>
-        <th>Δ%</th>
-      </tr></thead><tbody>`;
-
-    let sValor=0,sAtual=0,sNovo=0;
-    ativos.forEach(p=>{
-      const r=p.impacto[String(yr)];
-      const delta_p=r.total_novo-r.total_atual;
-      const deltaCls=delta_p>0?'delta-pos':delta_p<0?'delta-neg':'delta-zero';
-      const pct=r.total_atual>0?delta_p/r.total_atual:0;
-      sValor+=r.valor; sAtual+=r.total_atual; sNovo+=r.total_novo;
-      const empBadge=p.empresa==='CZTV'
-        ?`<span class="badge-emp badge-cztv">CZTV</span>`
-        :`<span class="badge-emp badge-lms">LMS</span>`;
-      html+=`<tr>
-        <td title="${p.nome}">${p.marca || p.nome}</td>
-        <td>${empBadge}</td>
-        <td class="num">${fmtN(r.valor)}</td>
-        <td class="num">${fmtN(r.pis+r.cof)}</td>
-        <td class="num">${fmtN(r.iss)}</td>
-        <td class="num">${r.irrf>0?fmtN(r.irrf):'—'}</td>
-        <td class="num">${fmtN(r.cbs)}</td>
-        <td class="num">${fmtN(r.ibs)}</td>
-        <td class="num">${fmtN(r.total_atual)}</td>
-        <td class="num">${fmtN(r.total_novo)}</td>
-        <td class="num ${deltaCls}">${(delta_p>=0?'+':'')+fmtN(delta_p)}</td>
-        <td class="num ${deltaCls}">${fmtPct(pct)}</td>
-      </tr>`;
-    });
-
-    const sDelta=sNovo-sAtual;
-    const sDeltaCls=sDelta>0?'delta-pos':sDelta<0?'delta-neg':'delta-zero';
-    html+=`<tr class="total-row">
-      <td>TOTAL</td><td></td>
-      <td class="num">${fmtN(sValor)}</td>
-      <td></td><td></td><td></td><td></td><td></td>
-      <td class="num">${fmtN(sAtual)}</td>
-      <td class="num">${fmtN(sNovo)}</td>
-      <td class="num ${sDeltaCls}">${(sDelta>=0?'+':'')+fmtN(sDelta)}</td>
-      <td class="num ${sDeltaCls}">${sAtual>0?fmtPct(sDelta/sAtual):'—'}</td>
-    </tr>`;
-    html+=`</tbody></table>`;
-  }
-  html+=`</div></div>`;
-
-  // Gráfico evolução 2026–2033
-  html+=`<div class="chart-wrap">
-    <div class="chart-title">Evolução do Impacto Tributário 2026–2033</div>
-    <div class="chart-note">
-      <span style="color:#9B59B6">■</span> Total Novo Regime &nbsp;·&nbsp;
-      <span style="color:#4A9FD4">■</span> Total Regime Atual &nbsp;·&nbsp;
-      <span style="color:#F5A623">⚠</span> Alíquotas estimadas (LC 214/2025)
-    </div>
-    <canvas id="evoChart" height="90"></canvas>
-  </div>`;
-
-  document.getElementById('content').innerHTML=html;
-
-  // Desenha gráfico
-  const labels=D.anos.map(String);
-  const dataAtual=D.anos.map(a=>res[a]?.atual||0);
-  const dataNovo =D.anos.map(a=>res[a]?.novo||0);
-
-  const ctx=document.getElementById('evoChart').getContext('2d');
-  if(window._evoChart) window._evoChart.destroy();
-
-  // Inline Chart.js mini (bar + line)
-  const script=document.createElement('script');
-  script.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
-  script.onload=()=>{
-    window._evoChart=new Chart(ctx,{
-      type:'bar',
-      data:{
-        labels,
-        datasets:[
-          {label:'Regime Atual',data:dataAtual,backgroundColor:'rgba(74,159,212,.6)',borderColor:'#4A9FD4',borderWidth:1,borderRadius:4},
-          {label:'Novo Regime', data:dataNovo, backgroundColor:'rgba(155,89,182,.6)',borderColor:'#9B59B6',borderWidth:1,borderRadius:4},
-        ]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:true,
-        plugins:{
-          legend:{display:false},
-          tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtR(ctx.raw)}`}},
+  _chart = new Chart(ctx, {
+    data: {
+      labels: lbls,
+      datasets: [
+        {
+          type:'bar', label:'Regime Atual', data:dAtual, order:2,
+          backgroundColor: conf.map(c => c ? 'rgba(74,159,212,.65)' : 'rgba(74,159,212,.3)'),
+          borderColor:     conf.map(c => c ? '#4A9FD4' : 'rgba(74,159,212,.5)'),
+          borderWidth:1, borderRadius:3,
+          borderDash: conf.map(c => c ? [] : [4,2]),
         },
-        scales:{
-          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10}}},
-          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10},callback:v=>fmtR(v)}},
-        }
+        {
+          type:'bar', label:'Novo Regime', data:dNovo, order:2,
+          backgroundColor: conf.map(c => c ? 'rgba(232,69,60,.65)' : 'rgba(232,69,60,.28)'),
+          borderColor:     conf.map(c => c ? '#E8453C' : 'rgba(232,69,60,.45)'),
+          borderWidth:1, borderRadius:3,
+        },
+        {
+          type:'line', label:'Δ Impacto', data:dDelta, order:1,
+          borderColor:'#F0A030', backgroundColor:'rgba(240,160,48,.07)',
+          borderWidth:2, pointRadius:4, pointBackgroundColor:'#F0A030',
+          pointBorderColor:'#0E0E11', pointBorderWidth:2,
+          fill:true, tension:0.3, yAxisID:'y2',
+        },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1C1C23', borderColor:'#272730', borderWidth:1,
+          titleColor:'#A0A0B4', bodyColor:'#EEEFF5', padding:12, itemSort:(a,b)=>b.datasetIndex-a.datasetIndex,
+          callbacks:{
+            label: ctx => {
+              if (ctx.dataset.label === 'Δ Impacto')
+                return `  Δ: ${ctx.raw>=0?'+':''}${fNS(ctx.raw)}`;
+              return `  ${ctx.dataset.label}: ${fNS(ctx.raw)}`;
+            },
+            afterBody: items => {
+              const a = D.anos[items[0].dataIndex];
+              const lines = [];
+              if (!D.rates[String(a)]?.confirmed) lines.push('  ⚠ Alíquotas estimadas');
+              if (a === 2026) lines.push('  ℹ CBS declaratório em 2026');
+              if (a === 2029) lines.push('  ⚡ IBS entra em vigor: 3,2%');
+              return lines;
+            }
+          }
+        },
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#585868', font:{size:10, family:'monospace'}}},
+        y:{
+          position:'left', grid:{color:'rgba(255,255,255,.04)'},
+          ticks:{color:'#585868', font:{size:10}, callback:v=>fR(v)}
+        },
+        y2:{
+          position:'right', grid:{display:false},
+          ticks:{color:'#B08030', font:{size:10}, callback:v=>(v>=0?'+':'')+fR(v)}
+        },
       }
-    });
-  };
-  if(!document.querySelector('script[src*="chart.umd"]')) document.head.appendChild(script);
-  else if(window.Chart){
-    window._evoChart=new Chart(ctx,{
-      type:'bar',
-      data:{labels,datasets:[
-        {label:'Regime Atual',data:dataAtual,backgroundColor:'rgba(74,159,212,.6)',borderColor:'#4A9FD4',borderWidth:1,borderRadius:4},
-        {label:'Novo Regime', data:dataNovo, backgroundColor:'rgba(155,89,182,.6)',borderColor:'#9B59B6',borderWidth:1,borderRadius:4},
-      ]},
-      options:{
-        responsive:true,maintainAspectRatio:true,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtR(ctx.raw)}`}}},
-        scales:{
-          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10}}},
-          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10},callback:v=>fmtR(v)}},
-        }
-      }
-    });
-  }
+    }
+  });
+
+  const n = projetos.length;
+  document.getElementById('chart-note').textContent =
+    `${n} contrato${n!==1?'s':''} · valores anualizados proporcionalmente ao período`;
 }
 
-// ── Init ───────────────────────────────────────────────────────
-document.getElementById('hd-total').textContent=D.total_projetos;
-document.getElementById('hd-gerado').textContent=new Date(D.gerado).toLocaleString('pt-BR');
-document.getElementById('footer').textContent=
-  `LIVEMODE · Reforma Tributária · Portfólio 2026–2033 · Gerado em ${new Date(D.gerado).toLocaleString('pt-BR')} · Posição: Cedente · LC 214/2025`;
+// ── Seletor de ano + mini KPIs ────────────────────────────────────────────────
+function buildYrStrip() {
+  document.getElementById('yr-strip').innerHTML =
+    `<span class="yr-lbl">Drill-down por ano</span>` +
+    D.anos.map(a => {
+      const conf = D.rates[String(a)]?.confirmed;
+      return `<button class="yr-btn${yr===a?' active':''}${!conf?' est':''}"
+        onclick="selYr(${a})">${a}${!conf?' ⚠':''}</button>`;
+    }).join('');
+}
+
+function buildYrKpis(projetos) {
+  const res  = resumo(projetos);
+  const r    = res[yr] || {};
+  const conf = D.rates[String(yr)]?.confirmed;
+  const est  = !conf ? ' <span style="color:var(--am);font-size:9px;font-weight:700">⚠ Est.</span>' : '';
+  const delta = r.delta || 0;
+
+  const cards = [
+    {lbl:'Valor na Base',        val:fR(r.valor),  sub:'receita anualizada dos contratos neste ano',        c:'var(--t2)'},
+    {lbl:'Regime Atual'+est,     val:fR(r.atual),  sub:yr===2026?'PIS+COFINS+ISS (regime em vigor)':'regime em vigor neste ano', c:'var(--bl)'},
+    {lbl:'Novo Regime'+est,      val:fR(r.novo),   sub:yr<=2028?'CBS+ISS · IBS declaratório':'CBS+IBS+ISS', c:'var(--re)'},
+    {lbl:'Δ em '+yr+est,         val:(delta>=0?'+':'')+fR(delta),
+      sub:r.atual>0?fPct(delta/r.atual)+' sobre regime atual neste ano':'regime atual = 0 (CBS/IBS substituíram PIS/COFINS)',
+      c:delta>0?'var(--re)':delta<0?'var(--g)':'var(--t3)'},
+  ];
+
+  document.getElementById('yr-kpis').innerHTML = cards.map(k =>
+    `<div class="yr-kpi" style="--c:${k.c}">
+       <div class="kpi-lbl">${k.lbl}</div>
+       <div class="kpi-val num">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('');
+}
+
+function selYr(a) { yr = a; buildYrStrip(); renderYr(); }
+
+// ── Tabela ───────────────────────────────────────────────────────────────────
+function buildTable(projetos) {
+  const ativos = projetos.filter(p => p.impacto[String(yr)]);
+
+  // Enriquecer com stats
+  const rows = ativos.map(p => {
+    const r  = p.impacto[String(yr)];
+    const st = contractStats(p);
+    return {
+      p, r, st,
+      nome:     p.nome,
+      marca:    p.marca || p.nome,
+      empresa:  p.empresa,
+      periodo:  p.ano_ini === p.ano_fim ? String(p.ano_ini) : `${p.ano_ini}–${p.ano_fim}`,
+      valor:    r.valor,
+      atual:    r.total_atual,
+      novo:     r.total_novo,
+      delta:    r.total_novo - r.total_atual,
+      deltaAcum: st.deltaAcum,
+      pctAcum:   st.pctAcum,
+      sev:       st.sev,
+    };
+  });
+
+  // Ordenar
+  const sevOrd = {c:4, a:3, m:2, b:1, n:0};
+  rows.sort((a, b) => {
+    let av, bv;
+    if (sortCol === 'nome')    { return a.nome.localeCompare(b.nome) * sortDir; }
+    if (sortCol === 'empresa') { return a.empresa.localeCompare(b.empresa) * sortDir; }
+    if (sortCol === 'sev')     { return ((sevOrd[a.sev]||0) - (sevOrd[b.sev]||0)) * sortDir; }
+    av = a[sortCol] ?? 0; bv = b[sortCol] ?? 0;
+    return (av - bv) * sortDir;
+  });
+
+  const thC = k => sortCol === k ? (sortDir === 1 ? 'sort-asc' : 'sort-desc') : '';
+
+  const thead = `<thead><tr>
+    <th class="left ${thC('nome')}"    onclick="tSort('nome')">Marca / Contrato</th>
+    <th class="left ${thC('empresa')}" onclick="tSort('empresa')">Empresa</th>
+    <th class="left ${thC('periodo')}" style="cursor:default">Período</th>
+    <th class="${thC('valor')}"    onclick="tSort('valor')">Valor ${yr}</th>
+    <th class="${thC('atual')}"    onclick="tSort('atual')">Regime Atual</th>
+    <th class="${thC('novo')}"     onclick="tSort('novo')">Novo Regime</th>
+    <th class="${thC('delta')}"    onclick="tSort('delta')">Δ ${yr}</th>
+    <th class="${thC('acum')}"     onclick="tSort('acum')">Δ Acumulado</th>
+    <th class="${thC('sev')}"      onclick="tSort('sev')">Severidade</th>
+  </tr></thead>`;
+
+  let sValor=0, sAtual=0, sNovo=0, sDelta=0;
+  const sevLabel = {c:'Crítico', a:'Alto', m:'Médio', b:'Baixo', n:'Não afetado'};
+
+  const tbody = '<tbody>' + rows.map(row => {
+    const {delta, deltaAcum} = row;
+    sValor += row.valor; sAtual += row.atual; sNovo += row.novo; sDelta += delta;
+    const dc  = clsDelta(delta);
+    const dac = clsDelta(deltaAcum);
+    const pctTxt = row.pctAcum != null && row.sev !== 'n'
+      ? `<span style="color:var(--t3);font-size:9px;margin-left:4px">(${fPct(row.pctAcum)})</span>` : '';
+    return `<tr>
+      <td class="left" title="${row.nome}" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${row.marca}</td>
+      <td class="left"><span class="badge badge-${row.empresa.toLowerCase()}">${row.empresa}</span></td>
+      <td class="left num" style="color:var(--t3)">${row.periodo}</td>
+      <td class="num">${fNS(row.valor)}</td>
+      <td class="num">${row.atual > 0 ? fNS(row.atual) : '<span style="color:var(--t3)">—</span>'}</td>
+      <td class="num">${row.novo  > 0 ? fNS(row.novo)  : '<span style="color:var(--t3)">—</span>'}</td>
+      <td class="num ${dc}">${delta  !== 0 ? (delta  > 0?'+':'')+fNS(delta)  : '<span class="nt">—</span>'}</td>
+      <td class="num ${dac}">${deltaAcum !== 0 ? (deltaAcum>0?'+':'')+fR(deltaAcum)+pctTxt : '<span class="nt">—</span>'}</td>
+      <td><span class="sev sev-${row.sev}">${sevLabel[row.sev]||row.sev}</span></td>
+    </tr>`;
+  }).join('') +
+  `<tr class="total-row">
+    <td class="left" colspan="3">TOTAL &nbsp;·&nbsp; ${rows.length} contrato${rows.length!==1?'s':''}</td>
+    <td class="num">${fNS(sValor)}</td>
+    <td class="num">${sAtual > 0 ? fNS(sAtual) : '—'}</td>
+    <td class="num">${sNovo  > 0 ? fNS(sNovo)  : '—'}</td>
+    <td class="num ${clsDelta(sDelta)}">${sDelta!==0?(sDelta>0?'+':'')+fNS(sDelta):'—'}</td>
+    <td></td><td></td>
+  </tr>` + '</tbody>';
+
+  document.getElementById('ct').innerHTML = thead + tbody;
+  document.getElementById('tbl-title').textContent = `Contratos em ${yr}`;
+  document.getElementById('tbl-count').textContent =
+    `${rows.length} contrato${rows.length!==1?'s':''} ativos · clique nos cabeçalhos para ordenar`;
+}
+
+function tSort(col) {
+  sortDir = sortCol === col ? sortDir * -1 : (col === 'nome' || col === 'empresa' ? 1 : -1);
+  sortCol = col;
+  buildTable(getProj());
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderYr() {
+  const proj = getProj();
+  buildYrStrip();
+  buildYrKpis(proj);
+  buildTable(proj);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+document.getElementById('hd-total').textContent  = D.total_projetos;
+document.getElementById('hd-gerado').textContent = fDate(D.gerado);
+document.getElementById('footer-meta').textContent =
+  `Gerado em ${fDate(D.gerado)} · ${D.total_projetos} contratos · Alíquotas 2027–2033 estimadas`;
 
 buildKPIStrip();
-buildCoBar();
-buildYrBar();
-renderContent();
+buildInsights();
+buildToolbar();
+drawChart();
+renderYr();
 </script>
 </body>
 </html>
