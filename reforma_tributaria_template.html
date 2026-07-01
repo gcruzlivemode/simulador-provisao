@@ -180,6 +180,55 @@ footer{padding:11px 28px;border-top:1px solid var(--s3);display:flex;
 <body>
 <script>const D=/*INJECT_DATA*/;</script>
 
+<!-- PASSWORD GATE -->
+<style>
+#gate{position:fixed;inset:0;z-index:9999;background:#0E0E11;display:flex;align-items:center;justify-content:center}
+#gate-box{background:#15151A;border:1px solid #272730;border-radius:10px;padding:40px 44px;width:100%;max-width:360px;text-align:center}
+#gate-logo{font-family:ui-monospace,Consolas,monospace;margin-bottom:24px;display:inline-flex;flex-direction:column;background:#1C1C23;border:1px solid #272730;border-radius:6px;padding:8px 14px;position:relative}
+#gate-logo::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:#6DC93B;border-radius:2px}
+#gate-logo .live{font-size:12px;font-weight:700;color:#EEEFF5;letter-spacing:1px}
+#gate-logo .mode{font-size:12px;font-weight:700;color:#6DC93B;letter-spacing:1px}
+#gate h2{font-size:14px;font-weight:700;color:#EEEFF5;margin-bottom:4px;letter-spacing:.5px}
+#gate p{font-size:11px;color:#585868;margin-bottom:24px}
+#gate input{width:100%;background:#0E0E11;border:1px solid #272730;border-radius:6px;padding:11px 14px;color:#EEEFF5;font-size:13px;font-family:ui-monospace,Consolas,monospace;letter-spacing:2px;outline:none;transition:border-color .15s;text-align:center}
+#gate input:focus{border-color:#6DC93B}
+#gate input.err{border-color:#E8453C;animation:shake .3s}
+#gate-btn{margin-top:12px;width:100%;background:#6DC93B;color:#fff;font-weight:700;font-size:13px;padding:11px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.5px;transition:background .15s}
+#gate-btn:hover{background:#4EA828}
+#gate-err{font-size:11px;color:#E8453C;margin-top:10px;min-height:16px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+<div id="gate">
+  <div id="gate-box">
+    <div id="gate-logo"><span class="live">LIVE</span><span class="mode">MODE</span></div>
+    <h2>Reforma Tributária · Portfólio</h2>
+    <p>Acesso restrito · Digite a senha para continuar</p>
+    <input id="gate-input" type="password" placeholder="••••••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')gateCheck()">
+    <button id="gate-btn" onclick="gateCheck()">Entrar →</button>
+    <div id="gate-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('rt_ok')==='1'){document.getElementById('gate').style.display='none';}
+  else{document.body.style.overflow='hidden';}
+})();
+function gateCheck(){
+  var v=document.getElementById('gate-input').value;
+  if(v==='livemode2026'){
+    sessionStorage.setItem('rt_ok','1');
+    document.getElementById('gate').style.display='none';
+    document.body.style.overflow='';
+  } else {
+    var inp=document.getElementById('gate-input');
+    inp.classList.add('err');
+    document.getElementById('gate-err').textContent='Senha incorreta. Tente novamente.';
+    inp.value='';
+    setTimeout(function(){inp.classList.remove('err');},400);
+  }
+}
+</script>
+
 <header>
   <div style="display:flex;align-items:center;gap:12px">
     <div class="logo-box">
