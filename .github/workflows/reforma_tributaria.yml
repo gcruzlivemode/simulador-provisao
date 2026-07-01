@@ -1,0 +1,51 @@
+name: Reforma Tributária — Portfólio Livemode
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Diariamente às 6h BRT (9h UTC)
+    - cron: '0 9 * * *'
+
+jobs:
+  reforma:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Gerar dashboard da reforma tributária
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+        run: python reforma_tributaria.py
+
+      - name: Publicar como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reforma-tributaria
+          path: REFORMA_TRIBUTARIA.html
+          retention-days: 90
+
+      - name: Preparar para GitHub Pages
+        run: |
+          mkdir -p _site
+          cp REFORMA_TRIBUTARIA.html _site/reforma.html
+          # Preserva o simulador manual existente
+          if [ -f simulador-provisao.html ]; then
+            cp simulador-provisao.html _site/simulador.html
+            cp simulador-provisao.html _site/index.html
+          fi
+
+      - name: Deploy para GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _site
+          force_orphan: true

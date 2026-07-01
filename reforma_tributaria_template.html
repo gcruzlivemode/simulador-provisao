@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reforma Tributária · Portfólio Livemode</title>
+<style>
+:root{
+  --bg:#111111;--s1:#1A1A1A;--s2:#222222;--s3:#2E2E2E;--s4:#3A3A3A;
+  --g:#6DC93B;--g2:#4EA828;--g3:#1A3A0A;
+  --t1:#FFFFFF;--t2:#BBBBBB;--t3:#666666;--t4:#3A3A3A;
+  --re:#E53935;--am:#F5A623;--bl:#4A9FD4;--pu:#9B59B6;
+  --fs:'system-ui',-apple-system,sans-serif;--fm:'ui-monospace','Cascadia Code','Fira Code',monospace;
+  --radius:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:3px}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:var(--s1);border-bottom:1px solid var(--s3);
+  position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-box{background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:7px 10px;position:relative}
+.logo-box::after{content:'';position:absolute;bottom:-1px;left:10px;width:14px;height:3px;background:var(--g);border-radius:2px}
+.logo-live{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--t1);letter-spacing:1px}
+.logo-mode{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--g);letter-spacing:1px}
+.hd-title{font-family:var(--fm);font-size:15px;font-weight:700;letter-spacing:1px}
+.hd-sub{font-size:10px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.hd-meta{text-align:right;font-size:10px;color:var(--t3);line-height:1.8}
+.hd-meta b{color:var(--t2)}
+
+/* KPI strip */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:18px 28px;background:var(--s1);border-bottom:1px solid var(--s3)}
+.kpi{background:var(--s2);border:1px solid var(--s3);border-radius:var(--radius);padding:14px 16px;border-top:3px solid var(--g)}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);margin-bottom:5px}
+.kpi-val{font-family:var(--fm);font-size:18px;font-weight:700;line-height:1;margin-bottom:3px;word-break:break-all}
+.kpi-sub{font-size:9px;color:var(--t3);line-height:1.4}
+
+/* Nav bars */
+.co-bar{display:flex;gap:6px;padding:10px 28px;background:var(--s1);border-bottom:1px solid var(--s3)}
+.co-btn{padding:6px 18px;border-radius:20px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fm);letter-spacing:.5px;transition:all .15s}
+.co-btn:hover{color:var(--t2);border-color:var(--s4)}
+.co-btn.active{background:var(--g);color:#111;border-color:var(--g)}
+
+.yr-bar{display:flex;gap:4px;padding:8px 28px;background:var(--bg);border-bottom:1px solid var(--s3);overflow-x:auto;scrollbar-width:none}
+.yr-bar::-webkit-scrollbar{display:none}
+.yr-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);white-space:nowrap;transition:all .15s}
+.yr-btn:hover{color:var(--t2);border-color:var(--s4)}
+.yr-btn.active{background:var(--g3);color:var(--g);border-color:var(--g)}
+.yr-btn.est{border-style:dashed}
+
+/* Content */
+.content{padding:20px 28px;max-width:1600px;margin:0 auto}
+
+/* Year KPI mini-strip */
+.yr-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.yr-kpi .kpi{padding:10px 14px}
+.yr-kpi .kpi-val{font-size:15px}
+
+/* Contracts table */
+.tbl-wrap{background:var(--s1);border:1px solid var(--s3);border-radius:var(--radius);overflow:hidden;margin-bottom:18px}
+.tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--s3)}
+.tbl-hdr-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px}
+.tbl-hdr-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--g);flex-shrink:0}
+.tbl-count{font-size:10px;color:var(--t3)}
+.tbl-scroll{overflow-x:auto}
+table.ct{width:100%;border-collapse:collapse;font-size:11px}
+table.ct th{background:#151515;padding:8px 10px;text-align:right;font-size:9px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);
+  border-bottom:1px solid var(--s3);white-space:nowrap;position:sticky;top:0}
+table.ct th:first-child,table.ct th:nth-child(2){text-align:left}
+table.ct td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.03);text-align:right;white-space:nowrap}
+table.ct td:first-child{text-align:left;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+table.ct td:nth-child(2){text-align:left;font-weight:700}
+table.ct tr:hover td{background:rgba(255,255,255,.025)}
+table.ct tr.total-row td{font-weight:700;background:#0A1A0A;color:var(--g);border-top:1px solid #1A3020;font-size:11px}
+.num{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.badge-emp{display:inline-block;font-size:8px;font-weight:700;font-family:var(--fm);padding:2px 6px;border-radius:10px;letter-spacing:.5px}
+.badge-lms{background:#0A1A30;color:#4A9FD4;border:1px solid #4A9FD4}
+.badge-cztv{background:#1A0A30;color:#9B59B6;border:1px solid #9B59B6}
+.delta-pos{color:var(--re)}
+.delta-neg{color:var(--g)}
+.delta-zero{color:var(--t3)}
+.est-mark{color:var(--am);font-size:9px}
+
+/* Chart */
+.chart-wrap{background:var(--s1);border:1px solid var(--s3);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+.chart-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.chart-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--g);flex-shrink:0}
+.chart-note{font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.8}
+canvas{display:block}
+
+/* Empty */
+.empty{text-align:center;padding:50px;color:var(--t3);font-size:12px}
+
+/* Footer */
+footer{padding:14px 28px;border-top:1px solid var(--s3);color:var(--t3);font-size:10px;text-align:center;font-family:var(--fm)}
+
+@media(max-width:1000px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+  .yr-kpi{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<script>const D=/*INJECT_DATA*/;</script>
+
+<header>
+  <div class="logo">
+    <div class="logo-box">
+      <div class="logo-live">LIVE</div>
+      <div class="logo-mode">MODE</div>
+    </div>
+    <div>
+      <div class="hd-title">REFORMA TRIBUTÁRIA</div>
+      <div class="hd-sub">Portfólio · Impacto 2026–2033</div>
+    </div>
+  </div>
+  <div class="hd-meta">
+    <b id="hd-total"></b> contratos &nbsp;·&nbsp; Gerado <b id="hd-gerado"></b>
+  </div>
+</header>
+
+<div class="kpi-strip" id="kpi-strip"></div>
+
+<div class="co-bar" id="co-bar"></div>
+<div class="yr-bar" id="yr-bar"></div>
+
+<div class="content" id="content"></div>
+
+<footer id="footer"></footer>
+
+<script>
+// ── Formatação ─────────────────────────────────────────────────
+const fmtR = v => {
+  if(v==null||isNaN(v)) return '—';
+  const a=Math.abs(v), s=v<0?'−':'';
+  if(a>=1e6) return s+'R$ '+(a/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'M';
+  if(a>=1e3) return s+'R$ '+(a/1e3).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})+'k';
+  return s+'R$ '+a.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fmtPct = v => v==null?'—':(v>=0?'+':'')+( v*100).toFixed(1)+'%';
+const fmtN = v => v==null?'—':'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+
+// ── State ──────────────────────────────────────────────────────
+let co = 'todos', yr = D.anos[0];
+
+// ── Helpers ────────────────────────────────────────────────────
+function projetosPara(coKey){
+  if(coKey==='lms')   return D.lms;
+  if(coKey==='cztv')  return D.cztv;
+  return D.projetos;
+}
+
+function resumoAnos(projetos){
+  const out={};
+  D.anos.forEach(a=>{
+    let valor=0,atual=0,novo=0,pis=0,cof=0,iss=0,cbs=0,ibs=0,irrf=0;
+    projetos.forEach(p=>{
+      const r=p.impacto[String(a)];
+      if(!r) return;
+      valor+=r.valor; atual+=r.total_atual; novo+=r.total_novo;
+      pis+=r.pis; cof+=r.cof; iss+=r.iss;
+      cbs+=r.cbs; ibs+=r.ibs; irrf+=r.irrf;
+    });
+    out[a]={valor,atual,novo,pis,cof,iss,cbs,ibs,irrf,
+      delta:novo-atual,
+      confirmed: D.rates[String(a)]?.confirmed ?? false};
+  });
+  return out;
+}
+
+// ── KPI strip global ───────────────────────────────────────────
+function buildKPIStrip(){
+  const all=D.projetos;
+  const totalValor=all.reduce((s,p)=>s+p.valor_total,0);
+  const n=all.length;
+  const r26=resumoAnos(all)[2026];
+  const r33=resumoAnos(all)[2033];
+  const totAtual=Object.values(resumoAnos(all)).reduce((s,r)=>s+(r?.atual||0),0);
+  const totNovo =Object.values(resumoAnos(all)).reduce((s,r)=>s+(r?.novo||0),0);
+  const delta=totNovo-totAtual;
+  const items=[
+    {lbl:'Total Portfólio',       val:fmtR(totalValor), sub:`${n} contratos fechados`,color:'var(--t1)'},
+    {lbl:'Tributos 2026 (Atual)', val:fmtR(r26?.atual), sub:'PIS+COFINS+ISS',         color:'var(--bl)'},
+    {lbl:'Tributos 2033 (Novo)',  val:fmtR(r33?.novo),  sub:'IBS 17,7% + ISS→0',      color:delta>0?'var(--re)':'var(--g)'},
+    {lbl:'Δ Impacto Total 2026–2033', val:(delta>=0?'+':'')+fmtR(delta),
+      sub:fmtPct(totAtual>0?delta/totAtual:0)+' sobre regime atual',
+      color:delta>0?'var(--re)':'var(--g)'},
+    {lbl:'Contratos Ativos',      val:n,                sub:'status Fechamento',       color:'var(--t1)'},
+  ];
+  document.getElementById('kpi-strip').innerHTML=items.map(k=>
+    `<div class="kpi" style="border-top-color:${k.color}">
+       <div class="kpi-lbl">${k.lbl}</div>
+       <div class="kpi-val num" style="color:${k.color}">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('');
+}
+
+// ── Co bar ─────────────────────────────────────────────────────
+function buildCoBar(){
+  const tabs=[
+    {key:'todos', label:`Todos (${D.projetos.length})`},
+    {key:'lms',   label:`Livemode (${D.lms.length})`},
+    {key:'cztv',  label:`CazéTV (${D.cztv.length})`},
+  ];
+  document.getElementById('co-bar').innerHTML=tabs.map(t=>
+    `<button class="co-btn${co===t.key?' active':''}" onclick="selectCo('${t.key}')">${t.label}</button>`
+  ).join('');
+}
+
+function selectCo(key){ co=key; buildCoBar(); renderContent(); }
+
+// ── Year bar ───────────────────────────────────────────────────
+function buildYrBar(){
+  document.getElementById('yr-bar').innerHTML=D.anos.map(a=>{
+    const confirmed=D.rates[String(a)]?.confirmed;
+    return `<button class="yr-btn${yr===a?' active':''}${!confirmed?' est':''}" onclick="selectYr(${a})">${a}${!confirmed?' ⚠':''}</button>`;
+  }).join('');
+}
+
+function selectYr(a){ yr=a; buildYrBar(); renderContent(); }
+
+// ── Content ────────────────────────────────────────────────────
+function renderContent(){
+  const projetos = projetosPara(co);
+  const res      = resumoAnos(projetos);
+  const ryear    = res[yr] || {};
+  const confirmed= D.rates[String(yr)]?.confirmed ?? false;
+
+  // Mini KPIs do ano
+  const delta_yr = ryear.delta || 0;
+  const yrKpis=[
+    {lbl:'Valor no Ano '+yr,      val:fmtR(ryear.valor), sub:'base de cálculo',                          color:'var(--t1)'},
+    {lbl:'Regime Atual',          val:fmtR(ryear.atual), sub:ryear.atual?'PIS+COFINS+ISS':'—',            color:'var(--bl)'},
+    {lbl:'Novo Regime',           val:fmtR(ryear.novo),  sub:yr<=2028?'CBS+ISS (IBS declaratório)':'CBS+IBS+ISS', color:'var(--pu)'},
+    {lbl:'Δ Impacto '+yr,        val:(delta_yr>=0?'+':'')+fmtR(delta_yr),
+      sub:ryear.atual>0?fmtPct(delta_yr/ryear.atual):'—',
+      color:delta_yr>0?'var(--re)':'var(--g)'},
+  ];
+  let html=`<div class="yr-kpi">`+yrKpis.map(k=>
+    `<div class="kpi" style="border-top-color:${k.color}">
+       <div class="kpi-lbl">${k.lbl}${!confirmed?' <span class="est-mark">⚠ Est.</span>':''}</div>
+       <div class="kpi-val num" style="color:${k.color}">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('')+'</div>';
+
+  // Tabela de contratos
+  const ativos = projetos.filter(p=>p.impacto[String(yr)]);
+  html+=`<div class="tbl-wrap">
+    <div class="tbl-hdr">
+      <div class="tbl-hdr-title">Contratos em ${yr}</div>
+      <div class="tbl-count">${ativos.length} contratos</div>
+    </div>
+    <div class="tbl-scroll">`;
+
+  if(ativos.length===0){
+    html+=`<div class="empty">Nenhum contrato ativo em ${yr}</div>`;
+  } else {
+    html+=`<table class="ct">
+      <thead><tr>
+        <th style="text-align:left">Marca / Contrato</th>
+        <th style="text-align:left">Empresa</th>
+        <th>Valor ${yr}</th>
+        <th>PIS+COF</th>
+        <th>ISS</th>
+        <th>IRRF</th>
+        <th>CBS</th>
+        <th>IBS</th>
+        <th>Total Atual</th>
+        <th>Total Novo</th>
+        <th>Δ</th>
+        <th>Δ%</th>
+      </tr></thead><tbody>`;
+
+    let sValor=0,sAtual=0,sNovo=0;
+    ativos.forEach(p=>{
+      const r=p.impacto[String(yr)];
+      const delta_p=r.total_novo-r.total_atual;
+      const deltaCls=delta_p>0?'delta-pos':delta_p<0?'delta-neg':'delta-zero';
+      const pct=r.total_atual>0?delta_p/r.total_atual:0;
+      sValor+=r.valor; sAtual+=r.total_atual; sNovo+=r.total_novo;
+      const empBadge=p.empresa==='CZTV'
+        ?`<span class="badge-emp badge-cztv">CZTV</span>`
+        :`<span class="badge-emp badge-lms">LMS</span>`;
+      html+=`<tr>
+        <td title="${p.nome}">${p.marca || p.nome}</td>
+        <td>${empBadge}</td>
+        <td class="num">${fmtN(r.valor)}</td>
+        <td class="num">${fmtN(r.pis+r.cof)}</td>
+        <td class="num">${fmtN(r.iss)}</td>
+        <td class="num">${r.irrf>0?fmtN(r.irrf):'—'}</td>
+        <td class="num">${fmtN(r.cbs)}</td>
+        <td class="num">${fmtN(r.ibs)}</td>
+        <td class="num">${fmtN(r.total_atual)}</td>
+        <td class="num">${fmtN(r.total_novo)}</td>
+        <td class="num ${deltaCls}">${(delta_p>=0?'+':'')+fmtN(delta_p)}</td>
+        <td class="num ${deltaCls}">${fmtPct(pct)}</td>
+      </tr>`;
+    });
+
+    const sDelta=sNovo-sAtual;
+    const sDeltaCls=sDelta>0?'delta-pos':sDelta<0?'delta-neg':'delta-zero';
+    html+=`<tr class="total-row">
+      <td>TOTAL</td><td></td>
+      <td class="num">${fmtN(sValor)}</td>
+      <td></td><td></td><td></td><td></td><td></td>
+      <td class="num">${fmtN(sAtual)}</td>
+      <td class="num">${fmtN(sNovo)}</td>
+      <td class="num ${sDeltaCls}">${(sDelta>=0?'+':'')+fmtN(sDelta)}</td>
+      <td class="num ${sDeltaCls}">${sAtual>0?fmtPct(sDelta/sAtual):'—'}</td>
+    </tr>`;
+    html+=`</tbody></table>`;
+  }
+  html+=`</div></div>`;
+
+  // Gráfico evolução 2026–2033
+  html+=`<div class="chart-wrap">
+    <div class="chart-title">Evolução do Impacto Tributário 2026–2033</div>
+    <div class="chart-note">
+      <span style="color:#9B59B6">■</span> Total Novo Regime &nbsp;·&nbsp;
+      <span style="color:#4A9FD4">■</span> Total Regime Atual &nbsp;·&nbsp;
+      <span style="color:#F5A623">⚠</span> Alíquotas estimadas (LC 214/2025)
+    </div>
+    <canvas id="evoChart" height="90"></canvas>
+  </div>`;
+
+  document.getElementById('content').innerHTML=html;
+
+  // Desenha gráfico
+  const labels=D.anos.map(String);
+  const dataAtual=D.anos.map(a=>res[a]?.atual||0);
+  const dataNovo =D.anos.map(a=>res[a]?.novo||0);
+
+  const ctx=document.getElementById('evoChart').getContext('2d');
+  if(window._evoChart) window._evoChart.destroy();
+
+  // Inline Chart.js mini (bar + line)
+  const script=document.createElement('script');
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  script.onload=()=>{
+    window._evoChart=new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels,
+        datasets:[
+          {label:'Regime Atual',data:dataAtual,backgroundColor:'rgba(74,159,212,.6)',borderColor:'#4A9FD4',borderWidth:1,borderRadius:4},
+          {label:'Novo Regime', data:dataNovo, backgroundColor:'rgba(155,89,182,.6)',borderColor:'#9B59B6',borderWidth:1,borderRadius:4},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:true,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtR(ctx.raw)}`}},
+        },
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10}}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10},callback:v=>fmtR(v)}},
+        }
+      }
+    });
+  };
+  if(!document.querySelector('script[src*="chart.umd"]')) document.head.appendChild(script);
+  else if(window.Chart){
+    window._evoChart=new Chart(ctx,{
+      type:'bar',
+      data:{labels,datasets:[
+        {label:'Regime Atual',data:dataAtual,backgroundColor:'rgba(74,159,212,.6)',borderColor:'#4A9FD4',borderWidth:1,borderRadius:4},
+        {label:'Novo Regime', data:dataNovo, backgroundColor:'rgba(155,89,182,.6)',borderColor:'#9B59B6',borderWidth:1,borderRadius:4},
+      ]},
+      options:{
+        responsive:true,maintainAspectRatio:true,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtR(ctx.raw)}`}}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10}}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#666',font:{size:10},callback:v=>fmtR(v)}},
+        }
+      }
+    });
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────
+document.getElementById('hd-total').textContent=D.total_projetos;
+document.getElementById('hd-gerado').textContent=new Date(D.gerado).toLocaleString('pt-BR');
+document.getElementById('footer').textContent=
+  `LIVEMODE · Reforma Tributária · Portfólio 2026–2033 · Gerado em ${new Date(D.gerado).toLocaleString('pt-BR')} · Posição: Cedente · LC 214/2025`;
+
+buildKPIStrip();
+buildCoBar();
+buildYrBar();
+renderContent();
+</script>
+</body>
+</html>
