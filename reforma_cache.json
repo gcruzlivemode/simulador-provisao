@@ -1,0 +1,173 @@
+{
+  "gerado": "2026-07-01T18:08:44.327684",
+  "projetos": [
+    {
+      "id": "rec1WBSXR5YO7OiET",
+      "nome": "Bet365 | Futebol Feminino | 2026",
+      "empresa": "LMS",
+      "valor_total": 500000.0
+    },
+    {
+      "id": "rec1mhtwAAwN8cquR",
+      "nome": "Casas Bahia | Naming Rights Paulistão Masculino",
+      "empresa": "LMS",
+      "valor_total": 21000000.0
+    },
+    {
+      "id": "rec4bCt9DoOOCCmaS",
+      "nome": "Guaraná | Arena Futebol Feminino | 2026",
+      "empresa": "LMS",
+      "valor_total": 710000.0
+    },
+    {
+      "id": "rec8pppKOeu3arutl",
+      "nome": "Betnacional | Casa CazéTV | Arena 2026",
+      "empresa": "CZTV",
+      "valor_total": 8000000.0
+    },
+    {
+      "id": "recA3mjNkS9YXFuz1",
+      "nome": "iFood | Bolão Copa do Mundo | 2026",
+      "empresa": "LMS",
+      "valor_total": 4000000.0
+    },
+    {
+      "id": "recCrxy5T70qGKEOu",
+      "nome": "Betnacional | Brasileirão | 2026",
+      "empresa": "LMS",
+      "valor_total": 19000000.0
+    },
+    {
+      "id": "recEDGgA3ZaIrlNt1",
+      "nome": "Itaú | Fred Caldeira 2026",
+      "empresa": "LMS",
+      "valor_total": 45700.0
+    },
+    {
+      "id": "recFe6metCEYHxQYh",
+      "nome": "Gillete l Upsell 2 Influenciadores l Brasileiro",
+      "empresa": "LMS",
+      "valor_total": 2684875.0
+    },
+    {
+      "id": "recGYT1upTJ1b430p",
+      "nome": "Outback | Estrelas Luisinho Campanha Casa Cazé | 2026",
+      "empresa": "CZTV",
+      "valor_total": 350000.0
+    },
+    {
+      "id": "recJXb7uVL5hWnZJs",
+      "nome": "Itaú | Igor Rodrigues 2026",
+      "empresa": "LMS",
+      "valor_total": 4969875.0
+    },
+    {
+      "id": "recKK4IwwKsq5e8Dc",
+      "nome": "Aurora | Paulistão (arena) | 2028",
+      "empresa": "LMS",
+      "valor_total": 5507748.0
+    },
+    {
+      "id": "recNCIfrleQ9YHZVp",
+      "nome": "Casas Bahia | Paulistão Masculino 2028 | Naming Rights",
+      "empresa": "LMS",
+      "valor_total": 24000000.0
+    },
+    {
+      "id": "recQBziNsyjDkUyJT",
+      "nome": "Itaú | Donan 2026",
+      "empresa": "LMS",
+      "valor_total": 38845.0
+    },
+    {
+      "id": "recRSFsXdhJQV3uDq",
+      "nome": "Hering | Roda de Bobo 2026",
+      "empresa": "LMS",
+      "valor_total": 1625000.0
+    },
+    {
+      "id": "recTXW2v937xqcLcN",
+      "nome": "JBS (Seara Gourmet) | Tênis CazéTV | 2026",
+      "empresa": "CZTV",
+      "valor_total": 1500000.0
+    },
+    {
+      "id": "recTeuDfl8Y9uWEme",
+      "nome": "Google | Copa do Mundo 2026",
+      "empresa": "CZTV",
+      "valor_total": 18720000.0
+    },
+    {
+      "id": "recUaTAAfSykqgceS",
+      "nome": "JBS (Friboi) | Luisinho (junho/julho) | 2026",
+      "empresa": "LMS",
+      "valor_total": 100000.0
+    },
+    {
+      "id": "recXOf6HmU8QBevNj",
+      "nome": "Mercado Livre | Casa CazéTV 2026",
+      "empresa": "CZTV",
+      "valor_total": 4000000.0
+    },
+    {
+      "id": "recb3KETFFXlX79uI",
+      "nome": "Bet365 | Fred | 4 meses (extensão contrato) | + entreg avulsa Copa",
+      "empresa": "LMS",
+      "valor_total": 172800.0
+    },
+    {
+      "id": "recblaQHT8jREaumT",
+      "nome": "Bet365 | Paulistão | 2027 | Cota Substituição\n",
+      "empresa": "LMS",
+      "valor_total": 25000000.0
+    },
+    {
+      "id": "rech6U5V0U2QWFWfK",
+      "nome": "Medley | Mutirão Copa | 2026",
+      "empresa": "LMS",
+      "valor_total": 785651.0
+    },
+    {
+      "id": "reckov01TBAdxMiRP",
+      "nome": "Aurora | Paulistão (arena) | 2027",
+      "empresa": "LMS",
+      "valor_total": 4932095.0
+    },
+    {
+      "id": "recnDfJha2ZlRkntC",
+      "nome": "Krispy Kreme | Creators Copa | 2026",
+      "empresa": "LMS",
+      "valor_total": 140000.0
+    },
+    {
+      "id": "recp7a4w6nwcrb3n0",
+      "nome": "GM | Igor Rodrigues e Bárbara Coelho 2026",
+      "empresa": "LMS",
+      "valor_total": 745000.0
+    },
+    {
+      "id": "recpN3etCKMk7wzy7",
+      "nome": "Midea | Libertadores Feminina 2026",
+      "empresa": "LMS",
+      "valor_total": 5000000.0
+    },
+    {
+      "id": "recwsNDI28zQ8ZSjm",
+      "nome": "GOOGLE | Talentos  | 2026",
+      "empresa": "LMS",
+      "valor_total": 73000.0
+    },
+    {
+      "id": "recyorKFn7UoKyAkG",
+      "nome": "Pitaco | João Barreto | Proposta Ano",
+      "empresa": "LMS",
+      "valor_total": 910000.0
+    },
+    {
+      "id": "reczMrSoR7JAnLwEX",
+      "nome": "Brasilux | Programas CazéTV | 2026",
+      "empresa": "CZTV",
+      "valor_total": 1454424.0
+    }
+  ]
+}
