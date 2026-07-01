@@ -176,15 +176,20 @@ def notificar_slack(novos, cancelados, atualizados, total):
         print(f"[Slack] Erro ao enviar: {ex}")
 
 def notificar_email(novos, cancelados, atualizados, total):
-    host     = os.environ.get("SMTP_HOST")
-    port     = int(os.environ.get("SMTP_PORT", "587"))
-    user     = os.environ.get("SMTP_USER")
-    password = os.environ.get("SMTP_PASS")
+    host     = os.environ.get("SMTP_HOST") or ""
+    port_raw = os.environ.get("SMTP_PORT") or "587"
+    user     = os.environ.get("SMTP_USER") or ""
+    password = os.environ.get("SMTP_PASS") or ""
     destino  = "gcruz@livemode.com"
 
     if not all([host, user, password]):
         print("[Email] SMTP_HOST/SMTP_USER/SMTP_PASS não configurados — pulando.")
         return
+
+    try:
+        port = int(port_raw)
+    except ValueError:
+        port = 587
 
     hoje = date.today().strftime("%d/%m/%Y")
     rows = []
