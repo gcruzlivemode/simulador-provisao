@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reforma Tributária · Portfólio Livemode</title>
+<style>
+:root{
+  --bg:#0E0E11;--s1:#15151A;--s2:#1C1C23;--s3:#272730;--s4:#38383F;
+  --g:#6DC93B;--g2:#4EA828;--g3:#152B07;
+  --t1:#EEEFF5;--t2:#A0A0B4;--t3:#585868;
+  --re:#E8453C;--am:#F0A030;--bl:#4A9FD4;
+  --fm:ui-monospace,'Cascadia Code','Fira Code',Consolas,monospace;
+  --ff:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --r:8px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:var(--bg);color:var(--t1);font-family:var(--ff);min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:4px}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 28px;background:var(--s1);border-bottom:1px solid var(--s3);
+  position:sticky;top:0;z-index:200}
+.logo-box{background:var(--s2);border:1px solid var(--s3);border-radius:6px;
+  padding:6px 10px;position:relative}
+.logo-box::after{content:'';position:absolute;bottom:-1px;left:50%;
+  transform:translateX(-50%);width:24px;height:2px;background:var(--g);border-radius:2px}
+.logo-live{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--t1);letter-spacing:1px}
+.logo-mode{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--g);letter-spacing:1px}
+.hd-center{text-align:center}
+.hd-title{font-family:var(--fm);font-size:13px;font-weight:700;letter-spacing:2px}
+.hd-sub{font-size:10px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;
+  margin-top:2px;text-align:center}
+.hd-meta{text-align:right;font-size:10px;color:var(--t3);line-height:1.9;font-family:var(--fm)}
+.hd-meta b{color:var(--t2)}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);background:var(--s3);gap:1px;
+  border-bottom:1px solid var(--s3)}
+.kpi{background:var(--s1);padding:16px 20px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--s4))}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);margin-bottom:7px}
+.kpi-val{font-family:var(--fm);font-size:22px;font-weight:700;line-height:1;
+  color:var(--c,var(--t1));margin-bottom:5px;font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-sub{font-size:10px;color:var(--t3);line-height:1.5}
+
+/* INSIGHT ROW */
+.insight-row{display:grid;grid-template-columns:repeat(3,1fr);background:var(--s3);gap:1px;
+  border-bottom:1px solid var(--s3)}
+.insight{background:var(--s2);padding:14px 20px;display:flex;gap:12px;align-items:flex-start}
+.ins-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;margin-top:1px}
+.ins-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);margin-bottom:4px}
+.ins-text{font-size:11.5px;color:var(--t2);line-height:1.65}
+.ins-text strong{color:var(--t1)}
+.ins-text em{color:var(--am);font-style:normal;font-weight:600}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:6px;padding:10px 28px;
+  background:var(--s1);border-bottom:1px solid var(--s3);flex-wrap:wrap}
+.co-btn{padding:5px 16px;border-radius:4px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);
+  letter-spacing:.5px;transition:all .12s}
+.co-btn:hover{color:var(--t2);border-color:var(--s4);background:var(--s2)}
+.co-btn.active{background:var(--g3);color:var(--g);border-color:var(--g2)}
+
+/* MAIN */
+.main{padding:18px 28px;max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* PANELS */
+.panel{background:var(--s1);border:1px solid var(--s3);border-radius:var(--r);overflow:hidden}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 18px;border-bottom:1px solid var(--s3)}
+.panel-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t2);font-family:var(--fm);display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--g);flex-shrink:0}
+.panel-note{font-size:10px;color:var(--t3);font-family:var(--fm)}
+.panel-body{padding:18px}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.leg{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);font-family:var(--fm)}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.leg-line{width:16px;height:3px;border-radius:4px;flex-shrink:0}
+
+/* YEAR STRIP */
+.yr-strip{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding:10px 18px;border-bottom:1px solid var(--s3)}
+.yr-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);flex-shrink:0;margin-right:2px}
+.yr-btn{padding:4px 13px;border-radius:4px;border:1px solid var(--s3);background:transparent;
+  color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fm);
+  white-space:nowrap;transition:all .12s}
+.yr-btn:hover{color:var(--t2);border-color:var(--s4)}
+.yr-btn.active{background:var(--g3);color:var(--g);border-color:var(--g2)}
+.yr-btn.est{border-style:dashed}
+.yr-btn.est:not(.active){color:var(--am);border-color:rgba(240,160,48,.4)}
+.yr-btn.est.active{background:rgba(240,160,48,.1);color:var(--am);border-color:var(--am)}
+
+/* YEAR KPIS */
+.yr-kpis{display:grid;grid-template-columns:repeat(4,1fr);background:var(--s3);gap:1px}
+.yr-kpi{background:var(--s2);padding:12px 16px;position:relative}
+.yr-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--s4))}
+.yr-kpi .kpi-val{font-size:16px}
+
+/* TABLE */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.ct{width:100%;border-collapse:collapse;font-size:11px}
+table.ct thead th{background:#0F0F13;padding:9px 12px;text-align:right;
+  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--t3);font-family:var(--fm);border-bottom:1px solid var(--s3);
+  white-space:nowrap;cursor:pointer;user-select:none;transition:color .1s}
+table.ct thead th:hover{color:var(--t2)}
+table.ct thead th.left{text-align:left}
+table.ct thead th.sort-asc::after{content:' ↑';color:var(--g)}
+table.ct thead th.sort-desc::after{content:' ↓';color:var(--g)}
+table.ct tbody td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.025);
+  text-align:right;white-space:nowrap;vertical-align:middle}
+table.ct tbody td.left{text-align:left}
+table.ct tbody tr:hover td{background:rgba(255,255,255,.018)}
+.total-row td{background:#0C160C !important;color:var(--g) !important;
+  font-weight:700;border-top:1px solid var(--g3) !important}
+.num{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.up{color:var(--re)}
+.dn{color:var(--g)}
+.nt{color:var(--t3)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  font-family:var(--fm);padding:2px 7px;border-radius:3px;letter-spacing:.5px;
+  text-transform:uppercase;white-space:nowrap}
+.badge-lms{background:rgba(74,159,212,.1);color:#5CAEE0;border:1px solid rgba(74,159,212,.25)}
+.badge-cztv{background:rgba(180,127,212,.1);color:#C090E0;border:1px solid rgba(180,127,212,.25)}
+.sev{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  font-family:var(--fm);padding:2px 9px;border-radius:10px;letter-spacing:.5px;
+  text-transform:uppercase;white-space:nowrap}
+.sev-c{background:rgba(232,69,60,.12);color:#F06050;border:1px solid rgba(232,69,60,.3)}
+.sev-a{background:rgba(240,160,48,.1);color:#F0A030;border:1px solid rgba(240,160,48,.3)}
+.sev-m{background:rgba(74,159,212,.1);color:#5CAEE0;border:1px solid rgba(74,159,212,.25)}
+.sev-b{background:rgba(109,201,59,.1);color:#6DC93B;border:1px solid rgba(109,201,59,.25)}
+.sev-n{background:var(--s3);color:var(--t3);border:1px solid var(--s3)}
+
+/* TIMELINE */
+.timeline{padding:14px 28px;background:var(--s1);border-top:1px solid var(--s3);
+  overflow-x:auto;display:flex;gap:0;align-items:stretch}
+.tl-item{flex-shrink:0;padding-right:24px;margin-right:24px;border-right:1px solid var(--s3)}
+.tl-item:last-child{border-right:none;margin-right:0;padding-right:0}
+.tl-year{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--g);margin-bottom:3px}
+.tl-text{font-size:10px;color:var(--t2);line-height:1.55;max-width:155px}
+.tl-est .tl-year{color:var(--am)}
+.tl-est .tl-text{color:var(--t3)}
+
+/* FOOTER */
+footer{padding:11px 28px;border-top:1px solid var(--s3);display:flex;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  font-size:10px;color:var(--t3);font-family:var(--fm)}
+.empty{text-align:center;padding:40px;color:var(--t3);font-size:12px}
+
+@media(max-width:1200px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+  .insight-row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+  .yr-kpis{grid-template-columns:repeat(2,1fr)}
+  header{flex-wrap:wrap}
+  .main{padding:14px 16px}
+  .toolbar,.timeline{padding:10px 16px}
+  .kpi-strip,.insight-row{padding:0}
+}
+</style>
+</head>
+<body>
+<script>const D={"gerado": "2026-07-02T04:54:42.559448", "anos": [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033], "rates": {"2026": {"pis": 0.0165, "cof": 0.076, "iss": 0.03, "cbs": 0.009, "ibs": 0.001, "confirmed": true}, "2027": {"pis": 0.0, "cof": 0.0, "iss": 0.03, "cbs": 0.088, "ibs": 0.001, "confirmed": false}, "2028": {"pis": 0.0, "cof": 0.0, "iss": 0.03, "cbs": 0.088, "ibs": 0.001, "confirmed": false}, "2029": {"pis": 0.0, "cof": 0.0, "iss": 0.027, "cbs": 0.088, "ibs": 0.032, "confirmed": false}, "2030": {"pis": 0.0, "cof": 0.0, "iss": 0.024, "cbs": 0.088, "ibs": 0.064, "confirmed": false}, "2031": {"pis": 0.0, "cof": 0.0, "iss": 0.021, "cbs": 0.088, "ibs": 0.096, "confirmed": false}, "2032": {"pis": 0.0, "cof": 0.0, "iss": 0.018, "cbs": 0.088, "ibs": 0.128, "confirmed": false}, "2033": {"pis": 0.0, "cof": 0.0, "iss": 0.0, "cbs": 0.088, "ibs": 0.177, "confirmed": false}}, "projetos": [{"id": "rec1WBSXR5YO7OiET", "nome": "Bet365 | Futebol Feminino | 2026", "marca": "Bet365", "empresa": "LMS", "valor_total": 500000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 500000.0, "pis": 8250.0, "cof": 38000.0, "iss": 15000.0, "irrf": 0.0, "cbs": 4500.0, "ibs": 500.0, "total_atual": 61250.0, "total_novo": 15000.0, "delta": -46250.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "rec1mhtwAAwN8cquR", "nome": "Casas Bahia | Naming Rights Paulistão Masculino", "marca": "Casas Bahia", "empresa": "LMS", "valor_total": 21000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 21000000.0, "pis": 346500.0, "cof": 1596000.0, "iss": 630000.0, "irrf": 0.0, "cbs": 189000.0, "ibs": 21000.0, "total_atual": 2572500.0, "total_novo": 630000.0, "delta": -1942500.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "rec4bCt9DoOOCCmaS", "nome": "Guaraná | Arena Futebol Feminino | 2026", "marca": "Ambev", "empresa": "LMS", "valor_total": 710000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 710000.0, "pis": 11715.0, "cof": 53960.0, "iss": 21300.0, "irrf": 0.0, "cbs": 6390.0, "ibs": 710.0, "total_atual": 86975.0, "total_novo": 21300.0, "delta": -65675.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "rec8pppKOeu3arutl", "nome": "Betnacional | Casa CazéTV | Arena 2026", "marca": "BetNacional", "empresa": "CZTV", "valor_total": 8000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 8000000.0, "pis": 132000.0, "cof": 608000.0, "iss": 240000.0, "irrf": 0.0, "cbs": 72000.0, "ibs": 8000.0, "total_atual": 980000.0, "total_novo": 240000.0, "delta": -740000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recA3mjNkS9YXFuz1", "nome": "iFood | Bolão Copa do Mundo | 2026", "marca": "—", "empresa": "LMS", "valor_total": 4000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4000000.0, "pis": 66000.0, "cof": 304000.0, "iss": 120000.0, "irrf": 0.0, "cbs": 36000.0, "ibs": 4000.0, "total_atual": 490000.0, "total_novo": 120000.0, "delta": -370000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recCrxy5T70qGKEOu", "nome": "Betnacional | Brasileirão | 2026", "marca": "BetNacional", "empresa": "LMS", "valor_total": 19000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 19000000.0, "pis": 313500.0, "cof": 1444000.0, "iss": 570000.0, "irrf": 0.0, "cbs": 171000.0, "ibs": 19000.0, "total_atual": 2327500.0, "total_novo": 570000.0, "delta": -1757500.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recEDGgA3ZaIrlNt1", "nome": "Itaú | Fred Caldeira 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 45700.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 45700.0, "pis": 754.05, "cof": 3473.2, "iss": 1371.0, "irrf": 0.0, "cbs": 411.3, "ibs": 45.7, "total_atual": 5598.25, "total_novo": 1371.0, "delta": -4227.25, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recFe6metCEYHxQYh", "nome": "Gillete l Upsell 2 Influenciadores l Brasileiro", "marca": "Gillette", "empresa": "LMS", "valor_total": 2684875.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 335609.38, "pis": 5537.55, "cof": 25506.31, "iss": 10068.28, "irrf": 0.0, "cbs": 3020.48, "ibs": 335.61, "total_atual": 41112.15, "total_novo": 10068.28, "delta": -31043.87, "confirmed": true}, "2027": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 10068.28, "irrf": 0.0, "cbs": 29533.62, "ibs": 335.61, "total_atual": 10068.28, "total_novo": 39601.91, "delta": 29533.62, "confirmed": false}, "2028": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 10068.28, "irrf": 0.0, "cbs": 29533.62, "ibs": 335.61, "total_atual": 10068.28, "total_novo": 39601.91, "delta": 29533.62, "confirmed": false}, "2029": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 9061.45, "irrf": 0.0, "cbs": 29533.62, "ibs": 10739.5, "total_atual": 9061.45, "total_novo": 49334.58, "delta": 40273.12, "confirmed": false}, "2030": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 8054.62, "irrf": 0.0, "cbs": 29533.62, "ibs": 21479.0, "total_atual": 8054.62, "total_novo": 59067.25, "delta": 51012.62, "confirmed": false}, "2031": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 7047.8, "irrf": 0.0, "cbs": 29533.62, "ibs": 32218.5, "total_atual": 7047.8, "total_novo": 68799.92, "delta": 61752.12, "confirmed": false}, "2032": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 6040.97, "irrf": 0.0, "cbs": 29533.62, "ibs": 42958.0, "total_atual": 6040.97, "total_novo": 78532.59, "delta": 72491.62, "confirmed": false}, "2033": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 29533.62, "ibs": 59402.86, "total_atual": 0.0, "total_novo": 88936.48, "delta": 88936.48, "confirmed": false}}}, {"id": "recJXb7uVL5hWnZJs", "nome": "Itaú | Igor Rodrigues 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 4969875.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4969875.0, "pis": 82002.94, "cof": 377710.5, "iss": 149096.25, "irrf": 0.0, "cbs": 44728.88, "ibs": 4969.88, "total_atual": 608809.69, "total_novo": 149096.25, "delta": -459713.44, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recKK4IwwKsq5e8Dc", "nome": "Aurora | Paulistão (arena) | 2028", "marca": "Aurora", "empresa": "LMS", "valor_total": 5507748.0, "ano_ini": 2028, "ano_fim": 2028, "is_brl": true, "impacto": {"2026": null, "2027": null, "2028": {"valor": 5507748.0, "pis": 0.0, "cof": 0.0, "iss": 165232.44, "irrf": 0.0, "cbs": 484681.82, "ibs": 5507.75, "total_atual": 165232.44, "total_novo": 649914.26, "delta": 484681.82, "confirmed": false}, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recNCIfrleQ9YHZVp", "nome": "Casas Bahia | Paulistão Masculino 2028 | Naming Rights", "marca": "Casas Bahia", "empresa": "LMS", "valor_total": 24000000.0, "ano_ini": 2028, "ano_fim": 2028, "is_brl": true, "impacto": {"2026": null, "2027": null, "2028": {"valor": 24000000.0, "pis": 0.0, "cof": 0.0, "iss": 720000.0, "irrf": 0.0, "cbs": 2112000.0, "ibs": 24000.0, "total_atual": 720000.0, "total_novo": 2832000.0, "delta": 2112000.0, "confirmed": false}, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recQBziNsyjDkUyJT", "nome": "Itaú | Donan 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 38845.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 38845.0, "pis": 640.94, "cof": 2952.22, "iss": 1165.35, "irrf": 0.0, "cbs": 349.6, "ibs": 38.84, "total_atual": 4758.51, "total_novo": 1165.35, "delta": -3593.16, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recRSFsXdhJQV3uDq", "nome": "Hering | Roda de Bobo 2026", "marca": "Hering", "empresa": "LMS", "valor_total": 1625000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 203125.0, "pis": 3351.56, "cof": 15437.5, "iss": 6093.75, "irrf": 0.0, "cbs": 1828.12, "ibs": 203.12, "total_atual": 24882.81, "total_novo": 6093.75, "delta": -18789.06, "confirmed": true}, "2027": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 6093.75, "irrf": 0.0, "cbs": 17875.0, "ibs": 203.12, "total_atual": 6093.75, "total_novo": 23968.75, "delta": 17875.0, "confirmed": false}, "2028": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 6093.75, "irrf": 0.0, "cbs": 17875.0, "ibs": 203.12, "total_atual": 6093.75, "total_novo": 23968.75, "delta": 17875.0, "confirmed": false}, "2029": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 5484.38, "irrf": 0.0, "cbs": 17875.0, "ibs": 6500.0, "total_atual": 5484.38, "total_novo": 29859.38, "delta": 24375.0, "confirmed": false}, "2030": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 4875.0, "irrf": 0.0, "cbs": 17875.0, "ibs": 13000.0, "total_atual": 4875.0, "total_novo": 35750.0, "delta": 30875.0, "confirmed": false}, "2031": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 4265.62, "irrf": 0.0, "cbs": 17875.0, "ibs": 19500.0, "total_atual": 4265.62, "total_novo": 41640.62, "delta": 37375.0, "confirmed": false}, "2032": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 3656.25, "irrf": 0.0, "cbs": 17875.0, "ibs": 26000.0, "total_atual": 3656.25, "total_novo": 47531.25, "delta": 43875.0, "confirmed": false}, "2033": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 17875.0, "ibs": 35953.12, "total_atual": 0.0, "total_novo": 53828.12, "delta": 53828.12, "confirmed": false}}}, {"id": "recTXW2v937xqcLcN", "nome": "JBS (Seara Gourmet) | Tênis CazéTV | 2026", "marca": "JBS", "empresa": "CZTV", "valor_total": 1500000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 1500000.0, "pis": 24750.0, "cof": 114000.0, "iss": 45000.0, "irrf": 0.0, "cbs": 13500.0, "ibs": 1500.0, "total_atual": 183750.0, "total_novo": 45000.0, "delta": -138750.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recTeuDfl8Y9uWEme", "nome": "Google | Copa do Mundo 2026", "marca": "Google", "empresa": "CZTV", "valor_total": 18720000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 18720000.0, "pis": 308880.0, "cof": 1422720.0, "iss": 561600.0, "irrf": 0.0, "cbs": 168480.0, "ibs": 18720.0, "total_atual": 2293200.0, "total_novo": 561600.0, "delta": -1731600.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recUaTAAfSykqgceS", "nome": "JBS (Friboi) | Luisinho (junho/julho) | 2026", "marca": "JBS", "empresa": "LMS", "valor_total": 100000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 100000.0, "pis": 1650.0, "cof": 7600.0, "iss": 3000.0, "irrf": 0.0, "cbs": 900.0, "ibs": 100.0, "total_atual": 12250.0, "total_novo": 3000.0, "delta": -9250.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recXOf6HmU8QBevNj", "nome": "Mercado Livre | Casa CazéTV 2026", "marca": "Mercado Livre", "empresa": "CZTV", "valor_total": 4000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4000000.0, "pis": 66000.0, "cof": 304000.0, "iss": 120000.0, "irrf": 0.0, "cbs": 36000.0, "ibs": 4000.0, "total_atual": 490000.0, "total_novo": 120000.0, "delta": -370000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recb3KETFFXlX79uI", "nome": "Bet365 | Fred | 4 meses (extensão contrato) | + entreg avulsa Copa", "marca": "Bet365", "empresa": "LMS", "valor_total": 172800.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 172800.0, "pis": 2851.2, "cof": 13132.8, "iss": 5184.0, "irrf": 0.0, "cbs": 1555.2, "ibs": 172.8, "total_atual": 21168.0, "total_novo": 5184.0, "delta": -15984.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recblaQHT8jREaumT", "nome": "Bet365 | Paulistão | 2027 | Cota Substituição\n", "marca": "Bet365", "empresa": "LMS", "valor_total": 25000000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 3125000.0, "pis": 51562.5, "cof": 237500.0, "iss": 93750.0, "irrf": 0.0, "cbs": 28125.0, "ibs": 3125.0, "total_atual": 382812.5, "total_novo": 93750.0, "delta": -289062.5, "confirmed": true}, "2027": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 93750.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 3125.0, "total_atual": 93750.0, "total_novo": 368750.0, "delta": 275000.0, "confirmed": false}, "2028": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 93750.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 3125.0, "total_atual": 93750.0, "total_novo": 368750.0, "delta": 275000.0, "confirmed": false}, "2029": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 84375.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 100000.0, "total_atual": 84375.0, "total_novo": 459375.0, "delta": 375000.0, "confirmed": false}, "2030": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 75000.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 200000.0, "total_atual": 75000.0, "total_novo": 550000.0, "delta": 475000.0, "confirmed": false}, "2031": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 65625.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 300000.0, "total_atual": 65625.0, "total_novo": 640625.0, "delta": 575000.0, "confirmed": false}, "2032": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 56250.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 400000.0, "total_atual": 56250.0, "total_novo": 731250.0, "delta": 675000.0, "confirmed": false}, "2033": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 553125.0, "total_atual": 0.0, "total_novo": 828125.0, "delta": 828125.0, "confirmed": false}}}, {"id": "rech6U5V0U2QWFWfK", "nome": "Medley | Mutirão Copa | 2026", "marca": "Medley", "empresa": "LMS", "valor_total": 785651.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 785651.0, "pis": 12963.24, "cof": 59709.48, "iss": 23569.53, "irrf": 0.0, "cbs": 7070.86, "ibs": 785.65, "total_atual": 96242.25, "total_novo": 23569.53, "delta": -72672.72, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "reckov01TBAdxMiRP", "nome": "Aurora | Paulistão (arena) | 2027", "marca": "Aurora", "empresa": "LMS", "valor_total": 4932095.0, "ano_ini": 2027, "ano_fim": 2027, "is_brl": true, "impacto": {"2026": null, "2027": {"valor": 4932095.0, "pis": 0.0, "cof": 0.0, "iss": 147962.85, "irrf": 0.0, "cbs": 434024.36, "ibs": 4932.1, "total_atual": 147962.85, "total_novo": 581987.21, "delta": 434024.36, "confirmed": false}, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recnDfJha2ZlRkntC", "nome": "Krispy Kreme | Creators Copa | 2026", "marca": "—", "empresa": "LMS", "valor_total": 140000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 140000.0, "pis": 2310.0, "cof": 10640.0, "iss": 4200.0, "irrf": 0.0, "cbs": 1260.0, "ibs": 140.0, "total_atual": 17150.0, "total_novo": 4200.0, "delta": -12950.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recp7a4w6nwcrb3n0", "nome": "GM | Igor Rodrigues e Bárbara Coelho 2026", "marca": "GM", "empresa": "LMS", "valor_total": 745000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 745000.0, "pis": 12292.5, "cof": 56620.0, "iss": 22350.0, "irrf": 0.0, "cbs": 6705.0, "ibs": 745.0, "total_atual": 91262.5, "total_novo": 22350.0, "delta": -68912.5, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recpN3etCKMk7wzy7", "nome": "Midea | Libertadores Feminina 2026", "marca": "Midea", "empresa": "LMS", "valor_total": 5000000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 625000.0, "pis": 10312.5, "cof": 47500.0, "iss": 18750.0, "irrf": 0.0, "cbs": 5625.0, "ibs": 625.0, "total_atual": 76562.5, "total_novo": 18750.0, "delta": -57812.5, "confirmed": true}, "2027": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 18750.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 625.0, "total_atual": 18750.0, "total_novo": 73750.0, "delta": 55000.0, "confirmed": false}, "2028": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 18750.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 625.0, "total_atual": 18750.0, "total_novo": 73750.0, "delta": 55000.0, "confirmed": false}, "2029": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 16875.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 20000.0, "total_atual": 16875.0, "total_novo": 91875.0, "delta": 75000.0, "confirmed": false}, "2030": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 15000.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 40000.0, "total_atual": 15000.0, "total_novo": 110000.0, "delta": 95000.0, "confirmed": false}, "2031": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 13125.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 60000.0, "total_atual": 13125.0, "total_novo": 128125.0, "delta": 115000.0, "confirmed": false}, "2032": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 11250.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 80000.0, "total_atual": 11250.0, "total_novo": 146250.0, "delta": 135000.0, "confirmed": false}, "2033": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 110625.0, "total_atual": 0.0, "total_novo": 165625.0, "delta": 165625.0, "confirmed": false}}}, {"id": "recwsNDI28zQ8ZSjm", "nome": "GOOGLE | Talentos  | 2026", "marca": "Google", "empresa": "LMS", "valor_total": 73000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 73000.0, "pis": 1204.5, "cof": 5548.0, "iss": 2190.0, "irrf": 0.0, "cbs": 657.0, "ibs": 73.0, "total_atual": 8942.5, "total_novo": 2190.0, "delta": -6752.5, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recyorKFn7UoKyAkG", "nome": "Pitaco | João Barreto | Proposta Ano", "marca": "Rei do Pitaco", "empresa": "LMS", "valor_total": 910000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 910000.0, "pis": 15015.0, "cof": 69160.0, "iss": 27300.0, "irrf": 0.0, "cbs": 8190.0, "ibs": 910.0, "total_atual": 111475.0, "total_novo": 27300.0, "delta": -84175.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "reczMrSoR7JAnLwEX", "nome": "Brasilux | Programas CazéTV | 2026", "marca": "Brasilux", "empresa": "CZTV", "valor_total": 1454424.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 1454424.0, "pis": 23998.0, "cof": 110536.22, "iss": 43632.72, "irrf": 0.0, "cbs": 13089.82, "ibs": 1454.42, "total_atual": 178166.94, "total_novo": 43632.72, "delta": -134534.22, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}], "lms": [{"id": "rec1WBSXR5YO7OiET", "nome": "Bet365 | Futebol Feminino | 2026", "marca": "Bet365", "empresa": "LMS", "valor_total": 500000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 500000.0, "pis": 8250.0, "cof": 38000.0, "iss": 15000.0, "irrf": 0.0, "cbs": 4500.0, "ibs": 500.0, "total_atual": 61250.0, "total_novo": 15000.0, "delta": -46250.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "rec1mhtwAAwN8cquR", "nome": "Casas Bahia | Naming Rights Paulistão Masculino", "marca": "Casas Bahia", "empresa": "LMS", "valor_total": 21000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 21000000.0, "pis": 346500.0, "cof": 1596000.0, "iss": 630000.0, "irrf": 0.0, "cbs": 189000.0, "ibs": 21000.0, "total_atual": 2572500.0, "total_novo": 630000.0, "delta": -1942500.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "rec4bCt9DoOOCCmaS", "nome": "Guaraná | Arena Futebol Feminino | 2026", "marca": "Ambev", "empresa": "LMS", "valor_total": 710000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 710000.0, "pis": 11715.0, "cof": 53960.0, "iss": 21300.0, "irrf": 0.0, "cbs": 6390.0, "ibs": 710.0, "total_atual": 86975.0, "total_novo": 21300.0, "delta": -65675.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recA3mjNkS9YXFuz1", "nome": "iFood | Bolão Copa do Mundo | 2026", "marca": "—", "empresa": "LMS", "valor_total": 4000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4000000.0, "pis": 66000.0, "cof": 304000.0, "iss": 120000.0, "irrf": 0.0, "cbs": 36000.0, "ibs": 4000.0, "total_atual": 490000.0, "total_novo": 120000.0, "delta": -370000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recCrxy5T70qGKEOu", "nome": "Betnacional | Brasileirão | 2026", "marca": "BetNacional", "empresa": "LMS", "valor_total": 19000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 19000000.0, "pis": 313500.0, "cof": 1444000.0, "iss": 570000.0, "irrf": 0.0, "cbs": 171000.0, "ibs": 19000.0, "total_atual": 2327500.0, "total_novo": 570000.0, "delta": -1757500.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recEDGgA3ZaIrlNt1", "nome": "Itaú | Fred Caldeira 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 45700.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 45700.0, "pis": 754.05, "cof": 3473.2, "iss": 1371.0, "irrf": 0.0, "cbs": 411.3, "ibs": 45.7, "total_atual": 5598.25, "total_novo": 1371.0, "delta": -4227.25, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recFe6metCEYHxQYh", "nome": "Gillete l Upsell 2 Influenciadores l Brasileiro", "marca": "Gillette", "empresa": "LMS", "valor_total": 2684875.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 335609.38, "pis": 5537.55, "cof": 25506.31, "iss": 10068.28, "irrf": 0.0, "cbs": 3020.48, "ibs": 335.61, "total_atual": 41112.15, "total_novo": 10068.28, "delta": -31043.87, "confirmed": true}, "2027": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 10068.28, "irrf": 0.0, "cbs": 29533.62, "ibs": 335.61, "total_atual": 10068.28, "total_novo": 39601.91, "delta": 29533.62, "confirmed": false}, "2028": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 10068.28, "irrf": 0.0, "cbs": 29533.62, "ibs": 335.61, "total_atual": 10068.28, "total_novo": 39601.91, "delta": 29533.62, "confirmed": false}, "2029": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 9061.45, "irrf": 0.0, "cbs": 29533.62, "ibs": 10739.5, "total_atual": 9061.45, "total_novo": 49334.58, "delta": 40273.12, "confirmed": false}, "2030": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 8054.62, "irrf": 0.0, "cbs": 29533.62, "ibs": 21479.0, "total_atual": 8054.62, "total_novo": 59067.25, "delta": 51012.62, "confirmed": false}, "2031": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 7047.8, "irrf": 0.0, "cbs": 29533.62, "ibs": 32218.5, "total_atual": 7047.8, "total_novo": 68799.92, "delta": 61752.12, "confirmed": false}, "2032": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 6040.97, "irrf": 0.0, "cbs": 29533.62, "ibs": 42958.0, "total_atual": 6040.97, "total_novo": 78532.59, "delta": 72491.62, "confirmed": false}, "2033": {"valor": 335609.38, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 29533.62, "ibs": 59402.86, "total_atual": 0.0, "total_novo": 88936.48, "delta": 88936.48, "confirmed": false}}}, {"id": "recJXb7uVL5hWnZJs", "nome": "Itaú | Igor Rodrigues 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 4969875.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4969875.0, "pis": 82002.94, "cof": 377710.5, "iss": 149096.25, "irrf": 0.0, "cbs": 44728.88, "ibs": 4969.88, "total_atual": 608809.69, "total_novo": 149096.25, "delta": -459713.44, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recKK4IwwKsq5e8Dc", "nome": "Aurora | Paulistão (arena) | 2028", "marca": "Aurora", "empresa": "LMS", "valor_total": 5507748.0, "ano_ini": 2028, "ano_fim": 2028, "is_brl": true, "impacto": {"2026": null, "2027": null, "2028": {"valor": 5507748.0, "pis": 0.0, "cof": 0.0, "iss": 165232.44, "irrf": 0.0, "cbs": 484681.82, "ibs": 5507.75, "total_atual": 165232.44, "total_novo": 649914.26, "delta": 484681.82, "confirmed": false}, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recNCIfrleQ9YHZVp", "nome": "Casas Bahia | Paulistão Masculino 2028 | Naming Rights", "marca": "Casas Bahia", "empresa": "LMS", "valor_total": 24000000.0, "ano_ini": 2028, "ano_fim": 2028, "is_brl": true, "impacto": {"2026": null, "2027": null, "2028": {"valor": 24000000.0, "pis": 0.0, "cof": 0.0, "iss": 720000.0, "irrf": 0.0, "cbs": 2112000.0, "ibs": 24000.0, "total_atual": 720000.0, "total_novo": 2832000.0, "delta": 2112000.0, "confirmed": false}, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recQBziNsyjDkUyJT", "nome": "Itaú | Donan 2026", "marca": "Itaú", "empresa": "LMS", "valor_total": 38845.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 38845.0, "pis": 640.94, "cof": 2952.22, "iss": 1165.35, "irrf": 0.0, "cbs": 349.6, "ibs": 38.84, "total_atual": 4758.51, "total_novo": 1165.35, "delta": -3593.16, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recRSFsXdhJQV3uDq", "nome": "Hering | Roda de Bobo 2026", "marca": "Hering", "empresa": "LMS", "valor_total": 1625000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 203125.0, "pis": 3351.56, "cof": 15437.5, "iss": 6093.75, "irrf": 0.0, "cbs": 1828.12, "ibs": 203.12, "total_atual": 24882.81, "total_novo": 6093.75, "delta": -18789.06, "confirmed": true}, "2027": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 6093.75, "irrf": 0.0, "cbs": 17875.0, "ibs": 203.12, "total_atual": 6093.75, "total_novo": 23968.75, "delta": 17875.0, "confirmed": false}, "2028": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 6093.75, "irrf": 0.0, "cbs": 17875.0, "ibs": 203.12, "total_atual": 6093.75, "total_novo": 23968.75, "delta": 17875.0, "confirmed": false}, "2029": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 5484.38, "irrf": 0.0, "cbs": 17875.0, "ibs": 6500.0, "total_atual": 5484.38, "total_novo": 29859.38, "delta": 24375.0, "confirmed": false}, "2030": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 4875.0, "irrf": 0.0, "cbs": 17875.0, "ibs": 13000.0, "total_atual": 4875.0, "total_novo": 35750.0, "delta": 30875.0, "confirmed": false}, "2031": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 4265.62, "irrf": 0.0, "cbs": 17875.0, "ibs": 19500.0, "total_atual": 4265.62, "total_novo": 41640.62, "delta": 37375.0, "confirmed": false}, "2032": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 3656.25, "irrf": 0.0, "cbs": 17875.0, "ibs": 26000.0, "total_atual": 3656.25, "total_novo": 47531.25, "delta": 43875.0, "confirmed": false}, "2033": {"valor": 203125.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 17875.0, "ibs": 35953.12, "total_atual": 0.0, "total_novo": 53828.12, "delta": 53828.12, "confirmed": false}}}, {"id": "recUaTAAfSykqgceS", "nome": "JBS (Friboi) | Luisinho (junho/julho) | 2026", "marca": "JBS", "empresa": "LMS", "valor_total": 100000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 100000.0, "pis": 1650.0, "cof": 7600.0, "iss": 3000.0, "irrf": 0.0, "cbs": 900.0, "ibs": 100.0, "total_atual": 12250.0, "total_novo": 3000.0, "delta": -9250.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recb3KETFFXlX79uI", "nome": "Bet365 | Fred | 4 meses (extensão contrato) | + entreg avulsa Copa", "marca": "Bet365", "empresa": "LMS", "valor_total": 172800.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 172800.0, "pis": 2851.2, "cof": 13132.8, "iss": 5184.0, "irrf": 0.0, "cbs": 1555.2, "ibs": 172.8, "total_atual": 21168.0, "total_novo": 5184.0, "delta": -15984.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recblaQHT8jREaumT", "nome": "Bet365 | Paulistão | 2027 | Cota Substituição\n", "marca": "Bet365", "empresa": "LMS", "valor_total": 25000000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 3125000.0, "pis": 51562.5, "cof": 237500.0, "iss": 93750.0, "irrf": 0.0, "cbs": 28125.0, "ibs": 3125.0, "total_atual": 382812.5, "total_novo": 93750.0, "delta": -289062.5, "confirmed": true}, "2027": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 93750.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 3125.0, "total_atual": 93750.0, "total_novo": 368750.0, "delta": 275000.0, "confirmed": false}, "2028": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 93750.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 3125.0, "total_atual": 93750.0, "total_novo": 368750.0, "delta": 275000.0, "confirmed": false}, "2029": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 84375.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 100000.0, "total_atual": 84375.0, "total_novo": 459375.0, "delta": 375000.0, "confirmed": false}, "2030": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 75000.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 200000.0, "total_atual": 75000.0, "total_novo": 550000.0, "delta": 475000.0, "confirmed": false}, "2031": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 65625.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 300000.0, "total_atual": 65625.0, "total_novo": 640625.0, "delta": 575000.0, "confirmed": false}, "2032": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 56250.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 400000.0, "total_atual": 56250.0, "total_novo": 731250.0, "delta": 675000.0, "confirmed": false}, "2033": {"valor": 3125000.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 275000.0, "ibs": 553125.0, "total_atual": 0.0, "total_novo": 828125.0, "delta": 828125.0, "confirmed": false}}}, {"id": "rech6U5V0U2QWFWfK", "nome": "Medley | Mutirão Copa | 2026", "marca": "Medley", "empresa": "LMS", "valor_total": 785651.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 785651.0, "pis": 12963.24, "cof": 59709.48, "iss": 23569.53, "irrf": 0.0, "cbs": 7070.86, "ibs": 785.65, "total_atual": 96242.25, "total_novo": 23569.53, "delta": -72672.72, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "reckov01TBAdxMiRP", "nome": "Aurora | Paulistão (arena) | 2027", "marca": "Aurora", "empresa": "LMS", "valor_total": 4932095.0, "ano_ini": 2027, "ano_fim": 2027, "is_brl": true, "impacto": {"2026": null, "2027": {"valor": 4932095.0, "pis": 0.0, "cof": 0.0, "iss": 147962.85, "irrf": 0.0, "cbs": 434024.36, "ibs": 4932.1, "total_atual": 147962.85, "total_novo": 581987.21, "delta": 434024.36, "confirmed": false}, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recnDfJha2ZlRkntC", "nome": "Krispy Kreme | Creators Copa | 2026", "marca": "—", "empresa": "LMS", "valor_total": 140000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 140000.0, "pis": 2310.0, "cof": 10640.0, "iss": 4200.0, "irrf": 0.0, "cbs": 1260.0, "ibs": 140.0, "total_atual": 17150.0, "total_novo": 4200.0, "delta": -12950.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recp7a4w6nwcrb3n0", "nome": "GM | Igor Rodrigues e Bárbara Coelho 2026", "marca": "GM", "empresa": "LMS", "valor_total": 745000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 745000.0, "pis": 12292.5, "cof": 56620.0, "iss": 22350.0, "irrf": 0.0, "cbs": 6705.0, "ibs": 745.0, "total_atual": 91262.5, "total_novo": 22350.0, "delta": -68912.5, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recpN3etCKMk7wzy7", "nome": "Midea | Libertadores Feminina 2026", "marca": "Midea", "empresa": "LMS", "valor_total": 5000000.0, "ano_ini": 2026, "ano_fim": 2033, "is_brl": true, "impacto": {"2026": {"valor": 625000.0, "pis": 10312.5, "cof": 47500.0, "iss": 18750.0, "irrf": 0.0, "cbs": 5625.0, "ibs": 625.0, "total_atual": 76562.5, "total_novo": 18750.0, "delta": -57812.5, "confirmed": true}, "2027": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 18750.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 625.0, "total_atual": 18750.0, "total_novo": 73750.0, "delta": 55000.0, "confirmed": false}, "2028": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 18750.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 625.0, "total_atual": 18750.0, "total_novo": 73750.0, "delta": 55000.0, "confirmed": false}, "2029": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 16875.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 20000.0, "total_atual": 16875.0, "total_novo": 91875.0, "delta": 75000.0, "confirmed": false}, "2030": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 15000.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 40000.0, "total_atual": 15000.0, "total_novo": 110000.0, "delta": 95000.0, "confirmed": false}, "2031": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 13125.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 60000.0, "total_atual": 13125.0, "total_novo": 128125.0, "delta": 115000.0, "confirmed": false}, "2032": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 11250.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 80000.0, "total_atual": 11250.0, "total_novo": 146250.0, "delta": 135000.0, "confirmed": false}, "2033": {"valor": 625000.0, "pis": 0.0, "cof": 0.0, "iss": 0.0, "irrf": 0.0, "cbs": 55000.0, "ibs": 110625.0, "total_atual": 0.0, "total_novo": 165625.0, "delta": 165625.0, "confirmed": false}}}, {"id": "recwsNDI28zQ8ZSjm", "nome": "GOOGLE | Talentos  | 2026", "marca": "Google", "empresa": "LMS", "valor_total": 73000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 73000.0, "pis": 1204.5, "cof": 5548.0, "iss": 2190.0, "irrf": 0.0, "cbs": 657.0, "ibs": 73.0, "total_atual": 8942.5, "total_novo": 2190.0, "delta": -6752.5, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recyorKFn7UoKyAkG", "nome": "Pitaco | João Barreto | Proposta Ano", "marca": "Rei do Pitaco", "empresa": "LMS", "valor_total": 910000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 910000.0, "pis": 15015.0, "cof": 69160.0, "iss": 27300.0, "irrf": 0.0, "cbs": 8190.0, "ibs": 910.0, "total_atual": 111475.0, "total_novo": 27300.0, "delta": -84175.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}], "cztv": [{"id": "rec8pppKOeu3arutl", "nome": "Betnacional | Casa CazéTV | Arena 2026", "marca": "BetNacional", "empresa": "CZTV", "valor_total": 8000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 8000000.0, "pis": 132000.0, "cof": 608000.0, "iss": 240000.0, "irrf": 0.0, "cbs": 72000.0, "ibs": 8000.0, "total_atual": 980000.0, "total_novo": 240000.0, "delta": -740000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recTXW2v937xqcLcN", "nome": "JBS (Seara Gourmet) | Tênis CazéTV | 2026", "marca": "JBS", "empresa": "CZTV", "valor_total": 1500000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 1500000.0, "pis": 24750.0, "cof": 114000.0, "iss": 45000.0, "irrf": 0.0, "cbs": 13500.0, "ibs": 1500.0, "total_atual": 183750.0, "total_novo": 45000.0, "delta": -138750.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recTeuDfl8Y9uWEme", "nome": "Google | Copa do Mundo 2026", "marca": "Google", "empresa": "CZTV", "valor_total": 18720000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 18720000.0, "pis": 308880.0, "cof": 1422720.0, "iss": 561600.0, "irrf": 0.0, "cbs": 168480.0, "ibs": 18720.0, "total_atual": 2293200.0, "total_novo": 561600.0, "delta": -1731600.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "recXOf6HmU8QBevNj", "nome": "Mercado Livre | Casa CazéTV 2026", "marca": "Mercado Livre", "empresa": "CZTV", "valor_total": 4000000.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 4000000.0, "pis": 66000.0, "cof": 304000.0, "iss": 120000.0, "irrf": 0.0, "cbs": 36000.0, "ibs": 4000.0, "total_atual": 490000.0, "total_novo": 120000.0, "delta": -370000.0, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}, {"id": "reczMrSoR7JAnLwEX", "nome": "Brasilux | Programas CazéTV | 2026", "marca": "Brasilux", "empresa": "CZTV", "valor_total": 1454424.0, "ano_ini": 2026, "ano_fim": 2026, "is_brl": true, "impacto": {"2026": {"valor": 1454424.0, "pis": 23998.0, "cof": 110536.22, "iss": 43632.72, "irrf": 0.0, "cbs": 13089.82, "ibs": 1454.42, "total_atual": 178166.94, "total_novo": 43632.72, "delta": -134534.22, "confirmed": true}, "2027": null, "2028": null, "2029": null, "2030": null, "2031": null, "2032": null, "2033": null}}], "total_projetos": 27};</script>
+
+<!-- PASSWORD GATE -->
+<style>
+#gate{position:fixed;inset:0;z-index:9999;background:#0E0E11;display:flex;align-items:center;justify-content:center}
+#gate-box{background:#15151A;border:1px solid #272730;border-radius:10px;padding:40px 44px;width:100%;max-width:360px;text-align:center}
+#gate-logo{font-family:ui-monospace,Consolas,monospace;margin-bottom:24px;display:inline-flex;flex-direction:column;background:#1C1C23;border:1px solid #272730;border-radius:6px;padding:8px 14px;position:relative}
+#gate-logo::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:#6DC93B;border-radius:2px}
+#gate-logo .live{font-size:12px;font-weight:700;color:#EEEFF5;letter-spacing:1px}
+#gate-logo .mode{font-size:12px;font-weight:700;color:#6DC93B;letter-spacing:1px}
+#gate h2{font-size:14px;font-weight:700;color:#EEEFF5;margin-bottom:4px;letter-spacing:.5px}
+#gate p{font-size:11px;color:#585868;margin-bottom:24px}
+#gate input{width:100%;background:#0E0E11;border:1px solid #272730;border-radius:6px;padding:11px 14px;color:#EEEFF5;font-size:13px;font-family:ui-monospace,Consolas,monospace;letter-spacing:2px;outline:none;transition:border-color .15s;text-align:center}
+#gate input:focus{border-color:#6DC93B}
+#gate input.err{border-color:#E8453C;animation:shake .3s}
+#gate-btn{margin-top:12px;width:100%;background:#6DC93B;color:#fff;font-weight:700;font-size:13px;padding:11px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.5px;transition:background .15s}
+#gate-btn:hover{background:#4EA828}
+#gate-err{font-size:11px;color:#E8453C;margin-top:10px;min-height:16px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+<div id="gate">
+  <div id="gate-box">
+    <div id="gate-logo"><span class="live">LIVE</span><span class="mode">MODE</span></div>
+    <h2>Reforma Tributária · Portfólio</h2>
+    <p>Acesso restrito · Digite a senha para continuar</p>
+    <input id="gate-input" type="password" placeholder="••••••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')gateCheck()">
+    <button id="gate-btn" onclick="gateCheck()">Entrar →</button>
+    <div id="gate-err"></div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('rt_ok')==='1'){document.getElementById('gate').style.display='none';}
+  else{document.body.style.overflow='hidden';}
+})();
+function gateCheck(){
+  var v=document.getElementById('gate-input').value;
+  if(v==='livemode2026'){
+    sessionStorage.setItem('rt_ok','1');
+    document.getElementById('gate').style.display='none';
+    document.body.style.overflow='';
+  } else {
+    var inp=document.getElementById('gate-input');
+    inp.classList.add('err');
+    document.getElementById('gate-err').textContent='Senha incorreta. Tente novamente.';
+    inp.value='';
+    setTimeout(function(){inp.classList.remove('err');},400);
+  }
+}
+</script>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo-box">
+      <div class="logo-live">LIVE</div>
+      <div class="logo-mode">MODE</div>
+    </div>
+    <div class="hd-center">
+      <div class="hd-title">REFORMA TRIBUTÁRIA</div>
+      <div class="hd-sub">Portfólio · LC 214/2025 · 2026–2033</div>
+    </div>
+  </div>
+  <div class="hd-meta">
+    <b id="hd-total">—</b> contratos &nbsp;|&nbsp; Atualizado <b id="hd-gerado">—</b>
+  </div>
+</header>
+
+<div class="kpi-strip" id="kpi-strip"></div>
+<div class="insight-row" id="insight-row"></div>
+<div class="toolbar" id="toolbar"></div>
+
+<div class="main">
+
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-title">Evolução do Impacto Tributário 2026–2033</div>
+      <div class="panel-note" id="chart-note"></div>
+    </div>
+    <div class="panel-body">
+      <div class="legend">
+        <div class="leg"><div class="leg-sq" style="background:rgba(109,201,59,.75)"></div>Regime Atual</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.3)"></div>Novo Regime (CBS+IBS)</div>
+        <div class="leg"><div class="leg-line" style="background:var(--am)"></div>Δ Impacto (eixo direito · ponto maior = ano selecionado)</div>
+        <div class="leg" style="margin-left:auto;font-style:italic;color:var(--am)">⚠ barra tracejada = estimativa</div>
+      </div>
+      <canvas id="evoChart" height="75"></canvas>
+    </div>
+  </div>
+
+  <div class="panel" id="year-panel">
+    <div class="yr-strip" id="yr-strip"></div>
+    <div class="yr-kpis" id="yr-kpis"></div>
+    <div class="panel-hdr" style="border-top:1px solid var(--s3)">
+      <div class="panel-title" id="tbl-title">Contratos</div>
+      <div class="panel-note" id="tbl-count"></div>
+    </div>
+    <div class="tbl-scroll">
+      <table class="ct" id="ct"></table>
+    </div>
+  </div>
+
+</div>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="tl-year">2026</div>
+    <div class="tl-text">CBS declaratório — não gera pagamento. PIS+COFINS e ISS vigentes.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2027 ⚠</div>
+    <div class="tl-text">CBS 8,8% substitui PIS+COFINS. IBS declaratório (0,1%). Cedente sem crédito.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2028 ⚠</div>
+    <div class="tl-text">CBS 8,8% + ISS 3%. IBS ainda declaratório.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2029 ⚠</div>
+    <div class="tl-text">IBS efetivo: 3,2%. ISS reduz para 2,7%. Ponto de aceleração da carga.</div>
+  </div>
+  <div class="tl-item tl-est">
+    <div class="tl-year">2033 ⚠</div>
+    <div class="tl-text">ISS zerado. CBS 8,8% + IBS 17,7% = 26,5% sobre a base de serviços.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-year" style="color:var(--t3)">Posição Cedente</div>
+    <div class="tl-text" style="color:var(--t3)">Livemode vende direitos. Sem recuperação de crédito CBS/IBS. Carga é custo líquido.</div>
+  </div>
+</div>
+
+<footer>
+  <span>LIVEMODE · Reforma Tributária · LC 214/2025 · Posição: Cedente</span>
+  <span id="footer-meta"></span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── Formatação ───────────────────────────────────────────────────────────────
+const fR = v => {
+  if (v == null || isNaN(v)) return '—';
+  const neg = v < 0, a = Math.abs(v), s = neg ? '−' : '';
+  if (a >= 1e6) return s + 'R$ ' + (a/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) + 'M';
+  if (a >= 1e3) return s + 'R$ ' + (a/1e3).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) + 'k';
+  return s + 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fN = v => {
+  if (v == null || isNaN(v) || v === 0) return '—';
+  return (v < 0 ? '−' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fNS = v => {
+  if (v == null || isNaN(v)) return '—';
+  return (v < 0 ? '−' : '') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+};
+const fPct = v => v == null ? '—' : (v >= 0 ? '+' : '') + (v*100).toFixed(1) + '%';
+const fDate = s => { try { return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); } catch(e){return s;} };
+const clsDelta = v => v > 100 ? 'up' : v < -100 ? 'dn' : 'nt';
+
+// ── Cálculo auxiliar ─────────────────────────────────────────────────────────
+function resumo(projetos) {
+  const out = {};
+  D.anos.forEach(a => {
+    let valor = 0, atual = 0, novo = 0;
+    projetos.forEach(p => {
+      const r = p.impacto[String(a)];
+      if (!r) return;
+      valor += r.valor; atual += r.total_atual; novo += r.total_novo;
+    });
+    out[a] = {valor, atual, novo, delta: novo - atual, confirmed: D.rates[String(a)]?.confirmed ?? false};
+  });
+  return out;
+}
+
+function contractStats(proj) {
+  let totalOld = 0, totalNew = 0;
+  D.anos.forEach(a => {
+    const r = proj.impacto[String(a)];
+    if (!r) return;
+    totalOld += r.total_atual;
+    totalNew += r.total_novo;
+  });
+  const deltaAcum = totalNew - totalOld;
+  const pctAcum = totalOld > 0 ? deltaAcum / totalOld : (deltaAcum > 0 ? 1 : 0);
+  let sev;
+  if (proj.ano_fim < 2027)       sev = 'n';
+  else if (pctAcum >= 0.40)      sev = 'c';
+  else if (pctAcum >= 0.20)      sev = 'a';
+  else if (pctAcum >= 0.05)      sev = 'm';
+  else                           sev = 'b';
+  return {totalOld, totalNew, deltaAcum, pctAcum, sev};
+}
+
+// ── Estado global ────────────────────────────────────────────────────────────
+let co = 'todos', yr = D.anos[0];
+let sortCol = 'acum', sortDir = -1;
+let _chart = null;
+
+function getProj() {
+  return co === 'lms' ? D.lms : co === 'cztv' ? D.cztv : D.projetos;
+}
+
+// ── KPI Strip ────────────────────────────────────────────────────────────────
+function buildKPIStrip() {
+  const all = D.projetos;
+  const totalVal = all.reduce((s,p) => s + p.valor_total, 0);
+  const res = resumo(all);
+  const r26 = res[2026] || {};
+  const r33 = res[2033] || {};
+  const acumOld  = Object.values(res).reduce((s,r) => s + r.atual, 0);
+  const acumNew  = Object.values(res).reduce((s,r) => s + r.novo, 0);
+  const acumDelta = acumNew - acumOld;
+  const ativos33 = all.filter(p => p.ano_fim >= 2033).length;
+
+  const kpis = [
+    {lbl:'Total Portfólio',       val:fR(totalVal),      sub:`${all.length} contratos em Fechamento`,            c:'var(--t2)'},
+    {lbl:'Carga Tributária 2026', val:fR(r26.atual),     sub:'PIS 1,65% + COFINS 7,6% + ISS 3% vigentes',       c:'var(--bl)'},
+    {lbl:'Carga Projetada 2033',  val:fR(r33.novo),      sub:'CBS 8,8% + IBS 17,7% · ISS zerado ⚠ est.',        c:'var(--re)'},
+    {lbl:'Δ Acumulado 2026–2033', val:(acumDelta>=0?'+':'')+fR(acumDelta),
+      sub:fPct(acumOld>0?acumDelta/acumOld:0)+' sobre regime atual acumulado',
+      c: acumDelta > 0 ? 'var(--re)' : 'var(--g)'},
+    {lbl:'Contratos Expostos 2033', val:ativos33,
+      sub:`de ${all.length} atingem o ano terminal · ISS zero`,
+      c: ativos33 > 0 ? 'var(--am)' : 'var(--t2)'},
+  ];
+
+  document.getElementById('kpi-strip').innerHTML = kpis.map(k =>
+    `<div class="kpi" style="--c:${k.c}">
+       <div class="kpi-lbl">${k.lbl}</div>
+       <div class="kpi-val num">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('');
+}
+
+// ── Insights ─────────────────────────────────────────────────────────────────
+function buildInsights() {
+  const all = D.projetos;
+  const totalVal = all.reduce((s,p) => s + p.valor_total, 0);
+
+  // 1 — contratos além de 2029 (IBS acelera)
+  const post2028 = all.filter(p => p.ano_fim >= 2029);
+  const valPost  = post2028.reduce((s,p) => s + p.valor_total, 0);
+  const pctPost  = totalVal > 0 ? valPost/totalVal : 0;
+
+  // 2 — distribuição de severidade
+  const stats   = all.map(p => contractStats(p));
+  const nCrit   = stats.filter(s => s.sev === 'c').length;
+  const nAlto   = stats.filter(s => s.sev === 'a').length;
+  const nNaoAf  = stats.filter(s => s.sev === 'n').length;
+  const bigImpact = all
+    .map((p,i) => ({p, st:stats[i]}))
+    .sort((a,b) => b.st.deltaAcum - a.st.deltaAcum)[0];
+
+  // 3 — exposição por empresa
+  const resLMS  = resumo(D.lms);
+  const resCZTV = resumo(D.cztv);
+  const dLMS    = Object.values(resLMS).reduce((s,r) => s+r.delta, 0);
+  const dCZTV   = Object.values(resCZTV).reduce((s,r) => s+r.delta, 0);
+  const dTotal  = dLMS + dCZTV;
+
+  const items = [
+    {
+      icon:'⚡', bg:'rgba(240,160,48,.15)',
+      lbl:'Aceleração do IBS a partir de 2029',
+      text:`<strong>${post2028.length} contrato${post2028.length!==1?'s':''}</strong> (${(pctPost*100).toFixed(0)}% do portfólio em valor) atravessam 2029, quando IBS sobe de <em>0,1%</em> para <em>3,2%</em> e continua crescendo até <em>17,7%</em> em 2033. Contratos curtos, que encerram antes de 2027, não são afetados pelo novo regime.`
+    },
+    {
+      icon:'🔴', bg:'rgba(232,69,60,.12)',
+      lbl:`${nCrit+nAlto} contrato${nCrit+nAlto!==1?'s':''} com risco alto ou crítico`,
+      text:`<strong>${nCrit} crítico${nCrit!==1?'s':''}</strong> (aumento acumulado ≥40%) e <strong>${nAlto} alto${nAlto!==1?'s':''}</strong> (20–40%). ${nNaoAf>0?`<strong>${nNaoAf}</strong> encerram antes de 2027 e não são afetados. `:''}Maior impacto: <strong>${bigImpact?bigImpact.p.nome.slice(0,40):'—'}</strong>${bigImpact?` (+${fR(bigImpact.st.deltaAcum)} acumulado)`:''}.`
+    },
+    {
+      icon:'📊', bg:'rgba(74,159,212,.1)',
+      lbl:'Distribuição do impacto por empresa',
+      text:`Livemode concentra <strong>${dTotal>0?(dLMS/dTotal*100).toFixed(0):0}%</strong> do impacto acumulado (${fR(dLMS)}). CazéTV concentra <strong>${dTotal>0?(dCZTV/dTotal*100).toFixed(0):0}%</strong> (${fR(dCZTV)}). Posição cedente: sem recuperação de crédito CBS/IBS — toda carga é custo líquido.`
+    },
+  ];
+
+  document.getElementById('insight-row').innerHTML = items.map(i =>
+    `<div class="insight">
+       <div class="ins-icon" style="background:${i.bg}">${i.icon}</div>
+       <div>
+         <div class="ins-label">${i.lbl}</div>
+         <div class="ins-text">${i.text}</div>
+       </div>
+     </div>`
+  ).join('');
+}
+
+// ── Toolbar ──────────────────────────────────────────────────────────────────
+function buildToolbar() {
+  const tabs = [
+    {key:'todos', lbl:`Todos os Contratos (${D.projetos.length})`},
+    {key:'lms',   lbl:`Livemode (${D.lms.length})`},
+    {key:'cztv',  lbl:`CazéTV (${D.cztv.length})`},
+  ];
+  document.getElementById('toolbar').innerHTML = tabs.map(t =>
+    `<button class="co-btn${co===t.key?' active':''}" onclick="selCo('${t.key}')">${t.lbl}</button>`
+  ).join('');
+}
+
+function selCo(key) { co = key; buildToolbar(); drawChart(); renderYr(); }
+
+// ── Gráfico ──────────────────────────────────────────────────────────────────
+function drawChart() {
+  if (typeof Chart === 'undefined') return;
+  const projetos = getProj();
+  const res   = resumo(projetos);
+  const lbls  = D.anos.map(String);
+  const dAtual = D.anos.map(a => Math.round(res[a]?.atual || 0));
+  const dNovo  = D.anos.map(a => Math.round(res[a]?.novo  || 0));
+  const dDelta = D.anos.map(a => Math.round(res[a]?.delta || 0));
+  const conf   = D.anos.map(a => D.rates[String(a)]?.confirmed ?? false);
+
+  const ctx = document.getElementById('evoChart').getContext('2d');
+  if (_chart) _chart.destroy();
+
+  const yrHighlight = {
+    id: 'yrHighlight',
+    beforeDraw(chart) {
+      const idx = D.anos.indexOf(yr);
+      if (idx < 0) return;
+      const meta = chart.getDatasetMeta(0);
+      const bar = meta.data[idx];
+      if (!bar) return;
+      const {ctx: c, chartArea} = chart;
+      const hw = (bar.width || 32) * 0.8;
+      c.save();
+      c.fillStyle = 'rgba(109,201,59,.10)';
+      c.fillRect(bar.x - hw, chartArea.top, hw * 2, chartArea.height);
+      c.strokeStyle = 'rgba(109,201,59,.25)';
+      c.lineWidth = 1;
+      c.setLineDash([3, 3]);
+      c.beginPath(); c.moveTo(bar.x - hw, chartArea.top);    c.lineTo(bar.x - hw, chartArea.bottom); c.stroke();
+      c.beginPath(); c.moveTo(bar.x + hw, chartArea.top);    c.lineTo(bar.x + hw, chartArea.bottom); c.stroke();
+      c.restore();
+    }
+  };
+
+  _chart = new Chart(ctx, {
+    plugins: [yrHighlight],
+    data: {
+      labels: lbls,
+      datasets: [
+        {
+          type:'bar', label:'Regime Atual', data:dAtual, order:2,
+          backgroundColor: D.anos.map((a,i) => conf[i] ? 'rgba(109,201,59,.75)' : 'rgba(109,201,59,.35)'),
+          borderColor:     D.anos.map((a,i) => conf[i] ? '#6DC93B' : 'rgba(109,201,59,.5)'),
+          borderWidth:1, borderRadius:3,
+        },
+        {
+          type:'bar', label:'Novo Regime', data:dNovo, order:2,
+          backgroundColor: D.anos.map((a,i) => conf[i] ? 'rgba(255,255,255,.65)' : 'rgba(255,255,255,.22)'),
+          borderColor:     D.anos.map((a,i) => conf[i] ? 'rgba(255,255,255,.9)' : 'rgba(255,255,255,.35)'),
+          borderWidth:1, borderRadius:3,
+        },
+        {
+          type:'line', label:'Δ Impacto', data:dDelta, order:1,
+          borderColor:'#F0A030', backgroundColor:'rgba(240,160,48,.07)',
+          borderWidth:2,
+          pointRadius:     D.anos.map(a => a === yr ? 8 : 4),
+          pointBackgroundColor: D.anos.map(a => a === yr ? '#FFFFFF' : '#F0A030'),
+          pointBorderColor:     D.anos.map(a => a === yr ? '#F0A030' : '#0E0E11'),
+          pointBorderWidth:     D.anos.map(a => a === yr ? 3 : 1.5),
+          fill:true, tension:0.3, yAxisID:'y2',
+        },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1C1C23', borderColor:'#272730', borderWidth:1,
+          titleColor:'#A0A0B4', bodyColor:'#EEEFF5', padding:12, itemSort:(a,b)=>b.datasetIndex-a.datasetIndex,
+          callbacks:{
+            label: ctx => {
+              if (ctx.dataset.label === 'Δ Impacto')
+                return `  Δ: ${ctx.raw>=0?'+':''}${fNS(ctx.raw)}`;
+              return `  ${ctx.dataset.label}: ${fNS(ctx.raw)}`;
+            },
+            afterBody: items => {
+              const a = D.anos[items[0].dataIndex];
+              const lines = [];
+              if (!D.rates[String(a)]?.confirmed) lines.push('  ⚠ Alíquotas estimadas');
+              if (a === 2026) lines.push('  ℹ CBS declaratório em 2026');
+              if (a === 2029) lines.push('  ⚡ IBS entra em vigor: 3,2%');
+              return lines;
+            }
+          }
+        },
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#585868', font:{size:10, family:'monospace'}}},
+        y:{
+          position:'left', grid:{color:'rgba(255,255,255,.04)'},
+          ticks:{color:'#585868', font:{size:10}, callback:v=>fR(v)}
+        },
+        y2:{
+          position:'right', grid:{display:false},
+          ticks:{color:'#B08030', font:{size:10}, callback:v=>(v>=0?'+':'')+fR(v)}
+        },
+      }
+    }
+  });
+
+  const n = projetos.length;
+  document.getElementById('chart-note').textContent =
+    `${n} contrato${n!==1?'s':''} · valores anualizados proporcionalmente ao período`;
+}
+
+// ── Seletor de ano + mini KPIs ────────────────────────────────────────────────
+function buildYrStrip() {
+  document.getElementById('yr-strip').innerHTML =
+    `<span class="yr-lbl">Drill-down por ano</span>` +
+    D.anos.map(a => {
+      const conf = D.rates[String(a)]?.confirmed;
+      return `<button class="yr-btn${yr===a?' active':''}${!conf?' est':''}"
+        onclick="selYr(${a})">${a}${!conf?' ⚠':''}</button>`;
+    }).join('');
+}
+
+function buildYrKpis(projetos) {
+  const res  = resumo(projetos);
+  const r    = res[yr] || {};
+  const conf = D.rates[String(yr)]?.confirmed;
+  const est  = !conf ? ' <span style="color:var(--am);font-size:9px;font-weight:700">⚠ Est.</span>' : '';
+  const delta = r.delta || 0;
+
+  const cards = [
+    {lbl:'Valor na Base',        val:fR(r.valor),  sub:'receita anualizada dos contratos neste ano',        c:'var(--t2)'},
+    {lbl:'Regime Atual'+est,     val:fR(r.atual),  sub:yr===2026?'PIS+COFINS+ISS (regime em vigor)':'regime em vigor neste ano', c:'var(--bl)'},
+    {lbl:'Novo Regime'+est,      val:fR(r.novo),   sub:yr<=2028?'CBS+ISS · IBS declaratório':'CBS+IBS+ISS', c:'var(--re)'},
+    {lbl:'Δ em '+yr+est,         val:(delta>=0?'+':'')+fR(delta),
+      sub:r.atual>0?fPct(delta/r.atual)+' sobre regime atual neste ano':'regime atual = 0 (CBS/IBS substituíram PIS/COFINS)',
+      c:delta>0?'var(--re)':delta<0?'var(--g)':'var(--t3)'},
+  ];
+
+  document.getElementById('yr-kpis').innerHTML = cards.map(k =>
+    `<div class="yr-kpi" style="--c:${k.c}">
+       <div class="kpi-lbl">${k.lbl}</div>
+       <div class="kpi-val num">${k.val}</div>
+       <div class="kpi-sub">${k.sub}</div>
+     </div>`
+  ).join('');
+}
+
+function selYr(a) { yr = a; buildYrStrip(); renderYr(); drawChart(); }
+
+// ── Tabela ───────────────────────────────────────────────────────────────────
+function buildTable(projetos) {
+  const ativos = projetos.filter(p => p.impacto[String(yr)]);
+
+  // Enriquecer com stats
+  const rows = ativos.map(p => {
+    const r  = p.impacto[String(yr)];
+    const st = contractStats(p);
+    return {
+      p, r, st,
+      nome:     p.nome,
+      marca:    p.marca || p.nome,
+      empresa:  p.empresa,
+      periodo:  p.ano_ini === p.ano_fim ? String(p.ano_ini) : `${p.ano_ini}–${p.ano_fim}`,
+      valor:    r.valor,
+      atual:    r.total_atual,
+      novo:     r.total_novo,
+      delta:    r.total_novo - r.total_atual,
+      deltaAcum: st.deltaAcum,
+      pctAcum:   st.pctAcum,
+      sev:       st.sev,
+    };
+  });
+
+  // Ordenar
+  const sevOrd = {c:4, a:3, m:2, b:1, n:0};
+  rows.sort((a, b) => {
+    let av, bv;
+    if (sortCol === 'nome')    { return a.nome.localeCompare(b.nome) * sortDir; }
+    if (sortCol === 'empresa') { return a.empresa.localeCompare(b.empresa) * sortDir; }
+    if (sortCol === 'sev')     { return ((sevOrd[a.sev]||0) - (sevOrd[b.sev]||0)) * sortDir; }
+    av = a[sortCol] ?? 0; bv = b[sortCol] ?? 0;
+    return (av - bv) * sortDir;
+  });
+
+  const thC = k => sortCol === k ? (sortDir === 1 ? 'sort-asc' : 'sort-desc') : '';
+
+  const thead = `<thead><tr>
+    <th class="left ${thC('nome')}"    onclick="tSort('nome')">Marca / Contrato</th>
+    <th class="left ${thC('empresa')}" onclick="tSort('empresa')">Empresa</th>
+    <th class="left ${thC('periodo')}" style="cursor:default">Período</th>
+    <th class="${thC('valor')}"    onclick="tSort('valor')">Valor ${yr}</th>
+    <th class="${thC('atual')}"    onclick="tSort('atual')">Regime Atual</th>
+    <th class="${thC('novo')}"     onclick="tSort('novo')">Novo Regime</th>
+    <th class="${thC('delta')}"    onclick="tSort('delta')">Δ ${yr}</th>
+    <th class="${thC('acum')}"     onclick="tSort('acum')">Δ Acumulado</th>
+    <th class="${thC('sev')}"      onclick="tSort('sev')">Severidade</th>
+  </tr></thead>`;
+
+  let sValor=0, sAtual=0, sNovo=0, sDelta=0;
+  const sevLabel = {c:'Crítico', a:'Alto', m:'Médio', b:'Baixo', n:'Não afetado'};
+
+  const tbody = '<tbody>' + rows.map(row => {
+    const {delta, deltaAcum} = row;
+    sValor += row.valor; sAtual += row.atual; sNovo += row.novo; sDelta += delta;
+    const dc  = clsDelta(delta);
+    const dac = clsDelta(deltaAcum);
+    const pctTxt = row.pctAcum != null && row.sev !== 'n'
+      ? `<span style="color:var(--t3);font-size:9px;margin-left:4px">(${fPct(row.pctAcum)})</span>` : '';
+    return `<tr>
+      <td class="left" title="${row.nome}" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${row.marca}</td>
+      <td class="left"><span class="badge badge-${row.empresa.toLowerCase()}">${row.empresa}</span></td>
+      <td class="left num" style="color:var(--t3)">${row.periodo}</td>
+      <td class="num">${fNS(row.valor)}</td>
+      <td class="num">${row.atual > 0 ? fNS(row.atual) : '<span style="color:var(--t3)">—</span>'}</td>
+      <td class="num">${row.novo  > 0 ? fNS(row.novo)  : '<span style="color:var(--t3)">—</span>'}</td>
+      <td class="num ${dc}">${delta  !== 0 ? (delta  > 0?'+':'')+fNS(delta)  : '<span class="nt">—</span>'}</td>
+      <td class="num ${dac}">${deltaAcum !== 0 ? (deltaAcum>0?'+':'')+fR(deltaAcum)+pctTxt : '<span class="nt">—</span>'}</td>
+      <td><span class="sev sev-${row.sev}">${sevLabel[row.sev]||row.sev}</span></td>
+    </tr>`;
+  }).join('') +
+  `<tr class="total-row">
+    <td class="left" colspan="3">TOTAL &nbsp;·&nbsp; ${rows.length} contrato${rows.length!==1?'s':''}</td>
+    <td class="num">${fNS(sValor)}</td>
+    <td class="num">${sAtual > 0 ? fNS(sAtual) : '—'}</td>
+    <td class="num">${sNovo  > 0 ? fNS(sNovo)  : '—'}</td>
+    <td class="num ${clsDelta(sDelta)}">${sDelta!==0?(sDelta>0?'+':'')+fNS(sDelta):'—'}</td>
+    <td></td><td></td>
+  </tr>` + '</tbody>';
+
+  document.getElementById('ct').innerHTML = thead + tbody;
+  document.getElementById('tbl-title').textContent = `Contratos em ${yr}`;
+  document.getElementById('tbl-count').textContent =
+    `${rows.length} contrato${rows.length!==1?'s':''} ativos · clique nos cabeçalhos para ordenar`;
+}
+
+function tSort(col) {
+  sortDir = sortCol === col ? sortDir * -1 : (col === 'nome' || col === 'empresa' ? 1 : -1);
+  sortCol = col;
+  buildTable(getProj());
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderYr() {
+  const proj = getProj();
+  buildYrStrip();
+  buildYrKpis(proj);
+  buildTable(proj);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+document.getElementById('hd-total').textContent  = D.total_projetos;
+document.getElementById('hd-gerado').textContent = fDate(D.gerado);
+document.getElementById('footer-meta').textContent =
+  `Gerado em ${fDate(D.gerado)} · ${D.total_projetos} contratos · Alíquotas 2027–2033 estimadas`;
+
+buildKPIStrip();
+buildInsights();
+buildToolbar();
+drawChart();
+renderYr();
+</script>
+</body>
+</html>
