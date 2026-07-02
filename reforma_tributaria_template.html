@@ -267,6 +267,16 @@ function gateCheck(){
     </div>
   </div>
 
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-title">Alíquotas por Ano · Regime Atual vs. Novo Regime</div>
+      <div class="panel-note">CBS/IBS 2027–2033 são estimativas · LC 214/2025 ⚠</div>
+    </div>
+    <div class="tbl-scroll">
+      <table class="ct" id="rates-tbl"></table>
+    </div>
+  </div>
+
   <div class="panel" id="year-panel">
     <div class="yr-strip" id="yr-strip"></div>
     <div class="yr-kpis" id="yr-kpis"></div>
@@ -561,10 +571,21 @@ function drawChart() {
             },
             afterBody: items => {
               const a = D.anos[items[0].dataIndex];
-              const lines = [];
-              if (!D.rates[String(a)]?.confirmed) lines.push('  ⚠ Alíquotas estimadas');
-              if (a === 2026) lines.push('  ℹ CBS declaratório em 2026');
-              if (a === 2029) lines.push('  ⚡ IBS entra em vigor: 3,2%');
+              const r = D.rates[String(a)];
+              if (!r) return [];
+              const pct = v => (v*100).toFixed(1)+'%';
+              const cbsEf = a === 2026 ? 0 : r.cbs;
+              const ibsEf = a <= 2028  ? 0 : r.ibs;
+              const lines = [''];
+              if (r.pis > 0) lines.push(`  PIS: ${pct(r.pis)}  COFINS: ${pct(r.cof)}`);
+              lines.push(`  ISS: ${pct(r.iss)}` + (r.iss === 0 ? ' (zerado)' : ''));
+              lines.push(`  CBS: ${cbsEf > 0 ? pct(cbsEf) : '0% (declaratório)'}`);
+              lines.push(`  IBS: ${ibsEf > 0 ? pct(ibsEf) : '0% (declaratório)'}`);
+              const tAtual = r.pis + r.cof + r.iss;
+              const tNovo  = r.iss + cbsEf + ibsEf;
+              lines.push('');
+              lines.push(`  Regime Atual: ${pct(tAtual)}  →  Novo: ${pct(tNovo)}`);
+              if (!r.confirmed) lines.push('  ⚠ Estimativa — LC 214/2025');
               return lines;
             }
           }
@@ -607,10 +628,26 @@ function buildYrKpis(projetos) {
   const est  = !conf ? ' <span style="color:var(--am);font-size:9px;font-weight:700">⚠ Est.</span>' : '';
   const delta = r.delta || 0;
 
+  const rt     = D.rates[String(yr)] || {};
+  const pisCof = (rt.pis||0) + (rt.cof||0);
+  const cbsEf  = yr === 2026 ? 0 : (rt.cbs||0);
+  const ibsEf  = yr <= 2028  ? 0 : (rt.ibs||0);
+  const iss    = rt.iss || 0;
+  const tAtual = pisCof + iss;
+  const tNovo  = iss + cbsEf + ibsEf;
+  const pR     = v => (v*100).toFixed(1)+'%';
+
+  const subAtual = tAtual > 0
+    ? `PIS+COFINS ${pR(pisCof)} · ISS ${pR(iss)} · Total ${pR(tAtual)}`
+    : 'regime em vigor neste ano';
+  const subNovo = yr <= 2028
+    ? `CBS ${pR(cbsEf)} · ISS ${pR(iss)} · IBS decl. · Total ${pR(tNovo)}`
+    : `CBS ${pR(cbsEf)} · IBS ${pR(ibsEf)} · ISS ${pR(iss)} · Total ${pR(tNovo)}`;
+
   const cards = [
     {lbl:'Valor na Base',        val:fR(r.valor),  sub:'receita anualizada dos contratos neste ano',        c:'var(--t2)'},
-    {lbl:'Regime Atual'+est,     val:fR(r.atual),  sub:yr===2026?'PIS+COFINS+ISS (regime em vigor)':'regime em vigor neste ano', c:'var(--bl)'},
-    {lbl:'Novo Regime'+est,      val:fR(r.novo),   sub:yr<=2028?'CBS+ISS · IBS declaratório':'CBS+IBS+ISS', c:'var(--re)'},
+    {lbl:'Regime Atual'+est,     val:fR(r.atual),  sub:subAtual, c:'var(--bl)'},
+    {lbl:'Novo Regime'+est,      val:fR(r.novo),   sub:subNovo,  c:'var(--re)'},
     {lbl:'Δ em '+yr+est,         val:(delta>=0?'+':'')+fR(delta),
       sub:r.atual>0?fPct(delta/r.atual)+' sobre regime atual neste ano':'regime atual = 0 (CBS/IBS substituíram PIS/COFINS)',
       c:delta>0?'var(--re)':delta<0?'var(--g)':'var(--t3)'},
@@ -625,7 +662,55 @@ function buildYrKpis(projetos) {
   ).join('');
 }
 
-function selYr(a) { yr = a; buildYrStrip(); renderYr(); drawChart(); }
+// ── Tabela de Alíquotas ───────────────────────────────────────────────────────
+function buildRatesTable() {
+  const pct = v => v > 0 ? (v*100).toFixed(1)+'%' : '—';
+  const thead = `<thead><tr>
+    <th style="text-align:left">Ano</th>
+    <th>PIS+COFINS</th>
+    <th>ISS</th>
+    <th style="color:var(--bl)">Total Atual</th>
+    <th>CBS</th>
+    <th>IBS</th>
+    <th style="color:var(--re)">Total Novo</th>
+    <th>Δ Alíquota</th>
+    <th>Status</th>
+  </tr></thead>`;
+
+  const rows = D.anos.map(a => {
+    const r = D.rates[String(a)];
+    if (!r) return '';
+    const pisCof = (r.pis||0) + (r.cof||0);
+    const cbsEf  = a === 2026 ? 0 : (r.cbs||0);
+    const ibsEf  = a <= 2028  ? 0 : (r.ibs||0);
+    const tAtual = pisCof + (r.iss||0);
+    const tNovo  = (r.iss||0) + cbsEf + ibsEf;
+    const delta  = tNovo - tAtual;
+    const dCol   = delta > 0.0005 ? 'var(--re)' : delta < -0.0005 ? 'var(--g)' : 'var(--t3)';
+    const dSign  = delta > 0 ? '+' : '';
+    const isYr   = a === yr;
+    const rowStyle = isYr ? 'background:rgba(109,201,59,0.08);outline:1px solid rgba(109,201,59,0.25) inset' : '';
+    const yrLabel = `${a}${!r.confirmed?' <span style="color:var(--am);font-size:8px;vertical-align:super">⚠</span>':''}`;
+    return `<tr style="${rowStyle}">
+      <td style="text-align:left;font-family:var(--fm);font-weight:${isYr?700:400};color:${isYr?'var(--g)':'var(--t1)'}">${yrLabel}</td>
+      <td>${pct(pisCof)}</td>
+      <td>${pct(r.iss)}</td>
+      <td style="font-weight:700;color:var(--bl)">${pct(tAtual)}</td>
+      <td>${a===2026?'<span style="color:var(--t3);font-size:9px">declaratório</span>':pct(cbsEf)}</td>
+      <td>${a<=2028?'<span style="color:var(--t3);font-size:9px">declaratório</span>':pct(ibsEf)}</td>
+      <td style="font-weight:700;color:var(--re)">${pct(tNovo)}</td>
+      <td style="font-weight:700;color:${dCol}">${dSign}${(delta*100).toFixed(1)} pp</td>
+      <td>${r.confirmed
+        ?'<span style="color:var(--g);font-size:9px;font-weight:700">✓ Confirmado</span>'
+        :'<span style="color:var(--am);font-size:9px;font-weight:700">⚠ Estimativa</span>'
+      }</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('rates-tbl').innerHTML = thead + '<tbody>' + rows + '</tbody>';
+}
+
+function selYr(a) { yr = a; buildYrStrip(); renderYr(); drawChart(); buildRatesTable(); }
 
 // ── Tabela ───────────────────────────────────────────────────────────────────
 function buildTable(projetos) {
@@ -738,6 +823,7 @@ buildInsights();
 buildToolbar();
 drawChart();
 renderYr();
+buildRatesTable();
 </script>
 </body>
 </html>
