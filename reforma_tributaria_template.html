@@ -576,15 +576,21 @@ function drawChart() {
               const pct = v => (v*100).toFixed(1)+'%';
               const cbsEf = a === 2026 ? 0 : r.cbs;
               const ibsEf = a <= 2028  ? 0 : r.ibs;
+              const PIS_REF=0.0165, COF_REF=0.076, ISS_REF=0.030;
+              const tAtual = PIS_REF + COF_REF + ISS_REF;
+              const tNovo  = r.iss + cbsEf + ibsEf;
               const lines = [''];
-              if (r.pis > 0) lines.push(`  PIS: ${pct(r.pis)}  COFINS: ${pct(r.cof)}`);
-              lines.push(`  ISS: ${pct(r.iss)}` + (r.iss === 0 ? ' (zerado)' : ''));
+              lines.push(`  ── Regime Atual (baseline 2026) ──`);
+              lines.push(`  PIS: ${pct(PIS_REF)}  COFINS: ${pct(COF_REF)}  ISS: ${pct(ISS_REF)}`);
+              lines.push(`  Total Atual: ${pct(tAtual)}`);
+              lines.push('');
+              lines.push(`  ── Novo Regime ${a} ──`);
               lines.push(`  CBS: ${cbsEf > 0 ? pct(cbsEf) : '0% (declaratório)'}`);
               lines.push(`  IBS: ${ibsEf > 0 ? pct(ibsEf) : '0% (declaratório)'}`);
-              const tAtual = r.pis + r.cof + r.iss;
-              const tNovo  = r.iss + cbsEf + ibsEf;
+              lines.push(`  ISS: ${pct(r.iss)}` + (r.iss === 0 ? ' (zerado)' : ''));
+              lines.push(`  Total Novo: ${pct(tNovo)}`);
               lines.push('');
-              lines.push(`  Regime Atual: ${pct(tAtual)}  →  Novo: ${pct(tNovo)}`);
+              lines.push(`  Δ: ${tNovo >= tAtual ? '+' : ''}${pct(tNovo - tAtual)}`);
               if (!r.confirmed) lines.push('  ⚠ Estimativa — LC 214/2025');
               return lines;
             }
@@ -629,17 +635,16 @@ function buildYrKpis(projetos) {
   const delta = r.delta || 0;
 
   const rt     = D.rates[String(yr)] || {};
-  const pisCof = (rt.pis||0) + (rt.cof||0);
+  const PIS_REF = 0.0165, COF_REF = 0.076, ISS_REF = 0.030;
+  const pisCof = PIS_REF + COF_REF;
   const cbsEf  = yr === 2026 ? 0 : (rt.cbs||0);
   const ibsEf  = yr <= 2028  ? 0 : (rt.ibs||0);
   const iss    = rt.iss || 0;
-  const tAtual = pisCof + iss;
+  const tAtual = pisCof + ISS_REF;   // baseline 2026 fixo
   const tNovo  = iss + cbsEf + ibsEf;
   const pR     = v => (v*100).toFixed(1)+'%';
 
-  const subAtual = tAtual > 0
-    ? `PIS+COFINS ${pR(pisCof)} · ISS ${pR(iss)} · Total ${pR(tAtual)}`
-    : 'regime em vigor neste ano';
+  const subAtual = `PIS+COFINS ${pR(pisCof)} · ISS ${pR(ISS_REF)} · Total ${pR(tAtual)} (baseline 2026)`;
   const subNovo = yr <= 2028
     ? `CBS ${pR(cbsEf)} · ISS ${pR(iss)} · IBS decl. · Total ${pR(tNovo)}`
     : `CBS ${pR(cbsEf)} · IBS ${pR(ibsEf)} · ISS ${pR(iss)} · Total ${pR(tNovo)}`;
@@ -649,7 +654,7 @@ function buildYrKpis(projetos) {
     {lbl:'Regime Atual'+est,     val:fR(r.atual),  sub:subAtual, c:'var(--bl)'},
     {lbl:'Novo Regime'+est,      val:fR(r.novo),   sub:subNovo,  c:'var(--re)'},
     {lbl:'Δ em '+yr+est,         val:(delta>=0?'+':'')+fR(delta),
-      sub:r.atual>0?fPct(delta/r.atual)+' sobre regime atual neste ano':'regime atual = 0 (CBS/IBS substituíram PIS/COFINS)',
+      sub:fPct(delta/r.atual)+' sobre baseline 2026 (PIS+COFINS+ISS)',
       c:delta>0?'var(--re)':delta<0?'var(--g)':'var(--t3)'},
   ];
 
@@ -680,10 +685,11 @@ function buildRatesTable() {
   const rows = D.anos.map(a => {
     const r = D.rates[String(a)];
     if (!r) return '';
-    const pisCof = (r.pis||0) + (r.cof||0);
+    const PIS_REF = 0.0165, COF_REF = 0.076, ISS_REF = 0.030;
+    const pisCof = PIS_REF + COF_REF;          // baseline 2026 fixo
     const cbsEf  = a === 2026 ? 0 : (r.cbs||0);
     const ibsEf  = a <= 2028  ? 0 : (r.ibs||0);
-    const tAtual = pisCof + (r.iss||0);
+    const tAtual = pisCof + ISS_REF;           // baseline 2026 fixo
     const tNovo  = (r.iss||0) + cbsEf + ibsEf;
     const delta  = tNovo - tAtual;
     const dCol   = delta > 0.0005 ? 'var(--re)' : delta < -0.0005 ? 'var(--g)' : 'var(--t3)';

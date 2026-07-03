@@ -28,7 +28,11 @@ RATES = {
     2032: {"pis": .000,  "cof": .000,  "iss": .018, "cbs": .088, "ibs": .128, "confirmed": False},
     2033: {"pis": .000,  "cof": .000,  "iss": .000, "cbs": .088, "ibs": .177, "confirmed": False},
 }
-RATES_USD_PIS_COF = {y: (.0165 if y == 2026 else 0, .076 if y == 2026 else 0) for y in ANOS}
+# Baseline 2026 — alíquotas fixas para coluna "Regime Atual" (comparativo)
+# Pergunta: "quanto pagaria se a reforma nunca tivesse acontecido?"
+PIS_REF = 0.0165
+COF_REF = 0.076
+ISS_REF = 0.030
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -59,24 +63,21 @@ def calcular_impacto(valor_brl, ano_ini, ano_fim, is_brl=True, irrf_pct=0.15):
             continue
         r = RATES[ano]
         v = valor_por_ano
-        if is_brl:
-            pis_v  = v * r["pis"]
-            cof_v  = v * r["cof"]
-            iss_v  = v * r["iss"]
-            irrf_v = 0.0
-        else:
-            pis_pct, cof_pct = RATES_USD_PIS_COF[ano]
-            pis_v  = v * pis_pct
-            cof_v  = v * cof_pct
-            iss_v  = v * r["iss"]
-            irrf_v = v * irrf_pct
-        cbs_v        = v * r["cbs"]
-        ibs_v        = v * r["ibs"]
-        cbs_efetiva  = 0.0 if ano == 2026 else cbs_v
-        ibs_efetivo  = 0.0 if ano <= 2028  else ibs_v
-        total_atual  = irrf_v + pis_v + cof_v + iss_v
-        total_novo   = irrf_v + iss_v + cbs_efetiva + ibs_efetivo
-        delta        = total_novo - total_atual
+        # Regime Atual = baseline 2026 aplicado ao valor do ano
+        # "quanto pagaria se a reforma não tivesse ocorrido"
+        pis_v   = v * PIS_REF
+        cof_v   = v * COF_REF
+        iss_ref = v * ISS_REF   # ISS 2026 fixo para total_atual
+        iss_v   = v * r["iss"]  # ISS real do ano para total_novo
+        irrf_v  = 0.0 if is_brl else v * irrf_pct
+
+        cbs_v       = v * r["cbs"]
+        ibs_v       = v * r["ibs"]
+        cbs_efetiva = 0.0 if ano == 2026 else cbs_v
+        ibs_efetivo = 0.0 if ano <= 2028  else ibs_v
+        total_atual = irrf_v + pis_v + cof_v + iss_ref
+        total_novo  = irrf_v + iss_v + cbs_efetiva + ibs_efetivo
+        delta       = total_novo - total_atual
         resultado[str(ano)] = {
             "valor":       round(v, 2),
             "pis":         round(pis_v, 2),
