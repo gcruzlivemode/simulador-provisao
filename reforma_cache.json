@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-03T04:37:36.296767",
+  "gerado": "2026-07-03T12:52:50.666332",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -30,6 +30,12 @@
       "nome": "iFood | Bolão Copa do Mundo | 2026",
       "empresa": "LMS",
       "valor_total": 4000000.0
+    },
+    {
+      "id": "recBKPsE1JKRsQjL3",
+      "nome": "Bet365 | Paulistão | CazéTV | 2027",
+      "empresa": "CZTV",
+      "valor_total": 11500000.0
     },
     {
       "id": "recCrxy5T70qGKEOu",
