@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-06T17:38:32.498077",
+  "gerado": "2026-07-06T20:49:23.737361",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -120,6 +120,12 @@
       "nome": "Bet365 | Paulistão | 2027 | Cota Substituição\n",
       "empresa": "LMS",
       "valor_total": 25000000.0
+    },
+    {
+      "id": "recczz94XCWAKwcOg",
+      "nome": "Casas Bahia | Talentos: Luisinho | 2026 e 2027",
+      "empresa": "LMS",
+      "valor_total": 600000.0
     },
     {
       "id": "rech6U5V0U2QWFWfK",
