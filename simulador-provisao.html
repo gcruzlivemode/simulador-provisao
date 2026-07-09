@@ -70,13 +70,17 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:16px;color:var(--t3)}
 .empty-icon{font-size:48px;opacity:.3}
 .empty-text{font-size:13px;text-align:center;line-height:1.7;max-width:320px}
-.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px}
+.kpi-rates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
 .kpi{background:var(--s1);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--s3);border-top:3px solid var(--g);position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.015) 0%,transparent 60%);pointer-events:none}
+.kpi-rate-card{background:var(--s2);border-radius:var(--radius);padding:14px 18px;border:1px solid var(--s3);border-left:4px solid var(--g);position:relative;overflow:hidden}
+.kpi::before,.kpi-rate-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.015) 0%,transparent 60%);pointer-events:none}
 .kpi-lbl{font-size:9px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fm);margin-bottom:6px}
 .kpi-val{font-family:var(--fm);font-size:16px;font-weight:700;line-height:1;margin-bottom:3px;word-break:break-all}
+.kpi-rate-val{font-family:var(--fm);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px;letter-spacing:-1px}
 .kpi-sub{font-size:9px;color:var(--t3);line-height:1.4}
-.charts-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:14px}
+.kpi-delta{font-size:10px;font-weight:700;font-family:var(--fm);line-height:1.4}
+.charts-row{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:14px}
 .card{background:var(--s1);border-radius:var(--radius);border:1px solid var(--s3);padding:20px 22px;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(109,201,59,.25),transparent);pointer-events:none}
 .card-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -292,28 +296,31 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
 
     <!-- ABA CONSOLIDADO -->
     <div id="tab-consolidado" class="tab-pane active">
+      <div class="kpi-rates fade-in" id="kpi-rates"></div>
       <div class="kpi-strip fade-in" id="kpi-strip"></div>
       <div class="charts-row fade-in">
+        <!-- PRIMÁRIO: curva de alíquota % — o CFO lê aqui a tendência estratégica -->
         <div class="card">
           <div class="card-title">
-            <div class="ct-bar" style="background:var(--g)"></div>
-            <span class="ct-text">Composição Tributária por Ano</span>
-          </div>
-          <div class="card-note" id="chart-note"></div>
-          <canvas id="barChart" height="200"></canvas>
-        </div>
-        <div class="card">
-          <div class="card-title">
-            <div class="ct-bar" style="background:var(--g)"></div>
-            <span class="ct-text">Compras & Vendas — Curva de Impacto 2026–2033</span>
+            <div class="ct-bar" style="background:var(--or)"></div>
+            <span class="ct-text">Alíquota Efetiva por Ano (% do Contrato) — 2026 → 2033</span>
           </div>
           <div class="card-note">
-            <span style="color:var(--g)">●</span> Compras / Adq. (CBS creditado · ISS n/a) &nbsp;·&nbsp;
-            <span style="color:var(--or)">●</span> Vendas / Ced. (ISS + CBS + IBS) &nbsp;·&nbsp;
-            <span style="color:rgba(255,255,255,.3)">—</span> Regime Atual 2026 = 100 &nbsp;·&nbsp;
-            <span style="color:rgba(255,255,255,.4)">◉</span> Contrato &nbsp;<span style="color:rgba(255,255,255,.25)">○</span> Ref.
+            <span style="color:rgba(255,255,255,.35)">— —</span> Regime Atual &nbsp;·&nbsp;
+            <span style="color:var(--or)">●</span> Vendas / Cedente &nbsp;·&nbsp;
+            <span style="color:var(--g)">●</span> Compras / Adquirente &nbsp;·&nbsp;
+            <span style="color:rgba(255,255,255,.5)">◉</span> Dentro do contrato &nbsp;<span style="color:rgba(255,255,255,.2)">○</span> Referência
           </div>
-          <canvas id="lineChart" height="200"></canvas>
+          <canvas id="lineChart" height="220"></canvas>
+        </div>
+        <!-- SECUNDÁRIO: R$ no contrato — valida o impacto financeiro -->
+        <div class="card">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--g)"></div>
+            <span class="ct-text">Provisão em R$ por Ano — Anos do Contrato</span>
+          </div>
+          <div class="card-note" id="chart-note"></div>
+          <canvas id="barChart" height="220"></canvas>
         </div>
       </div>
       <div class="card fade-in" style="margin-bottom:14px">
@@ -750,14 +757,66 @@ function calcular(){
       : {t:'📥 ADQUIRENTE',c:'var(--g)',bg:'var(--g3)'},
   ].map(x=>`<span style="background:${x.bg};border:1px solid ${x.c};border-radius:20px;padding:3px 10px;font-size:9px;font-weight:700;color:${x.c};font-family:'Space Mono',monospace">${x.t}</span>`).join('');
 
-  // ── KPIs ──────────────────────────────────────────────────────────────────
+  // ── KPI ESTRATÉGICO — Alíquotas efetivas (independente de R$) ────────────
+  const allYrs8 = Object.keys(RATES).map(Number); // [2026..2033]
+  const rAtual_rate = isBRL
+    ? (RATES[2026].pis + RATES[2026].cof + RATES[2026].iss)*100
+    : (irrf + RATES[2026].iss)*100;
+  const cedRates8 = allYrs8.map(y => {
+    const r=RATES[y]; const cbsEff=y===2026?0:r.cbs; const ibsEff=y<=2028?0:r.ibs;
+    return ((isBRL?0:irrf)+r.iss+cbsEff+ibsEff)*100;
+  });
+  const adqRates8 = allYrs8.map(y => {
+    const r=RATES[y]; const ibsEff=y<=2028?0:r.ibs;
+    return ((isBRL?0:irrf)+ibsEff)*100;
+  });
+  const inflexaoIdx = cedRates8.findIndex(v => v > rAtual_rate);
+  const inflexaoY = inflexaoIdx>=0 ? allYrs8[inflexaoIdx] : '—';
+  const isActY8 = allYrs8.map(y => activeRows.some(r => r.y === y));
+  const get8 = (arr,y) => arr[allYrs8.indexOf(y)] ?? 0;
+  const ced2029=get8(cedRates8,2029), adq2029=get8(adqRates8,2029);
+  const ced2033=get8(cedRates8,2033), adq2033=get8(adqRates8,2033);
+  const pp = (v,base) => { const d=v-base; return `${d>=0?'↑ +':'↓ '}${Math.abs(d).toFixed(2)}pp vs. regime atual`; };
+
+  const kpiRates=[
+    {lbl:'Taxa Efetiva Hoje — Regime Atual',
+     val:rAtual_rate.toFixed(2)+'%',
+     delta:'Base de comparação',
+     sub: isBRL?'PIS 1,65% + COFINS 7,60% + ISS 3%':'IRRF '+((irrf||0)*100).toFixed(1)+'% + ISS 3%',
+     color:'rgba(255,255,255,.5)', leftColor:'rgba(255,255,255,.3)'},
+    {lbl:'Vendas / Cedente — 2029',
+     val:ced2029.toFixed(2)+'%',
+     delta:pp(ced2029,rAtual_rate),
+     sub:'CBS 8,8% + ISS 2,7% + IBS 3,2% · sem crédito',
+     color: ced2029>rAtual_rate ? '#FF8080' : C.g,
+     leftColor: ced2029>rAtual_rate ? '#FF8080' : C.g},
+    {lbl:'Compras / Adquirente — 2029',
+     val:adq2029.toFixed(2)+'%',
+     delta:pp(adq2029,rAtual_rate),
+     sub:'IBS 3,2% · CBS creditado 100% · sem ISS',
+     color:C.g, leftColor:C.g},
+    {lbl:'Projeção 2033 — IVA Dual Pleno',
+     val:`Vendas ${ced2033.toFixed(1)}% / Compras ${adq2033.toFixed(1)}%`,
+     delta:`Inflexão: ${inflexaoY}`,
+     sub:'⚠ Estimativa — sujeito a Res. Senado (art.18,II)',
+     color:'#FFD580', leftColor:'#FFD580'},
+  ];
+  document.getElementById('kpi-rates').innerHTML=kpiRates.map(k=>`
+    <div class="kpi-rate-card" style="border-left-color:${k.leftColor}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-rate-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-delta" style="color:${k.leftColor}">${k.delta}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // ── KPI OPERACIONAL — Valores R$ do contrato ─────────────────────────────
   const kpis=[
     {lbl:'Valor Total Contrato', val:fmt(totVal,moeda), sub:isBRL?'Total em R$':`US$ · ≈ ${fmt(totValBRL,'BRL')}`, color:'var(--t1)'},
     {lbl:'Tributos Regime Atual',val:fmt(totAtual,moedaImposto),sub:isBRL?'PIS+COFINS+ISS':'IRRF+PIS/COF+ISS (R$)',color:activeRows.some(r=>!r.confirmed)?'#FFD580':'var(--t1)'},
-    {lbl:'Tributos Novo Regime', val:fmt(totNovo,moedaImposto), sub:'IRRF+ISS+CBS+IBS (2029+)',color:activeRows.some(r=>!r.confirmed)?'#FFD580':'var(--t1)'},
+    {lbl:'Tributos Novo Regime', val:fmt(totNovo,moedaImposto), sub:'Vendas (sem crédito CBS)',color:activeRows.some(r=>!r.confirmed)?'#FFD580':'var(--t1)'},
     {lbl:'Δ Impacto da Reforma',  val:(totDelta>=0?'+':'')+fmt(totDelta,moedaImposto), sub:fmtPct(totDelta/Math.max(totAtual,0.001))+' sobre regime atual', color:totDelta>0?'#FF8080':'var(--g)'},
-    {lbl:'Custo Líquido Final',   val:fmt(totLiq,moedaImposto),
-      sub: isCedente ? 'Sem crédito CBS (posição cedente)' : 'Após crédito CBS recuperável',
+    {lbl:'Custo Líquido (Compras)', val:fmt(totLiq,moedaImposto),
+      sub: isCedente ? 'Posição cedente — sem crédito CBS' : 'Após crédito CBS recuperável',
       color: isCedente ? 'var(--re)' : 'var(--g)'},
   ];
   document.getElementById('kpi-strip').innerHTML=kpis.map(k=>`
@@ -767,149 +826,192 @@ function calcular(){
       <div class="kpi-sub">${k.sub}</div>
     </div>`).join('');
 
-  // ── GRÁFICO BARRAS ────────────────────────────────────────────────────────
+  const ar = activeRows; // alias usado pelos gráficos e tabela
+  // ── GRÁFICO BARRAS — Provisão por Ano: Regime Atual vs. Compras vs. Vendas ──
   document.getElementById('chart-note').innerHTML=
-    `<span style="color:${C.bl}">■</span> IRRF &nbsp;·&nbsp;`+
-    `<span style="color:${C.pi}">■</span> PIS 1,65% &nbsp;·&nbsp;`+
-    `<span style="color:${C.co}">■</span> COFINS 7,60% &nbsp;·&nbsp;`+
-    `<span style="color:${C.or}">■</span> ISS &nbsp;·&nbsp;`+
-    `<span style="color:#3A8F1E">■</span> CBS &nbsp;·&nbsp;`+
-    `<span style="color:${C.g}">■</span> IBS &nbsp;·&nbsp;`+
-    `<span style="color:${C.am}">⚠</span> Estimado`;
+    `<span style="color:rgba(180,180,180,.75)">■</span> Regime Atual (${isBRL?'PIS+COFINS+ISS':'IRRF+ISS'}) &nbsp;·&nbsp;`+
+    `<span style="color:${C.g}">■</span> Compras / Adquirente &nbsp;·&nbsp;`+
+    `<span style="color:${C.or}">■</span> Vendas / Cedente &nbsp;·&nbsp;`+
+    `<span style="color:${C.am}">⚠</span> Alíquota estimada`;
 
-  const labels=rows.filter(r=>r.active).map(r=>String(r.y));
-  const ar=rows.filter(r=>r.active);
+  const labels=ar.map(r=>String(r.y));
   if(barChartInst)barChartInst.destroy();
   barChartInst=new Chart(document.getElementById('barChart'),{
-    type:'bar',data:{labels,datasets:[
-      {label:'IRRF',    data:ar.map(r=>r.irrf_v), backgroundColor:C.bl, stack:'a'},
-      {label:'PIS',     data:ar.map(r=>r.pis_v),  backgroundColor:C.pi, stack:'a'},
-      {label:'COFINS',  data:ar.map(r=>r.cof_v),  backgroundColor:C.co, stack:'a'},
-      {label:'ISS',     data:ar.map(r=>r.iss_v),  backgroundColor:C.or, stack:'a'},
-      {label:'CBS',     data:ar.map(r=>r.cbs_v),  backgroundColor:C.g2, stack:'a'},
-      {label:'IBS',     data:ar.map(r=>r.ibs_v),  backgroundColor:C.g,  stack:'a', borderRadius:{topLeft:3,topRight:3}},
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Regime Atual',
+       data:ar.map(r=>+r.total_atual.toFixed(2)),
+       backgroundColor:'rgba(180,180,180,.28)',
+       borderColor:'rgba(180,180,180,.55)',
+       borderWidth:1, borderRadius:3},
+      {label:'Compras / Adquirente',
+       data:ar.map(r=>+(r.total_novo-r.cbs_efetiva).toFixed(2)),
+       backgroundColor:ar.map(r=>r.confirmed?'rgba(109,201,59,.5)':'rgba(245,166,35,.35)'),
+       borderColor:ar.map(r=>r.confirmed?C.g:C.am),
+       borderWidth:1, borderRadius:{topLeft:3,topRight:3}},
+      {label:'Vendas / Cedente',
+       data:ar.map(r=>+r.total_novo.toFixed(2)),
+       backgroundColor:ar.map(r=>r.confirmed?'rgba(230,126,34,.5)':'rgba(245,166,35,.35)'),
+       borderColor:ar.map(r=>r.confirmed?C.or:C.am),
+       borderWidth:1, borderRadius:{topLeft:3,topRight:3}},
     ]},
-    options:{responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{display:false},
-        tooltip:{...TIP,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw,moedaImposto)}`}}},
-      scales:{x:{...SCALE.x,stacked:true},y:{...SCALE.y,stacked:true,
-        ticks:{...SCALE.y.ticks,callback:v=>fmt(v,moedaImposto)}}}}
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{...TIP, mode:'index', intersect:false,
+          callbacks:{
+            label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw,moedaImposto)}`,
+            afterBody:items=>{
+              const i=items[0]?.dataIndex; const r=ar[i]; if(!r)return[];
+              const base=isBRL?r.valBase:r.valBRL;
+              const adq=r.total_novo-r.cbs_efetiva;
+              const ced=r.total_novo;
+              const pct=v=>base>0?`${(v/base*100).toFixed(2)}% do contrato`:'—';
+              const dAdq=adq-r.total_atual; const dCed=ced-r.total_atual;
+              return ['',
+                ` Atual: ${pct(r.total_atual)}`,
+                ` Compras: ${pct(adq)} · Δ ${dAdq>=0?'+':''}${fmt(dAdq,moedaImposto)} vs atual`,
+                ` Vendas:  ${pct(ced)} · Δ ${dCed>=0?'+':''}${fmt(dCed,moedaImposto)} vs atual`,
+              ];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{...SCALE.x},
+        y:{...SCALE.y, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,moedaImposto)}}
+      }
+    }
   });
 
+  // ── CURVA DE ALÍQUOTA EFETIVA 2026-2033 ──────────────────────────────────────
+  // allYrs8, cedRates8, adqRates8, isActY8, rAtual_rate já computados no bloco KPI acima
   if(lineChartInst)lineChartInst.destroy();
-  // ── CURVA DE IMPACTO 2026-2033 ───────────────────────────────────────────────
-  // Usa alíquotas puras (independente de valBase) → todos os 8 anos sempre visíveis
-  // Base de referência = Regime Atual 2026 = 100
-  //
-  // ISS: custo exclusivo de VENDA (Cedente emite NF e recolhe ISS)
-  //      Adquirente NÃO paga ISS diretamente — não há crédito de ISS em nenhum regime
-  // CBS: não-cumulativo → Adquirente credita 100% (custo líquido CBS = 0)
-  //      Cedente: CBS é débito de saída, sem crédito
-  // IBS: segue mesma lógica, mas créditos ainda sem regulamentação definitiva
-  // USD: compra de direitos do exterior NÃO gera crédito de PIS/COFINS (ISS importação pode incidir)
-
-  const allYrs = Object.keys(RATES).map(Number); // [2026..2033]
-  const isActY = allYrs.map(y => ar.some(r => r.y === y));
-
-  // Alíquota base 2026 — regime atual (PIS+COFINS+ISS para BRL / IRRF+ISS para USD)
-  const r26 = RATES[2026];
-  const rAtual2026 = isBRL
-    ? r26.pis + r26.cof + r26.iss    // 1.65% + 7.60% + 3.00% = 12.25%
-    : irrf + r26.iss;                 // IRRF treaty rate + ISS 3%
-
-  // Alíquotas do novo regime por ano e posição
-  const curvaCed = allYrs.map(y => {
-    const r = RATES[y];
-    const cbsEff = y === 2026 ? 0 : r.cbs;   // 2026 declaratório
-    const ibsEff = y <= 2028  ? 0 : r.ibs;   // IBS efetivo só a partir de 2029
-    const irrf_r = isBRL ? 0 : irrf;
-    // Cedente: ISS (sempre) + CBS + IBS, sem crédito
-    return +((irrf_r + r.iss + cbsEff + ibsEff) / rAtual2026 * 100).toFixed(1);
-  });
-  const curvaAdq = allYrs.map(y => {
-    const r = RATES[y];
-    const cbsEff = y === 2026 ? 0 : r.cbs;
-    const ibsEff = y <= 2028  ? 0 : r.ibs;
-    const irrf_r = isBRL ? 0 : irrf;
-    // Adquirente: sem ISS (é custo do cedente), CBS creditado (= 0 líquido), só IBS efetivo
-    return +((irrf_r + ibsEff) / rAtual2026 * 100).toFixed(1);
-  });
-
-  lineChartInst = new Chart(document.getElementById('lineChart'), {
-    type: 'line',
-    data: {
-      labels: allYrs.map(String),
-      datasets: [
-        // Linha de referência: Regime Atual 2026 = 100
-        {label:'Regime Atual 2026',data:allYrs.map(()=>100),
-         borderColor:'rgba(255,255,255,.22)',borderWidth:1.5,borderDash:[4,3],
-         pointRadius:0,fill:false,tension:0},
-        // Vendas / Cedente
-        {label:'Vendas / Cedente',data:curvaCed,
-         borderColor:C.or,borderWidth:2.5,backgroundColor:'rgba(230,126,34,.07)',fill:true,tension:.2,
-         pointBackgroundColor:allYrs.map(y=>RATES[y].confirmed?C.or:C.am),
-         pointBorderColor:allYrs.map((y,i)=>isActY[i]?C.bg:'rgba(230,126,34,.35)'),
-         pointBorderWidth:allYrs.map((y,i)=>isActY[i]?2:1),
-         pointRadius:allYrs.map((y,i)=>isActY[i]?6:3.5)},
-        // Compras / Adquirente
-        {label:'Compras / Adquirente',data:curvaAdq,
-         borderColor:C.g,borderWidth:2.5,backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.2,
-         pointBackgroundColor:allYrs.map(y=>RATES[y].confirmed?C.g:C.am),
-         pointBorderColor:allYrs.map((y,i)=>isActY[i]?C.bg:'rgba(109,201,59,.35)'),
-         pointBorderWidth:allYrs.map((y,i)=>isActY[i]?2:1),
-         pointRadius:allYrs.map((y,i)=>isActY[i]?6:3.5)},
+  lineChartInst=new Chart(document.getElementById('lineChart'),{
+    type:'line',
+    data:{
+      labels:allYrs8.map(String),
+      datasets:[
+        // ── Regime Atual — linha de referência flat (dashed, branca)
+        {label:'Regime Atual '+rAtual_rate.toFixed(2)+'%',
+         data:allYrs8.map(()=>+rAtual_rate.toFixed(2)),
+         borderColor:'rgba(255,255,255,.4)',
+         borderWidth:1.5,
+         borderDash:[6,4],
+         pointRadius:0,
+         fill:false,
+         tension:0,
+         order:3},
+        // ── Vendas / Cedente — ISS+CBS+IBS, sem crédito
+        {label:'Vendas / Cedente',
+         data:cedRates8.map(v=>+v.toFixed(2)),
+         borderColor:C.or,
+         borderWidth:2.5,
+         tension:.25,
+         fill:false,
+         order:1,
+         pointRadius:isActY8.map(a=>a?7:3.5),
+         pointHoverRadius:9,
+         pointBackgroundColor:allYrs8.map(y=>RATES[y].confirmed?C.or:C.am),
+         pointBorderColor:isActY8.map(a=>a?C.bg:'rgba(230,126,34,.35)'),
+         pointBorderWidth:isActY8.map(a=>a?2:1)},
+        // ── Compras / Adquirente — CBS creditado, sem ISS, só IBS
+        {label:'Compras / Adquirente',
+         data:adqRates8.map(v=>+v.toFixed(2)),
+         borderColor:C.g,
+         borderWidth:2.5,
+         tension:.25,
+         fill:false,
+         order:2,
+         pointRadius:isActY8.map(a=>a?7:3.5),
+         pointHoverRadius:9,
+         pointBackgroundColor:allYrs8.map(y=>RATES[y].confirmed?C.g:C.am),
+         pointBorderColor:isActY8.map(a=>a?C.bg:'rgba(109,201,59,.35)'),
+         pointBorderWidth:isActY8.map(a=>a?2:1)},
       ]
     },
-    options: {
-      responsive:true, maintainAspectRatio:true,
-      plugins: {
-        legend:{display:false},
-        tooltip:{...TIP, callbacks:{
-          label: ctx => {
-            if(ctx.datasetIndex===0) return null;
-            const y = allYrs[ctx.dataIndex];
-            const r = RATES[y];
-            const cbsEff = y===2026?0:r.cbs;
-            const ibsEff = y<=2028?0:r.ibs;
-            const pct = v => (v*100).toFixed(2)+'%';
-            if(ctx.datasetIndex===1){
-              // Vendas
-              const det = [r.iss?`ISS ${pct(r.iss)}`:'', cbsEff?`CBS ${pct(cbsEff)}`:'', ibsEff?`IBS ${pct(ibsEff)}`:''].filter(Boolean).join(' · ')||'—';
-              return [` Vendas/Cedente: ${ctx.raw}% do regime atual`, `   ${det}`];
-            } else {
-              // Compras
-              const det = ibsEff?`IBS ${pct(ibsEff)} (CBS creditado, sem ISS)`:'CBS declaratório · sem IBS efetivo · sem ISS';
-              return [` Compras/Adq.: ${ctx.raw}% do regime atual`, `   ${det}`];
-            }
-          },
-          footer: items => {
-            const i = items[0]?.dataIndex;
-            const y = allYrs[i];
-            const r = RATES[y];
-            const inContract = isActY[i];
-            const status =
-              y===2026 ? '✔ CBS+IBS declaratórios — sem recolhimento' :
-              y<=2028  ? '⚡ CBS plena efetiva · IBS ainda 0,1% (teste)' :
-              y<=2032  ? '⚠ IBS estimado — Res. Senado pendente (art.18,II)' :
-                         '⚠ IVA Dual pleno projetado — sujeito a revisão';
-            const cedVsAtual = curvaCed[i]-100;
-            const adqVsAtual = curvaAdq[i]-100;
-            return [
-              inContract ? '◉ Dentro do período do contrato' : '○ Fora do período selecionado',
-              status,
-              `Vendas vs regime atual: ${cedVsAtual>=0?'+':''}${cedVsAtual.toFixed(1)} pts`,
-              `Compras vs regime atual: ${adqVsAtual>=0?'+':''}${adqVsAtual.toFixed(1)} pts`,
-            ];
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      layout:{padding:{right:12,top:4}},
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          align:'start',
+          labels:{
+            color:'rgba(255,255,255,.65)',
+            font:{size:10,family:'Space Mono,monospace'},
+            padding:18,
+            boxWidth:24,
+            boxHeight:2,
+            usePointStyle:false
           }
-        }}
+        },
+        subtitle:{
+          display:true,
+          text:'2026: CBS decl.  ·  2027-28: CBS plena  ·  2029-32: CBS+IBS crescente  ·  2033: IVA Dual',
+          color:'rgba(255,255,255,.2)',
+          font:{size:8,family:'Space Mono,monospace'},
+          padding:{top:0,bottom:10}
+        },
+        tooltip:{...TIP,
+          callbacks:{
+            title:items=>{
+              const idx=items[0]?.dataIndex;
+              const y=allYrs8[idx];
+              return `${y}  ${isActY8[idx]?'◉ dentro do período do contrato':'○ referência — fora do período'}`;
+            },
+            label:ctx=>{
+              if(ctx.datasetIndex===0)
+                return ` Regime Atual: ${ctx.raw.toFixed(2)}% do contrato (base)`;
+              const y=allYrs8[ctx.dataIndex];
+              const r=RATES[y];
+              const cbsEff=y===2026?0:r.cbs;
+              const ibsEff=y<=2028?0:r.ibs;
+              const vs=ctx.raw-rAtual_rate;
+              const sinal=vs>=0?'↑ +':'↓ ';
+              const vsStr=`${sinal}${Math.abs(vs).toFixed(2)}pp vs. regime atual`;
+              if(ctx.datasetIndex===1){
+                const partes=[r.iss>0?`ISS ${(r.iss*100).toFixed(1)}%`:'',
+                  cbsEff>0?`CBS ${(cbsEff*100).toFixed(1)}%`:'',
+                  ibsEff>0?`IBS ${(ibsEff*100).toFixed(1)}%`:''].filter(Boolean);
+                const comp=partes.length?partes.join(' + '):'CBS declaratório (sem recolhimento)';
+                return [` Vendas / Cedente: ${ctx.raw.toFixed(2)}%  (${vsStr})`,`   ${comp}`];
+              } else {
+                const comp=ibsEff>0
+                  ?`IBS ${(ibsEff*100).toFixed(1)}%  ·  CBS 100% creditado  ·  sem ISS`
+                  :`CBS declaratório  ·  sem IBS efetivo  ·  sem ISS`;
+                return [` Compras / Adquirente: ${ctx.raw.toFixed(2)}%  (${vsStr})`,`   ${comp}`];
+              }
+            },
+            footer:items=>{
+              const y=allYrs8[items[0]?.dataIndex];
+              const leg=
+                y===2026?'✔ CBS+IBS declaratórios — recolhimento zero em 2026':
+                y<=2028 ?'⚡ CBS plena efetiva · IBS 0,1% (ano-teste)':
+                y<=2032 ?'⚠ IBS estimado — Resolução Senado pendente (art.18,II)':
+                          '⚠ IVA Dual pleno (2033) — sujeito a revisão';
+              return [leg, inflexaoIdx>=0?`Inflexão vendas: ${inflexaoY} (custo supera regime atual)`:''];
+            }
+          }
+        }
       },
-      scales: {
-        x: {...SCALE.x},
-        y: {
+      scales:{
+        x:{...SCALE.x},
+        y:{
           ...SCALE.y,
-          min: 0,
-          ticks: {...SCALE.y.ticks, callback: v => v+'%'},
-          title: {display:true, text:'Carga vs. Regime Atual 2026 (100% = custo igual)', color:'#555', font:{size:8,family:'var(--fm)'}}
+          min:0,
+          suggestedMax:20,
+          ticks:{...SCALE.y.ticks, stepSize:5, callback:v=>`${v}%`},
+          title:{
+            display:true,
+            text:'% do valor do contrato',
+            color:'rgba(255,255,255,.25)',
+            font:{size:9,family:'Space Mono,monospace'}
+          }
         }
       }
     }
