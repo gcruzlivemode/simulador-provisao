@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -305,11 +305,12 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
         <div class="card">
           <div class="card-title">
             <div class="ct-bar" style="background:var(--g)"></div>
-            <span class="ct-text">Carga Efetiva vs. Custo Líquido %</span>
+            <span class="ct-text">Evolução vs. 2026 — Índice Base 100</span>
           </div>
           <div class="card-note">
-            <span style="color:var(--g)">●</span> Carga bruta &nbsp;·&nbsp;
-            <span style="color:var(--pu)">●</span> Custo líquido (pós crédito CBS)
+            <span style="color:var(--g)">●</span> Novo Regime &nbsp;·&nbsp;
+            <span style="color:var(--pu)">●</span> Custo Líquido &nbsp;·&nbsp;
+            <span style="color:rgba(255,255,255,.35)">—</span> Base 2026 = 100
           </div>
           <canvas id="lineChart" height="200"></canvas>
         </div>
@@ -795,14 +796,36 @@ function calcular(){
   });
 
   if(lineChartInst)lineChartInst.destroy();
+  // 2026 sempre fixo como base de referência (índice 100), independente do período do contrato
+  const ref26=rows.find(r=>r.y===2026);
+  const refTot=ref26&&ref26.total_novo>0?ref26.total_novo:1;
+  const refLiq26=ref26&&Math.abs(ref26.custo_liq)>0?ref26.custo_liq:refTot;
+  const maxY=ar.length?Math.max(...ar.map(r=>r.y)):2026;
+  const linY=Object.keys(RATES).map(Number).filter(y=>y<=maxY);
+  const linR=linY.map(y=>rows.find(r=>r.y===y));
+  const isAct=linY.map(y=>ar.some(r=>r.y===y));
   lineChartInst=new Chart(document.getElementById('lineChart'),{
-    type:'line',data:{labels,datasets:[
-      {label:'Carga Bruta %',data:ar.map(r=>+(r.carga_pct*100).toFixed(2)),borderColor:C.g,borderWidth:2.5,backgroundColor:'rgba(109,201,59,.1)',fill:true,tension:.35,pointBackgroundColor:ar.map(r=>r.confirmed?C.g:C.am),pointBorderColor:C.bg,pointBorderWidth:2,pointRadius:5},
-      {label:'Custo Líquido %',data:ar.map(r=>+(r.carga_liq*100).toFixed(2)),borderColor:C.pu,borderWidth:2,borderDash:[4,3],backgroundColor:'transparent',tension:.35,pointBackgroundColor:C.pu,pointBorderColor:C.bg,pointBorderWidth:2,pointRadius:4},
+    type:'line',data:{labels:linY.map(String),datasets:[
+      {label:'Base 2026=100',data:linY.map(()=>100),borderColor:'rgba(255,255,255,.18)',borderWidth:1,borderDash:[3,4],pointRadius:0,fill:false,tension:0},
+      {label:'Novo Regime',data:linR.map(r=>r?+(r.total_novo/refTot*100).toFixed(1):null),borderColor:C.g,borderWidth:2.5,backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.3,
+       pointBackgroundColor:linR.map(r=>!r?C.t3:r.confirmed?C.g:C.am),
+       pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
+       pointBorderWidth:2,pointRadius:linR.map(r=>r?5:0),spanGaps:false},
+      {label:'Custo Líquido',data:linR.map(r=>r?+(r.custo_liq/refLiq26*100).toFixed(1):null),borderColor:C.pu,borderWidth:2,borderDash:[5,3],backgroundColor:'transparent',tension:.3,
+       pointBackgroundColor:C.pu,
+       pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
+       pointBorderWidth:2,pointRadius:linR.map(r=>r?4:0),spanGaps:false},
     ]},
     options:{responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}%`}}},
-      scales:{x:{...SCALE.x},y:{...SCALE.y,ticks:{...SCALE.y.ticks,callback:v=>`${v}%`}}}}
+      plugins:{legend:{display:false},
+        tooltip:{...TIP,callbacks:{
+          label:ctx=>ctx.datasetIndex===0?null:` ${ctx.dataset.label}: ${ctx.raw!=null?ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:1}):'—'}`,
+          footer:items=>{const i=items[0]?.dataIndex;const r=linR[i];if(!r)return[];if(r.y===2026)return['⚓ 2026 — base de referência (100)'];const d=+(r.total_novo/refTot*100-100).toFixed(1);return[`vs 2026: ${d>=0?'+':''}${d} pontos`];}
+        }}},
+      scales:{x:{...SCALE.x},y:{...SCALE.y,
+        ticks:{...SCALE.y.ticks,callback:v=>v+''},
+        title:{display:true,text:'Índice (2026 = 100)',color:'#666',font:{size:9,family:'var(--fm)'}}}}
+    }
   });
 
   // ── TABELA DISCRIMINADA ────────────────────────────────────────────────────
@@ -1004,3 +1027,4 @@ window.addEventListener('DOMContentLoaded',autoloadFromURL);
 </script>
 </body>
 </html>
+
