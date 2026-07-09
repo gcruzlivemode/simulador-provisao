@@ -305,11 +305,11 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
         <div class="card">
           <div class="card-title">
             <div class="ct-bar" style="background:var(--g)"></div>
-            <span class="ct-text">Evolução vs. 2026 — Índice Base 100</span>
+            <span class="ct-text">Compras vs. Vendas — Índice Base 2026 = 100</span>
           </div>
           <div class="card-note">
-            <span style="color:var(--g)">●</span> Novo Regime &nbsp;·&nbsp;
-            <span style="color:var(--pu)">●</span> Custo Líquido &nbsp;·&nbsp;
+            <span style="color:var(--g)">●</span> Compras / Adquirente (com crédito CBS) &nbsp;·&nbsp;
+            <span style="color:var(--or)">●</span> Vendas / Cedente (sem crédito) &nbsp;·&nbsp;
             <span style="color:rgba(255,255,255,.35)">—</span> Base 2026 = 100
           </div>
           <canvas id="lineChart" height="200"></canvas>
@@ -796,31 +796,60 @@ function calcular(){
   });
 
   if(lineChartInst)lineChartInst.destroy();
-  // 2026 sempre fixo como base de referência (índice 100), independente do período do contrato
+  // 2026 sempre fixo como base (índice 100) — mostra impacto da reforma por posição
+  // Compras (Adquirente): cbs_efetiva vira crédito → custo = total_novo - cbs_efetiva
+  // Vendas  (Cedente):    sem crédito              → custo = total_novo
+  // Em 2026 cbs_efetiva=0 (declaratório) → ambas partem do mesmo ponto base
   const ref26=rows.find(r=>r.y===2026);
-  const refTot=ref26&&ref26.total_novo>0?ref26.total_novo:1;
-  const refLiq26=ref26&&Math.abs(ref26.custo_liq)>0?ref26.custo_liq:refTot;
+  const refBase=ref26&&ref26.total_novo>0?ref26.total_novo:1;
   const maxY=ar.length?Math.max(...ar.map(r=>r.y)):2026;
   const linY=Object.keys(RATES).map(Number).filter(y=>y<=maxY);
   const linR=linY.map(y=>rows.find(r=>r.y===y));
   const isAct=linY.map(y=>ar.some(r=>r.y===y));
+  // Custo por posição (independente do seletor atual)
+  const idxAdq=linR.map(r=>r?+(( r.total_novo - r.cbs_efetiva )/refBase*100).toFixed(1):null);
+  const idxCed=linR.map(r=>r?+(  r.total_novo                  /refBase*100).toFixed(1):null);
   lineChartInst=new Chart(document.getElementById('lineChart'),{
     type:'line',data:{labels:linY.map(String),datasets:[
+      // Linha de referência 2026=100
       {label:'Base 2026=100',data:linY.map(()=>100),borderColor:'rgba(255,255,255,.18)',borderWidth:1,borderDash:[3,4],pointRadius:0,fill:false,tension:0},
-      {label:'Novo Regime',data:linR.map(r=>r?+(r.total_novo/refTot*100).toFixed(1):null),borderColor:C.g,borderWidth:2.5,backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.3,
+      // Compras — Adquirente (com crédito CBS)
+      {label:'Compras / Adquirente',data:idxAdq,borderColor:C.g,borderWidth:2.5,
+       backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.3,
        pointBackgroundColor:linR.map(r=>!r?C.t3:r.confirmed?C.g:C.am),
        pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
        pointBorderWidth:2,pointRadius:linR.map(r=>r?5:0),spanGaps:false},
-      {label:'Custo Líquido',data:linR.map(r=>r?+(r.custo_liq/refLiq26*100).toFixed(1):null),borderColor:C.pu,borderWidth:2,borderDash:[5,3],backgroundColor:'transparent',tension:.3,
-       pointBackgroundColor:C.pu,
+      // Vendas — Cedente (sem crédito)
+      {label:'Vendas / Cedente',data:idxCed,borderColor:C.or,borderWidth:2.5,
+       backgroundColor:'rgba(230,126,34,.06)',fill:true,tension:.3,
+       pointBackgroundColor:linR.map(r=>!r?C.t3:r.confirmed?C.or:C.am),
        pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
-       pointBorderWidth:2,pointRadius:linR.map(r=>r?4:0),spanGaps:false},
+       pointBorderWidth:2,pointRadius:linR.map(r=>r?5:0),spanGaps:false},
     ]},
     options:{responsive:true,maintainAspectRatio:true,
       plugins:{legend:{display:false},
         tooltip:{...TIP,callbacks:{
-          label:ctx=>ctx.datasetIndex===0?null:` ${ctx.dataset.label}: ${ctx.raw!=null?ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:1}):'—'}`,
-          footer:items=>{const i=items[0]?.dataIndex;const r=linR[i];if(!r)return[];if(r.y===2026)return['⚓ 2026 — base de referência (100)'];const d=+(r.total_novo/refTot*100-100).toFixed(1);return[`vs 2026: ${d>=0?'+':''}${d} pontos`];}
+          label:ctx=>{
+            if(ctx.datasetIndex===0)return null;
+            const r=linR[ctx.dataIndex];
+            const val=ctx.datasetIndex===1
+              ?(r?fmt(r.total_novo-r.cbs_efetiva,moedaImposto):'—')
+              :(r?fmt(r.total_novo,moedaImposto):'—');
+            return ` ${ctx.dataset.label}: ${ctx.raw!=null?ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:1}):'—'} (${val})`;
+          },
+          footer:items=>{
+            const i=items[0]?.dataIndex;const r=linR[i];
+            if(!r)return[];
+            if(r.y===2026)return['⚓ 2026 — base de referência (100)'];
+            const dAdq=+(idxAdq[i]-100).toFixed(1);
+            const dCed=+(idxCed[i]-100).toFixed(1);
+            const gap=+(idxCed[i]-idxAdq[i]).toFixed(1);
+            return[
+              `Adquirente vs 2026: ${dAdq>=0?'+':''}${dAdq} pts`,
+              `Cedente vs 2026: ${dCed>=0?'+':''}${dCed} pts`,
+              `Vantagem do crédito CBS: −${gap} pts`,
+            ];
+          }
         }}},
       scales:{x:{...SCALE.x},y:{...SCALE.y,
         ticks:{...SCALE.y.ticks,callback:v=>v+''},
