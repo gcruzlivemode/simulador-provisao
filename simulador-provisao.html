@@ -305,12 +305,13 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
         <div class="card">
           <div class="card-title">
             <div class="ct-bar" style="background:var(--g)"></div>
-            <span class="ct-text">Compras vs. Vendas — Índice Base 2026 = 100</span>
+            <span class="ct-text">Compras & Vendas — Curva de Impacto 2026–2033</span>
           </div>
           <div class="card-note">
-            <span style="color:var(--g)">●</span> Compras / Adquirente (com crédito CBS) &nbsp;·&nbsp;
-            <span style="color:var(--or)">●</span> Vendas / Cedente (sem crédito) &nbsp;·&nbsp;
-            <span style="color:rgba(255,255,255,.35)">—</span> Base 2026 = 100
+            <span style="color:var(--g)">●</span> Compras / Adq. (CBS creditado · ISS n/a) &nbsp;·&nbsp;
+            <span style="color:var(--or)">●</span> Vendas / Ced. (ISS + CBS + IBS) &nbsp;·&nbsp;
+            <span style="color:rgba(255,255,255,.3)">—</span> Regime Atual 2026 = 100 &nbsp;·&nbsp;
+            <span style="color:rgba(255,255,255,.4)">◉</span> Contrato &nbsp;<span style="color:rgba(255,255,255,.25)">○</span> Ref.
           </div>
           <canvas id="lineChart" height="200"></canvas>
         </div>
@@ -796,64 +797,121 @@ function calcular(){
   });
 
   if(lineChartInst)lineChartInst.destroy();
-  // 2026 sempre fixo como base (índice 100) — mostra impacto da reforma por posição
-  // Compras (Adquirente): cbs_efetiva vira crédito → custo = total_novo - cbs_efetiva
-  // Vendas  (Cedente):    sem crédito              → custo = total_novo
-  // Em 2026 cbs_efetiva=0 (declaratório) → ambas partem do mesmo ponto base
-  const ref26=rows.find(r=>r.y===2026);
-  const refBase=ref26&&ref26.total_novo>0?ref26.total_novo:1;
-  const maxY=ar.length?Math.max(...ar.map(r=>r.y)):2026;
-  const linY=Object.keys(RATES).map(Number).filter(y=>y<=maxY);
-  const linR=linY.map(y=>rows.find(r=>r.y===y));
-  const isAct=linY.map(y=>ar.some(r=>r.y===y));
-  // Custo por posição (independente do seletor atual)
-  const idxAdq=linR.map(r=>r?+(( r.total_novo - r.cbs_efetiva )/refBase*100).toFixed(1):null);
-  const idxCed=linR.map(r=>r?+(  r.total_novo                  /refBase*100).toFixed(1):null);
-  lineChartInst=new Chart(document.getElementById('lineChart'),{
-    type:'line',data:{labels:linY.map(String),datasets:[
-      // Linha de referência 2026=100
-      {label:'Base 2026=100',data:linY.map(()=>100),borderColor:'rgba(255,255,255,.18)',borderWidth:1,borderDash:[3,4],pointRadius:0,fill:false,tension:0},
-      // Compras — Adquirente (com crédito CBS)
-      {label:'Compras / Adquirente',data:idxAdq,borderColor:C.g,borderWidth:2.5,
-       backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.3,
-       pointBackgroundColor:linR.map(r=>!r?C.t3:r.confirmed?C.g:C.am),
-       pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
-       pointBorderWidth:2,pointRadius:linR.map(r=>r?5:0),spanGaps:false},
-      // Vendas — Cedente (sem crédito)
-      {label:'Vendas / Cedente',data:idxCed,borderColor:C.or,borderWidth:2.5,
-       backgroundColor:'rgba(230,126,34,.06)',fill:true,tension:.3,
-       pointBackgroundColor:linR.map(r=>!r?C.t3:r.confirmed?C.or:C.am),
-       pointBorderColor:linR.map((r,i)=>isAct[i]?C.bg:'rgba(0,0,0,0)'),
-       pointBorderWidth:2,pointRadius:linR.map(r=>r?5:0),spanGaps:false},
-    ]},
-    options:{responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{display:false},
-        tooltip:{...TIP,callbacks:{
-          label:ctx=>{
-            if(ctx.datasetIndex===0)return null;
-            const r=linR[ctx.dataIndex];
-            const val=ctx.datasetIndex===1
-              ?(r?fmt(r.total_novo-r.cbs_efetiva,moedaImposto):'—')
-              :(r?fmt(r.total_novo,moedaImposto):'—');
-            return ` ${ctx.dataset.label}: ${ctx.raw!=null?ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:1}):'—'} (${val})`;
+  // ── CURVA DE IMPACTO 2026-2033 ───────────────────────────────────────────────
+  // Usa alíquotas puras (independente de valBase) → todos os 8 anos sempre visíveis
+  // Base de referência = Regime Atual 2026 = 100
+  //
+  // ISS: custo exclusivo de VENDA (Cedente emite NF e recolhe ISS)
+  //      Adquirente NÃO paga ISS diretamente — não há crédito de ISS em nenhum regime
+  // CBS: não-cumulativo → Adquirente credita 100% (custo líquido CBS = 0)
+  //      Cedente: CBS é débito de saída, sem crédito
+  // IBS: segue mesma lógica, mas créditos ainda sem regulamentação definitiva
+  // USD: compra de direitos do exterior NÃO gera crédito de PIS/COFINS (ISS importação pode incidir)
+
+  const allYrs = Object.keys(RATES).map(Number); // [2026..2033]
+  const isActY = allYrs.map(y => ar.some(r => r.y === y));
+
+  // Alíquota base 2026 — regime atual (PIS+COFINS+ISS para BRL / IRRF+ISS para USD)
+  const r26 = RATES[2026];
+  const rAtual2026 = isBRL
+    ? r26.pis + r26.cof + r26.iss    // 1.65% + 7.60% + 3.00% = 12.25%
+    : irrf + r26.iss;                 // IRRF treaty rate + ISS 3%
+
+  // Alíquotas do novo regime por ano e posição
+  const curvaCed = allYrs.map(y => {
+    const r = RATES[y];
+    const cbsEff = y === 2026 ? 0 : r.cbs;   // 2026 declaratório
+    const ibsEff = y <= 2028  ? 0 : r.ibs;   // IBS efetivo só a partir de 2029
+    const irrf_r = isBRL ? 0 : irrf;
+    // Cedente: ISS (sempre) + CBS + IBS, sem crédito
+    return +((irrf_r + r.iss + cbsEff + ibsEff) / rAtual2026 * 100).toFixed(1);
+  });
+  const curvaAdq = allYrs.map(y => {
+    const r = RATES[y];
+    const cbsEff = y === 2026 ? 0 : r.cbs;
+    const ibsEff = y <= 2028  ? 0 : r.ibs;
+    const irrf_r = isBRL ? 0 : irrf;
+    // Adquirente: sem ISS (é custo do cedente), CBS creditado (= 0 líquido), só IBS efetivo
+    return +((irrf_r + ibsEff) / rAtual2026 * 100).toFixed(1);
+  });
+
+  lineChartInst = new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+      labels: allYrs.map(String),
+      datasets: [
+        // Linha de referência: Regime Atual 2026 = 100
+        {label:'Regime Atual 2026',data:allYrs.map(()=>100),
+         borderColor:'rgba(255,255,255,.22)',borderWidth:1.5,borderDash:[4,3],
+         pointRadius:0,fill:false,tension:0},
+        // Vendas / Cedente
+        {label:'Vendas / Cedente',data:curvaCed,
+         borderColor:C.or,borderWidth:2.5,backgroundColor:'rgba(230,126,34,.07)',fill:true,tension:.2,
+         pointBackgroundColor:allYrs.map(y=>RATES[y].confirmed?C.or:C.am),
+         pointBorderColor:allYrs.map((y,i)=>isActY[i]?C.bg:'rgba(230,126,34,.35)'),
+         pointBorderWidth:allYrs.map((y,i)=>isActY[i]?2:1),
+         pointRadius:allYrs.map((y,i)=>isActY[i]?6:3.5)},
+        // Compras / Adquirente
+        {label:'Compras / Adquirente',data:curvaAdq,
+         borderColor:C.g,borderWidth:2.5,backgroundColor:'rgba(109,201,59,.07)',fill:true,tension:.2,
+         pointBackgroundColor:allYrs.map(y=>RATES[y].confirmed?C.g:C.am),
+         pointBorderColor:allYrs.map((y,i)=>isActY[i]?C.bg:'rgba(109,201,59,.35)'),
+         pointBorderWidth:allYrs.map((y,i)=>isActY[i]?2:1),
+         pointRadius:allYrs.map((y,i)=>isActY[i]?6:3.5)},
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        legend:{display:false},
+        tooltip:{...TIP, callbacks:{
+          label: ctx => {
+            if(ctx.datasetIndex===0) return null;
+            const y = allYrs[ctx.dataIndex];
+            const r = RATES[y];
+            const cbsEff = y===2026?0:r.cbs;
+            const ibsEff = y<=2028?0:r.ibs;
+            const pct = v => (v*100).toFixed(2)+'%';
+            if(ctx.datasetIndex===1){
+              // Vendas
+              const det = [r.iss?`ISS ${pct(r.iss)}`:'', cbsEff?`CBS ${pct(cbsEff)}`:'', ibsEff?`IBS ${pct(ibsEff)}`:''].filter(Boolean).join(' · ')||'—';
+              return [` Vendas/Cedente: ${ctx.raw}% do regime atual`, `   ${det}`];
+            } else {
+              // Compras
+              const det = ibsEff?`IBS ${pct(ibsEff)} (CBS creditado, sem ISS)`:'CBS declaratório · sem IBS efetivo · sem ISS';
+              return [` Compras/Adq.: ${ctx.raw}% do regime atual`, `   ${det}`];
+            }
           },
-          footer:items=>{
-            const i=items[0]?.dataIndex;const r=linR[i];
-            if(!r)return[];
-            if(r.y===2026)return['⚓ 2026 — base de referência (100)'];
-            const dAdq=+(idxAdq[i]-100).toFixed(1);
-            const dCed=+(idxCed[i]-100).toFixed(1);
-            const gap=+(idxCed[i]-idxAdq[i]).toFixed(1);
-            return[
-              `Adquirente vs 2026: ${dAdq>=0?'+':''}${dAdq} pts`,
-              `Cedente vs 2026: ${dCed>=0?'+':''}${dCed} pts`,
-              `Vantagem do crédito CBS: −${gap} pts`,
+          footer: items => {
+            const i = items[0]?.dataIndex;
+            const y = allYrs[i];
+            const r = RATES[y];
+            const inContract = isActY[i];
+            const status =
+              y===2026 ? '✔ CBS+IBS declaratórios — sem recolhimento' :
+              y<=2028  ? '⚡ CBS plena efetiva · IBS ainda 0,1% (teste)' :
+              y<=2032  ? '⚠ IBS estimado — Res. Senado pendente (art.18,II)' :
+                         '⚠ IVA Dual pleno projetado — sujeito a revisão';
+            const cedVsAtual = curvaCed[i]-100;
+            const adqVsAtual = curvaAdq[i]-100;
+            return [
+              inContract ? '◉ Dentro do período do contrato' : '○ Fora do período selecionado',
+              status,
+              `Vendas vs regime atual: ${cedVsAtual>=0?'+':''}${cedVsAtual.toFixed(1)} pts`,
+              `Compras vs regime atual: ${adqVsAtual>=0?'+':''}${adqVsAtual.toFixed(1)} pts`,
             ];
           }
-        }}},
-      scales:{x:{...SCALE.x},y:{...SCALE.y,
-        ticks:{...SCALE.y.ticks,callback:v=>v+''},
-        title:{display:true,text:'Índice (2026 = 100)',color:'#666',font:{size:9,family:'var(--fm)'}}}}
+        }}
+      },
+      scales: {
+        x: {...SCALE.x},
+        y: {
+          ...SCALE.y,
+          min: 0,
+          ticks: {...SCALE.y.ticks, callback: v => v+'%'},
+          title: {display:true, text:'Carga vs. Regime Atual 2026 (100% = custo igual)', color:'#555', font:{size:8,family:'var(--fm)'}}
+        }
+      }
     }
   });
 
