@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-10T13:07:55.040698",
+  "gerado": "2026-07-10T16:51:25.228787",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -132,6 +132,12 @@
       "nome": "Medley | Mutirão Copa | 2026",
       "empresa": "LMS",
       "valor_total": 785651.0
+    },
+    {
+      "id": "reci0W4326iTki265",
+      "nome": "L'oreal l Kings League WC l 2026",
+      "empresa": "LMS",
+      "valor_total": 592192.0
     },
     {
       "id": "reckov01TBAdxMiRP",
