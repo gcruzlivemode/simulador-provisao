@@ -94,10 +94,13 @@ def calcular_impacto(valor_brl, ano_ini, ano_fim, is_brl=True, irrf_pct=0.15):
     return resultado
 
 def parse_anos(ini_str, fim_str, periodo_str, nome_projeto=""):
-    ano_ini = ano_fim = ANO_HOJE
+    ano_ini = ANO_HOJE
+    ano_fim = None  # None = sem data de término preenchida
+
     if ini_str:
         try: ano_ini = int(str(ini_str)[:4])
         except: pass
+
     if fim_str:
         try: ano_fim = int(str(fim_str)[:4])
         except: pass
@@ -106,16 +109,20 @@ def parse_anos(ini_str, fim_str, periodo_str, nome_projeto=""):
         if len(years) >= 2:
             ano_ini, ano_fim = int(years[0]), int(years[-1])
         elif len(years) == 1:
-            ano_ini = ano_fim = int(years[0])
+            ano_ini = int(years[0])
+
     # Fallback: extrai ano do nome do projeto (ex: "Aurora | Paulistão 2028")
-    if ano_ini == ANO_HOJE and ano_fim == ANO_HOJE and nome_projeto:
+    if ano_ini == ANO_HOJE and ano_fim is None and nome_projeto:
         years_nome = re.findall(r"20[2-3]\d", nome_projeto)
         if years_nome:
-            yr = int(years_nome[-1])
-            if 2026 <= yr <= 2033:
-                ano_ini = ano_fim = yr
-    ano_ini = max(2026, min(2033, ano_ini))
-    ano_fim = max(ano_ini, min(2033, ano_fim))
+            ano_ini = int(years_nome[0])
+
+    # Se não há data de término preenchida, usa o mesmo ano do início
+    if ano_fim is None:
+        ano_fim = ano_ini
+
+    ano_ini = max(2026, ano_ini)
+    ano_fim = max(ano_ini, ano_fim)
     return ano_ini, ano_fim
 
 def classifica_empresa(empresa_raw, nome_projeto):
