@@ -94,26 +94,35 @@ def calcular_impacto(valor_brl, ano_ini, ano_fim, is_brl=True, irrf_pct=0.15):
     return resultado
 
 def parse_anos(ini_str, fim_str, periodo_str, nome_projeto=""):
+    def ano_valido(s):
+        """Extrai ano de uma string e valida que é um ano realista (2020-2040)."""
+        try:
+            v = int(str(s)[:4])
+            return v if 2020 <= v <= 2040 else None
+        except Exception:
+            return None
+
     ano_ini = ANO_HOJE
     ano_fim = None  # None = sem data de término preenchida
 
     if ini_str:
-        try: ano_ini = int(str(ini_str)[:4])
-        except: pass
+        v = ano_valido(ini_str)
+        if v: ano_ini = v
 
     if fim_str:
-        try: ano_fim = int(str(fim_str)[:4])
-        except: pass
+        v = ano_valido(fim_str)
+        if v: ano_fim = v
     elif periodo_str:
-        years = re.findall(r"\d{4}", str(periodo_str))
+        # Regex restrito: só aceita anos no formato 20XX ou 203X
+        years = [int(y) for y in re.findall(r"\b20[2-3]\d\b", str(periodo_str))]
         if len(years) >= 2:
-            ano_ini, ano_fim = int(years[0]), int(years[-1])
+            ano_ini, ano_fim = years[0], years[-1]
         elif len(years) == 1:
-            ano_ini = int(years[0])
+            ano_ini = years[0]
 
     # Fallback: extrai ano do nome do projeto (ex: "Aurora | Paulistão 2028")
     if ano_ini == ANO_HOJE and ano_fim is None and nome_projeto:
-        years_nome = re.findall(r"20[2-3]\d", nome_projeto)
+        years_nome = re.findall(r"\b20[2-3]\d\b", nome_projeto)
         if years_nome:
             ano_ini = int(years_nome[0])
 
