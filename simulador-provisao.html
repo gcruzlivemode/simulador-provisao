@@ -830,8 +830,16 @@ function calcular(){
     ? (RATES[2026].pis + RATES[2026].cof + RATES[2026].iss)*100
     : (irrf + RATES[2026].iss)*100;
 
-  // Ponto de inflexão (reutilizado no card inflexão abaixo — não re-declarar lá)
-  let inflexaoContrato = activeRows.find(r => r.y >= 2027 && r.total_novo > r.total_atual);
+  // Ponto de inflexão: compara alíquota efetiva do novo regime contra a taxa de 2026 (12,25% BRL).
+  // ERRO a evitar: total_atual em 2027+ reflete apenas ISS (PIS/COFINS = 0 nas RATES),
+  // então comparar total_novo > total_atual(ano) seria sempre verdadeiro em 2027 — incorreto.
+  // Comparação correta: taxa efetiva do novo regime vs taxa de referência de 2026.
+  const rate2026_decimal = rAtual_rate / 100; // 0.1225 BRL ou irrf+iss para USD
+  let inflexaoContrato = activeRows.find(r => {
+    if(r.y < 2027) return false;
+    const base = isBRL ? r.valBase : r.valBRL;
+    return base > 0 && (r.total_novo / base) > rate2026_decimal;
+  });
 
   const infKpiVal = inflexaoContrato
     ? `A partir de <span style="color:#FF4444">${inflexaoContrato.y}</span>`
@@ -868,8 +876,11 @@ function calcular(){
   const inflexaoCard = document.getElementById('inflexao-card');
   if(inflexaoContrato){
     const anoInf = inflexaoContrato.y;
-    const delta  = inflexaoContrato.total_novo - inflexaoContrato.total_atual;
-    const pctDif = inflexaoContrato.total_atual > 0 ? delta/inflexaoContrato.total_atual*100 : 0;
+    // Delta vs o que custaria em 2026 com o mesmo valor de contrato (base correta)
+    const baseInf     = isBRL ? inflexaoContrato.valBase : inflexaoContrato.valBRL;
+    const custo2026eq = rate2026_decimal * baseInf;
+    const delta  = inflexaoContrato.total_novo - custo2026eq;
+    const pctDif = custo2026eq > 0 ? delta/custo2026eq*100 : 0;
     inflexaoCard.style.display = 'block';
     inflexaoCard.innerHTML = `
       <div style="background:#1A0800;border:1px solid #E53935;border-left:4px solid #E53935;
