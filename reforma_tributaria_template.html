@@ -643,8 +643,9 @@ function buildYrKpis(projetos) {
   const tAtual = pisCof + ISS_REF;   // baseline 2026 fixo
   const tNovo  = iss + cbsEf + ibsEf;
   const pR     = v => (v*100).toFixed(1)+'%';
+  const pR2    = v => (v*100).toFixed(2)+'%';
 
-  const subAtual = `PIS+COFINS ${pR(pisCof)} · ISS ${pR(ISS_REF)} · Total ${pR(tAtual)} (baseline 2026)`;
+  const subAtual = `PIS+COFINS ${pR2(pisCof)} · ISS ${pR(ISS_REF)} · Total ${pR2(tAtual)} (baseline 2026)`;
   const subNovo = yr <= 2028
     ? `CBS ${pR(cbsEf)} · ISS ${pR(iss)} · IBS decl. · Total ${pR(tNovo)}`
     : `CBS ${pR(cbsEf)} · IBS ${pR(ibsEf)} · ISS ${pR(iss)} · Total ${pR(tNovo)}`;
@@ -669,7 +670,8 @@ function buildYrKpis(projetos) {
 
 // ── Tabela de Alíquotas ───────────────────────────────────────────────────────
 function buildRatesTable() {
-  const pct = v => v > 0 ? (v*100).toFixed(1)+'%' : '—';
+  const pct  = v => v > 0 ? (v*100).toFixed(1)+'%' : '—';
+  const pct2 = v => v > 0 ? (v*100).toFixed(2)+'%' : '—';
   const thead = `<thead><tr>
     <th style="text-align:left">Ano</th>
     <th>PIS+COFINS</th>
@@ -699,9 +701,9 @@ function buildRatesTable() {
     const yrLabel = `${a}${!r.confirmed?' <span style="color:var(--am);font-size:8px;vertical-align:super">⚠</span>':''}`;
     return `<tr style="${rowStyle}">
       <td style="text-align:left;font-family:var(--fm);font-weight:${isYr?700:400};color:${isYr?'var(--g)':'var(--t1)'}">${yrLabel}</td>
-      <td>${pct(pisCof)}</td>
+      <td>${pct2(pisCof)}</td>
       <td>${pct(r.iss)}</td>
-      <td style="font-weight:700;color:var(--bl)">${pct(tAtual)}</td>
+      <td style="font-weight:700;color:var(--bl)">${pct2(tAtual)}</td>
       <td>${a===2026?'<span style="color:var(--t3);font-size:9px">declaratório</span>':pct(cbsEf)}</td>
       <td>${a<=2028?'<span style="color:var(--t3);font-size:9px">declaratório</span>':pct(ibsEf)}</td>
       <td style="font-weight:700;color:var(--re)">${pct(tNovo)}</td>
