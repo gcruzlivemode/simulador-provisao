@@ -298,6 +298,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
     <div id="tab-consolidado" class="tab-pane active">
       <div class="kpi-rates fade-in" id="kpi-rates"></div>
       <div class="kpi-strip fade-in" id="kpi-strip"></div>
+      <div id="inflexao-card" class="fade-in" style="display:none;margin-bottom:14px"></div>
       <div class="charts-row fade-in">
         <!-- PRIMÁRIO: curva de alíquota % — o CFO lê aqui a tendência estratégica -->
         <div class="card">
@@ -352,7 +353,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
         Selecione um ano acima para ver o detalhamento.
       </div>
       <div id="porano-conteudo" style="display:none">
-        <div class="kpi-strip-4 fade-in" id="kpi-ano"></div>
+        <div class="kpi-strip fade-in" id="kpi-ano"></div>
         <div class="card fade-in" style="margin-bottom:14px">
           <div class="card-title">
             <div class="ct-bar" style="background:var(--g)"></div>
@@ -544,11 +545,23 @@ function renderAno(ano){
   document.getElementById('ano-tbl-title').textContent = `Detalhamento ${ano} ${confirmed?'(Lei confirmada)':'(Estimativa)'}`;
 
   // KPIs do ano
+  const baseRef    = isBRL ? r.valBase : r.valBRL;
+  const pctAtual   = baseRef > 0 ? (r.total_atual / baseRef * 100).toFixed(2) + '% do contrato' : '—';
+  const pctNovo    = baseRef > 0 ? (r.total_novo  / baseRef * 100).toFixed(2) + '% do contrato' : '—';
+  const pctLiq     = baseRef > 0 ? (r.custo_liq   / baseRef * 100).toFixed(2) + '% do contrato' : '—';
+  const deltaAno   = r.total_novo - r.total_atual;
+  const deltaColor = deltaAno > 0 ? '#FF8080' : C.g;
+  const deltaSign  = deltaAno >= 0 ? '+' : '';
+  const deltaLabel = ano >= 2027
+    ? `${deltaSign}${fmt(deltaAno, moedaImposto)} vs. Regime Atual`
+    : 'Sem efeito efetivo (CBS/IBS declaratório)';
+
   const kpisAno=[
-    {lbl:'Valor do Contrato', val:fmt(r.valBase, lastResult.moeda), sub:isBRL?'em R$':`≈ ${fmt(r.valBRL,'BRL')}`, color:'var(--t1)'},
-    {lbl:'Tributos Regime Atual', val:fmt(r.total_atual, moedaImposto), sub:'IRRF+PIS+COFINS+ISS', color: confirmed?'var(--t1)':'#FFD580'},
-    {lbl:'Tributos Novo Regime', val:fmt(r.total_novo, moedaImposto), sub:'IRRF+ISS+CBS+IBS', color: confirmed?'var(--t1)':'#FFD580'},
-    {lbl:'Custo Líquido', val:fmt(r.custo_liq, moedaImposto), sub: isCedente?'Sem crédito CBS':'Após crédito CBS', color: isCedente?'var(--re)':'var(--g)'},
+    {lbl:'Valor do Contrato',    val:fmt(r.valBase, lastResult.moeda),  sub:isBRL?'em R$':`≈ ${fmt(r.valBRL,'BRL')}`,             color:'var(--t1)'},
+    {lbl:'Regime Atual',         val:fmt(r.total_atual, moedaImposto),  sub:pctAtual+' · PIS+COFINS+ISS',                          color: confirmed?'rgba(255,255,255,.7)':'#FFD580'},
+    {lbl:ano>=2027?'Novo Regime':'Novo Regime (declaratório)', val:fmt(r.total_novo, moedaImposto), sub:pctNovo+' · CBS+IBS+ISS',  color: confirmed?'rgba(255,255,255,.7)':'#FFD580'},
+    {lbl:'Δ Impacto Reforma',    val:deltaSign+fmt(deltaAno, moedaImposto), sub:deltaLabel,                                        color:ano<2027?'var(--t3)':deltaColor},
+    {lbl:'Custo Líquido',        val:fmt(r.custo_liq, moedaImposto),   sub:pctLiq+(isCedente?' · Cedente, sem crédito CBS':' · Após crédito CBS'), color: isCedente?'var(--re)':'var(--g)'},
   ];
   document.getElementById('kpi-ano').innerHTML = kpisAno.map(k=>`
     <div class="kpi" style="border-top-color:${k.color}">
@@ -875,13 +888,71 @@ function calcular(){
       <div class="kpi-sub">${k.sub}</div>
     </div>`).join('');
 
+  // ── PONTO DE INFLEXÃO ─────────────────────────────────────────────────────
+  // Identifica o primeiro ano do contrato em que o novo regime supera o atual
+  const inflexaoContrato = activeRows.find(r => r.y >= 2027 && r.total_novo > r.total_atual);
+  const inflexaoCard = document.getElementById('inflexao-card');
+  if(inflexaoContrato){
+    const anoInf = inflexaoContrato.y;
+    const delta  = inflexaoContrato.total_novo - inflexaoContrato.total_atual;
+    const pctDif = inflexaoContrato.total_atual > 0 ? delta/inflexaoContrato.total_atual*100 : 0;
+    inflexaoCard.style.display = 'block';
+    inflexaoCard.innerHTML = `
+      <div style="background:#1A0800;border:1px solid #E53935;border-left:4px solid #E53935;
+        border-radius:var(--radius);padding:16px 20px;display:flex;align-items:flex-start;gap:16px">
+        <div style="font-size:22px;line-height:1;flex-shrink:0">⚠</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1px;
+            color:#E53935;text-transform:uppercase;margin-bottom:4px">Ponto de Inflexão Tributária</div>
+          <div style="font-family:var(--fm);font-size:18px;font-weight:700;color:#FF8080;margin-bottom:4px">
+            A reforma supera o regime atual a partir de <span style="color:#FF4444">${anoInf}</span></div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.6">
+            Em ${anoInf} o Novo Regime custa <strong style="color:#FF8080">+${fmt(delta,moedaImposto)}</strong>
+            (+${pctDif.toFixed(1)}%) a mais que o regime atual neste contrato.
+            ${!RATES[anoInf].confirmed ? '<span style="color:var(--am)"> ⚠ Estimativa — sujeito à Res. Senado.</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // Dentro do período do contrato, novo regime não ultrapassa o atual
+    inflexaoCard.style.display = 'block';
+    inflexaoCard.innerHTML = `
+      <div style="background:var(--g3);border:1px solid var(--g);border-left:4px solid var(--g);
+        border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:20px;line-height:1;flex-shrink:0">✔</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1px;
+            color:var(--g);text-transform:uppercase;margin-bottom:3px">Sem Inflexão no Período</div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.5">
+            Dentro do período deste contrato (${ini}–${fim}), o Novo Regime não supera o custo do Regime Atual.
+          </div>
+        </div>
+      </div>`;
+  }
+
   const ar = activeRows; // alias usado pelos gráficos e tabela
-  // ── GRÁFICO BARRAS — Provisão por Ano: Regime Atual vs. Compras vs. Vendas ──
+
+  // ── GRÁFICO BARRAS — Atual vs. Novo Regime (posição do usuário) ──────────
+  // Simplificado: 2 barras por ano — Regime Atual vs. Novo Regime na posição informada
+  // Cedente  → custo = total_novo (sem crédito CBS)
+  // Adquirente → custo = custo_liq (após crédito CBS)
+  const novoLabel = isCedente ? 'Novo Regime — Cedente/Vendas' : 'Novo Regime — Adquirente/Compras';
+  const novoData  = ar.map(r => isCedente ? +r.total_novo.toFixed(2) : +r.custo_liq.toFixed(2));
+  const novoBg    = ar.map(r => {
+    if(r.y < 2027) return 'rgba(109,201,59,0.18)'; // 2026: declaratório, quasi-igual
+    return r.confirmed
+      ? (isCedente ? 'rgba(230,126,34,.60)' : 'rgba(109,201,59,.60)')
+      : (isCedente ? 'rgba(245,166,35,.35)' : 'rgba(109,201,59,.30)');
+  });
+  const novoBorder = ar.map(r => {
+    if(r.y < 2027) return 'rgba(109,201,59,0.3)';
+    return r.confirmed ? (isCedente ? C.or : C.g) : C.am;
+  });
+
   document.getElementById('chart-note').innerHTML=
-    `<span style="color:rgba(180,180,180,.75)">■</span> Regime Atual (${isBRL?'PIS+COFINS+ISS':'IRRF+ISS'}) &nbsp;·&nbsp;`+
-    `<span style="color:${C.g}">■</span> Compras / Adquirente &nbsp;·&nbsp;`+
-    `<span style="color:${C.or}">■</span> Vendas / Cedente &nbsp;·&nbsp;`+
-    `<span style="color:${C.am}">⚠</span> Alíquota estimada`;
+    `<span style="color:rgba(180,180,180,.75)">■</span> Regime Atual &nbsp;·&nbsp;`+
+    `<span style="color:${isCedente?C.or:C.g}">■</span> ${novoLabel} &nbsp;·&nbsp;`+
+    `<span style="color:${C.am}">⚠</span> estimativa`;
 
   const labels=ar.map(r=>String(r.y));
   if(barChartInst)barChartInst.destroy();
@@ -890,18 +961,13 @@ function calcular(){
     data:{labels,datasets:[
       {label:'Regime Atual',
        data:ar.map(r=>+r.total_atual.toFixed(2)),
-       backgroundColor:'rgba(180,180,180,.28)',
-       borderColor:'rgba(180,180,180,.55)',
+       backgroundColor:'rgba(180,180,180,.25)',
+       borderColor:'rgba(180,180,180,.50)',
        borderWidth:1, borderRadius:3},
-      {label:'Compras / Adquirente',
-       data:ar.map(r=>+(r.total_novo-r.cbs_efetiva).toFixed(2)),
-       backgroundColor:ar.map(r=>r.confirmed?'rgba(109,201,59,.5)':'rgba(245,166,35,.35)'),
-       borderColor:ar.map(r=>r.confirmed?C.g:C.am),
-       borderWidth:1, borderRadius:{topLeft:3,topRight:3}},
-      {label:'Vendas / Cedente',
-       data:ar.map(r=>+r.total_novo.toFixed(2)),
-       backgroundColor:ar.map(r=>r.confirmed?'rgba(230,126,34,.5)':'rgba(245,166,35,.35)'),
-       borderColor:ar.map(r=>r.confirmed?C.or:C.am),
+      {label:novoLabel,
+       data:novoData,
+       backgroundColor:novoBg,
+       borderColor:novoBorder,
        borderWidth:1, borderRadius:{topLeft:3,topRight:3}},
     ]},
     options:{
@@ -914,14 +980,12 @@ function calcular(){
             afterBody:items=>{
               const i=items[0]?.dataIndex; const r=ar[i]; if(!r)return[];
               const base=isBRL?r.valBase:r.valBRL;
-              const adq=r.total_novo-r.cbs_efetiva;
-              const ced=r.total_novo;
+              const novo=isCedente?r.total_novo:r.custo_liq;
+              const d=novo-r.total_atual;
               const pct=v=>base>0?`${(v/base*100).toFixed(2)}% do contrato`:'—';
-              const dAdq=adq-r.total_atual; const dCed=ced-r.total_atual;
               return ['',
                 ` Atual: ${pct(r.total_atual)}`,
-                ` Compras: ${pct(adq)} · Δ ${dAdq>=0?'+':''}${fmt(dAdq,moedaImposto)} vs atual`,
-                ` Vendas:  ${pct(ced)} · Δ ${dCed>=0?'+':''}${fmt(dCed,moedaImposto)} vs atual`,
+                ` ${isCedente?'Cedente':'Adquirente'}: ${pct(novo)} · Δ ${d>=0?'+':''}${fmt(d,moedaImposto)}`,
               ];
             }
           }
