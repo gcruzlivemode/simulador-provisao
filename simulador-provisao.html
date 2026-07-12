@@ -311,7 +311,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
             <span style="color:var(--g)">●</span> Compras / Adquirente &nbsp;·&nbsp;
             <span style="color:rgba(255,255,255,.5)">◉</span> Dentro do contrato &nbsp;<span style="color:rgba(255,255,255,.2)">○</span> Referência
           </div>
-          <canvas id="lineChart" height="220"></canvas>
+          <canvas id="lineChart" height="160"></canvas>
         </div>
         <!-- SECUNDÁRIO: R$ no contrato — valida o impacto financeiro -->
         <div class="card">
@@ -320,7 +320,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
             <span class="ct-text">Provisão em R$ por Ano — Anos do Contrato</span>
           </div>
           <div class="card-note" id="chart-note"></div>
-          <canvas id="barChart" height="220"></canvas>
+          <canvas id="barChart" height="160"></canvas>
         </div>
       </div>
       <div class="card fade-in" style="margin-bottom:14px">
@@ -341,20 +341,13 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
       </div>
       <div id="porano-conteudo" style="display:none">
         <div class="kpi-strip-4 fade-in" id="kpi-ano"></div>
-        <div class="ano-charts fade-in">
+        <div class="fade-in" style="margin-bottom:14px">
           <div class="card">
             <div class="card-title">
               <div class="ct-bar" style="background:var(--g)"></div>
-              <span class="ct-text" id="ano-chart-title">Composição dos Tributos</span>
+              <span class="ct-text" id="ano-chart-title">2026 (Referência) vs. Ano Selecionado</span>
             </div>
-            <canvas id="pieChartAno" height="220"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-title">
-              <div class="ct-bar" style="background:var(--g)"></div>
-              <span class="ct-text">Regime Atual vs. Novo Regime</span>
-            </div>
-            <canvas id="barChartAno" height="220"></canvas>
+            <canvas id="compChartAno" height="150"></canvas>
           </div>
         </div>
         <div class="card fade-in" style="margin-bottom:14px">
@@ -421,7 +414,7 @@ const C={g:'#6DC93B',bg:'#111111',s1:'#1A1A1A',s2:'#222222',s3:'#2E2E2E',s4:'#3A
          pi:'#E91E8C',co:'#FF6B35',cs:'#00BCD4'};
 
 let barChartInst=null,lineChartInst=null,lastResult=null;
-let pieChartAnoInst=null,barChartAnoInst=null;
+let compChartAnoInst=null;
 
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
@@ -456,7 +449,9 @@ function renderAno(ano){
     ? `<span class="badge" style="background:var(--g3);color:var(--g)">✔ LEI</span>`
     : `<span class="badge" style="background:#1E1200;color:${C.am}">⚠ EST</span>`;
 
-  document.getElementById('ano-chart-title').textContent = `Composição dos Tributos — ${ano}`;
+  document.getElementById('ano-chart-title').textContent = ano === 2026
+    ? `2026 — Regime Atual vs. Novo Regime (declaratório)`
+    : `2026 (Referência) vs. ${ano} (Projeção${confirmed?'':', Estimativa'})`;
   document.getElementById('ano-tbl-title').textContent = `Detalhamento ${ano} ${confirmed?'(Lei confirmada)':'(Estimativa)'}`;
 
   // KPIs do ano
@@ -473,42 +468,62 @@ function renderAno(ano){
       <div class="kpi-sub">${k.sub}</div>
     </div>`).join('');
 
-  // Gráfico de pizza — composição dos tributos do ano
-  const pieLabels=[], pieData=[], pieColors=[];
-  if(r.irrf_v>0){pieLabels.push('IRRF');pieData.push(r.irrf_v);pieColors.push(C.bl);}
-  if(r.pis_v>0){pieLabels.push('PIS');pieData.push(r.pis_v);pieColors.push(C.pi);}
-  if(r.cof_v>0){pieLabels.push('COFINS');pieData.push(r.cof_v);pieColors.push(C.co);}
-  if(r.iss_v>0){pieLabels.push('ISS');pieData.push(r.iss_v);pieColors.push(C.or);}
-  if(r.cbs_efetiva>0){pieLabels.push('CBS');pieData.push(r.cbs_efetiva);pieColors.push(C.g2);}
-  if(r.ibs_efetivo>0){pieLabels.push('IBS');pieData.push(r.ibs_efetivo);pieColors.push(C.g);}
+  // Grouped bar: 2026 (referência) vs ano selecionado
+  const ref26 = lastResult.rows.find(rr=>rr.y===2026) || r;
+  const isRef = ano === 2026;
 
-  if(pieChartAnoInst)pieChartAnoInst.destroy();
-  pieChartAnoInst=new Chart(document.getElementById('pieChartAno'),{
-    type:'doughnut',
-    data:{labels:pieLabels,datasets:[{data:pieData,backgroundColor:pieColors,borderColor:C.bg,borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{position:'bottom',labels:{color:C.t2,font:{size:10},padding:12}},
-        tooltip:{...TIP,callbacks:{label:ctx=>{
-          const total=ctx.dataset.data.reduce((a,b)=>a+b,0);
-          return ` ${ctx.label}: ${fmt(ctx.raw,moedaImposto)} (${(ctx.raw/total*100).toFixed(1)}%)`;
-        }}}}}
-  });
+  const compLabels = ['PIS+COFINS','ISS','CBS','IBS','TOTAL'];
+  const refVals = [
+    ref26.pis_v + ref26.cof_v,
+    ref26.iss_v,
+    0,   // CBS declaratório em 2026 (sem recolhimento)
+    0,   // IBS declaratório em 2026
+    ref26.total_atual,
+  ];
+  const curVals = [
+    r.pis_v + r.cof_v,
+    r.iss_v,
+    r.cbs_efetiva,
+    r.ibs_efetivo,
+    r.total_novo,
+  ];
+  if(ref26.irrf_v > 0 || r.irrf_v > 0){
+    compLabels.unshift('IRRF');
+    refVals.unshift(ref26.irrf_v);
+    curVals.unshift(r.irrf_v);
+  }
 
-  // Gráfico de barras — regime atual vs novo
-  if(barChartAnoInst)barChartAnoInst.destroy();
-  barChartAnoInst=new Chart(document.getElementById('barChartAno'),{
+  if(compChartAnoInst) compChartAnoInst.destroy();
+  compChartAnoInst = new Chart(document.getElementById('compChartAno'),{
     type:'bar',
     data:{
-      labels:['Regime Atual','Novo Regime','Custo Líquido'],
-      datasets:[{
-        data:[r.total_atual, r.total_novo, r.custo_liq],
-        backgroundColor:[C.bl, confirmed?C.g:C.am, isCedente?C.re:C.g],
-        borderRadius:6,
-      }]
+      labels: compLabels,
+      datasets:[
+        {
+          label: '2026 — Regime Atual',
+          data: refVals,
+          backgroundColor: 'rgba(74,159,212,0.75)',
+          borderRadius: 4,
+        },
+        {
+          label: `${ano} — ${isRef?'Novo Regime':('Projeção'+(confirmed?'':' ⚠Est'))}`,
+          data: curVals,
+          backgroundColor: confirmed ? 'rgba(109,201,59,0.75)' : 'rgba(245,166,35,0.75)',
+          borderRadius: 4,
+        },
+      ]
     },
-    options:{responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:ctx=>` ${fmt(ctx.raw,moedaImposto)}`}}},
-      scales:{x:{...SCALE.x},y:{...SCALE.y,ticks:{...SCALE.y.ticks,callback:v=>fmt(v,moedaImposto)}}}}
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{display:true, position:'top', labels:{color:C.t2, font:{size:10}, boxWidth:12, padding:16}},
+        tooltip:{...TIP, callbacks:{label:ctx=>` ${ctx.dataset.label.split('—')[0].trim()}: ${fmt(ctx.raw, moedaImposto)}`}},
+      },
+      scales:{
+        x:{...SCALE.x},
+        y:{...SCALE.y, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,moedaImposto)}},
+      },
+    }
   });
 
   // Tabela do ano
