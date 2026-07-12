@@ -336,20 +336,23 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh
     <!-- ABA POR ANO -->
     <div id="tab-porano" class="tab-pane">
       <div class="ano-selector" id="ano-selector"></div>
-      <div id="porano-empty" style="display:none;color:var(--t3);font-size:12px;padding:40px 0;text-align:center">
+      <!-- Gráfico overview: sempre visível quando há dados -->
+      <div id="porano-overview" style="display:none;margin-bottom:14px" class="fade-in">
+        <div class="card">
+          <div class="card-title" style="flex-wrap:wrap;gap:6px">
+            <div class="ct-bar" style="background:var(--or)"></div>
+            <span class="ct-text">Regime Atual vs. Novo Regime · Todos os Anos</span>
+            <span style="margin-left:auto;font-size:9px;color:var(--t3);font-family:var(--fm)">△ barra tracejada = estimativa</span>
+          </div>
+          <canvas id="compChartAno" height="190"></canvas>
+        </div>
+      </div>
+      <!-- Detalhe do ano selecionado -->
+      <div id="porano-empty" style="display:none;color:var(--t3);font-size:12px;padding:20px 0;text-align:center">
         Selecione um ano acima para ver o detalhamento.
       </div>
       <div id="porano-conteudo" style="display:none">
         <div class="kpi-strip-4 fade-in" id="kpi-ano"></div>
-        <div class="fade-in" style="margin-bottom:14px">
-          <div class="card">
-            <div class="card-title">
-              <div class="ct-bar" style="background:var(--g)"></div>
-              <span class="ct-text" id="ano-chart-title">2026 (Referência) vs. Ano Selecionado</span>
-            </div>
-            <canvas id="compChartAno" height="150"></canvas>
-          </div>
-        </div>
         <div class="card fade-in" style="margin-bottom:14px">
           <div class="card-title">
             <div class="ct-bar" style="background:var(--g)"></div>
@@ -424,18 +427,99 @@ function switchTab(tab){
   document.getElementById('tab-porano').classList.toggle('active', tab==='porano');
 }
 
+function renderAnoOverview(selectedAno){
+  if(!lastResult) return;
+  const activeRows = lastResult.rows.filter(r=>r.active&&r.valBase>0);
+  if(!activeRows.length) return;
+  const moedaImposto='BRL';
+  const labels = activeRows.map(r=>String(r.y));
+
+  const bgAtual = activeRows.map(r=>
+    r.y===selectedAno ? 'rgba(109,201,59,0.95)' :
+    RATES[r.y].confirmed ? 'rgba(109,201,59,0.45)' : 'rgba(109,201,59,0.28)'
+  );
+  const bgNovo = activeRows.map(r=>
+    r.y===selectedAno ? 'rgba(140,140,140,0.92)' :
+    RATES[r.y].confirmed ? 'rgba(100,100,100,0.55)' : 'rgba(75,75,75,0.38)'
+  );
+  const delta = activeRows.map(r=>r.total_novo - r.total_atual);
+  const ptRadius = activeRows.map(r=>r.y===selectedAno ? 8 : 4);
+  const ptBg = activeRows.map(r=>r.y===selectedAno ? '#FFFFFF' : '#E67E22');
+
+  if(compChartAnoInst) compChartAnoInst.destroy();
+  compChartAnoInst = new Chart(document.getElementById('compChartAno'),{
+    data:{
+      labels,
+      datasets:[
+        {
+          type:'bar', label:'Regime Atual', data:activeRows.map(r=>r.total_atual),
+          backgroundColor:bgAtual, borderRadius:4, yAxisID:'y', order:2,
+        },
+        {
+          type:'bar', label:'Novo Regime (CBS+IBS)', data:activeRows.map(r=>r.total_novo),
+          backgroundColor:bgNovo, borderRadius:4, yAxisID:'y', order:2,
+        },
+        {
+          type:'line',
+          label:'Δ Impacto (eixo direito · ponto maior = ano selecionado)',
+          data:delta,
+          borderColor:'#E67E22',
+          backgroundColor:'rgba(230,126,34,0.08)',
+          borderWidth:2,
+          pointRadius:ptRadius,
+          pointBackgroundColor:ptBg,
+          pointBorderColor:'#E67E22',
+          pointBorderWidth:2,
+          tension:0.3,
+          segment:{borderDash:ctx=>{
+            const y=activeRows[ctx.p0DataIndex]?.y;
+            return (y&&!RATES[y]?.confirmed)?[5,4]:[];
+          }},
+          yAxisID:'y2', order:1,
+        }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{
+          display:true, position:'top',
+          labels:{color:C.t2, font:{size:10}, boxWidth:12, padding:14,
+            filter:(item)=>true}
+        },
+        tooltip:{...TIP, callbacks:{
+          label:ctx=>{
+            if(ctx.dataset.yAxisID==='y2') return ` Δ: ${fmt(ctx.raw,moedaImposto)}`;
+            return ` ${ctx.dataset.label.split('(')[0].trim()}: ${fmt(ctx.raw,moedaImposto)}`;
+          }
+        }},
+      },
+      scales:{
+        x:{...SCALE.x},
+        y:{...SCALE.y, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,moedaImposto)}},
+        y2:{
+          type:'linear', position:'right',
+          grid:{drawOnChartArea:false},
+          ticks:{color:'#E67E22', font:{size:9}, callback:v=>fmt(v,moedaImposto)},
+          border:{color:'rgba(230,126,34,0.25)'},
+        }
+      }
+    }
+  });
+}
+
 function renderAno(ano){
   if(!lastResult) return;
   const row = lastResult.rows.find(r=>r.y===ano);
   if(!row||!row.active||row.valBase===0){
     document.getElementById('porano-empty').style.display='block';
     document.getElementById('porano-conteudo').style.display='none';
+    renderAnoOverview(ano);
     return;
   }
   document.getElementById('porano-empty').style.display='none';
   document.getElementById('porano-conteudo').style.display='block';
 
-  // Atualizar botões
   document.querySelectorAll('.ano-btn').forEach(b=>{
     b.classList.toggle('active', parseInt(b.dataset.ano)===ano);
   });
@@ -449,9 +533,6 @@ function renderAno(ano){
     ? `<span class="badge" style="background:var(--g3);color:var(--g)">✔ LEI</span>`
     : `<span class="badge" style="background:#1E1200;color:${C.am}">⚠ EST</span>`;
 
-  document.getElementById('ano-chart-title').textContent = ano === 2026
-    ? `2026 — Regime Atual vs. Novo Regime (declaratório)`
-    : `2026 (Referência) vs. ${ano} (Projeção${confirmed?'':', Estimativa'})`;
   document.getElementById('ano-tbl-title').textContent = `Detalhamento ${ano} ${confirmed?'(Lei confirmada)':'(Estimativa)'}`;
 
   // KPIs do ano
@@ -468,63 +549,8 @@ function renderAno(ano){
       <div class="kpi-sub">${k.sub}</div>
     </div>`).join('');
 
-  // Grouped bar: 2026 (referência) vs ano selecionado
-  const ref26 = lastResult.rows.find(rr=>rr.y===2026) || r;
-  const isRef = ano === 2026;
-
-  const compLabels = ['PIS+COFINS','ISS','CBS','IBS','TOTAL'];
-  const refVals = [
-    ref26.pis_v + ref26.cof_v,
-    ref26.iss_v,
-    0,   // CBS declaratório em 2026 (sem recolhimento)
-    0,   // IBS declaratório em 2026
-    ref26.total_atual,
-  ];
-  const curVals = [
-    r.pis_v + r.cof_v,
-    r.iss_v,
-    r.cbs_efetiva,
-    r.ibs_efetivo,
-    r.total_novo,
-  ];
-  if(ref26.irrf_v > 0 || r.irrf_v > 0){
-    compLabels.unshift('IRRF');
-    refVals.unshift(ref26.irrf_v);
-    curVals.unshift(r.irrf_v);
-  }
-
-  if(compChartAnoInst) compChartAnoInst.destroy();
-  compChartAnoInst = new Chart(document.getElementById('compChartAno'),{
-    type:'bar',
-    data:{
-      labels: compLabels,
-      datasets:[
-        {
-          label: '2026 — Regime Atual',
-          data: refVals,
-          backgroundColor: 'rgba(74,159,212,0.75)',
-          borderRadius: 4,
-        },
-        {
-          label: `${ano} — ${isRef?'Novo Regime':('Projeção'+(confirmed?'':' ⚠Est'))}`,
-          data: curVals,
-          backgroundColor: confirmed ? 'rgba(109,201,59,0.75)' : 'rgba(245,166,35,0.75)',
-          borderRadius: 4,
-        },
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:true,
-      plugins:{
-        legend:{display:true, position:'top', labels:{color:C.t2, font:{size:10}, boxWidth:12, padding:16}},
-        tooltip:{...TIP, callbacks:{label:ctx=>` ${ctx.dataset.label.split('—')[0].trim()}: ${fmt(ctx.raw, moedaImposto)}`}},
-      },
-      scales:{
-        x:{...SCALE.x},
-        y:{...SCALE.y, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,moedaImposto)}},
-      },
-    }
-  });
+  // Redesenhar overview com destaque no ano selecionado
+  renderAnoOverview(ano);
 
   // Tabela do ano
   const delta_abs = r.total_novo - r.total_atual;
@@ -1179,9 +1205,11 @@ function calcular(){
 
   // Selecionar automaticamente o primeiro ano ativo
   if(activeYears.length>0){
+    document.getElementById('porano-overview').style.display='block';
     document.getElementById('porano-empty').style.display='none';
     renderAno(activeYears[0]);
   } else {
+    document.getElementById('porano-overview').style.display='none';
     document.getElementById('porano-empty').style.display='block';
     document.getElementById('porano-conteudo').style.display='none';
   }
