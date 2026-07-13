@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-13T13:17:07.702218",
+  "gerado": "2026-07-13T17:10:13.340214",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -74,6 +74,12 @@
       "valor_total": 24000000.0
     },
     {
+      "id": "recNNCiuLfrk1gBiO",
+      "nome": "Betano | Paulistão Masculino | Arena | 2027",
+      "empresa": "LMS",
+      "valor_total": 23000000.0
+    },
+    {
       "id": "recQBziNsyjDkUyJT",
       "nome": "Itaú | Donan 2026",
       "empresa": "LMS",
@@ -84,6 +90,12 @@
       "nome": "Hering | Roda de Bobo 2026",
       "empresa": "LMS",
       "valor_total": 1625000.0
+    },
+    {
+      "id": "recRXr58qymWvhlbt",
+      "nome": "Betano | Paulistão Feminino | Arena | 2026",
+      "empresa": "LMS",
+      "valor_total": 1000000.0
     },
     {
       "id": "recTXW2v937xqcLcN",
