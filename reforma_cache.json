@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-16T03:57:27.443319",
+  "gerado": "2026-07-16T12:16:52.833923",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -150,6 +150,12 @@
       "nome": "L'oreal l Kings League WC l 2026",
       "empresa": "LMS",
       "valor_total": 592192.0
+    },
+    {
+      "id": "recjV7JVli5fEfKJd",
+      "nome": "Honda | Mutirão Olímpico | 2026",
+      "empresa": "LMS",
+      "valor_total": 2400000.0
     },
     {
       "id": "reckov01TBAdxMiRP",
