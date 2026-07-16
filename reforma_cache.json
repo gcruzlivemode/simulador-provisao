@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-16T16:13:50.605464",
+  "gerado": "2026-07-16T18:01:30.425887",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -36,6 +36,12 @@
       "nome": "Bet365 | Paulistão | CazéTV | 2027",
       "empresa": "CZTV",
       "valor_total": 11500000.0
+    },
+    {
+      "id": "recBNJoQAuqfsEbUz",
+      "nome": "Magalu | Mutirão Olímpico | 2026\n",
+      "empresa": "LMS",
+      "valor_total": 2500000.0
     },
     {
       "id": "recCrxy5T70qGKEOu",
