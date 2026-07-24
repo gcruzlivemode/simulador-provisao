@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-24T12:15:52.095793",
+  "gerado": "2026-07-24T14:49:42.730711",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -150,6 +150,12 @@
       "nome": "Medley | Mutirão Copa | 2026",
       "empresa": "LMS",
       "valor_total": 785651.0
+    },
+    {
+      "id": "rech7uiULBcdykkpB",
+      "nome": "Mercado Livre | Projeto Especial | Cooling Break 2026",
+      "empresa": "LMS",
+      "valor_total": 1072487648.0
     },
     {
       "id": "reci0W4326iTki265",
