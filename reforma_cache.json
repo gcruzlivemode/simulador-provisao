@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-31T20:15:57.996070",
+  "gerado": "2026-07-31T21:59:30.433110",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -140,6 +140,12 @@
       "valor_total": 172800.0
     },
     {
+      "id": "recbghw9eueKbqMqJ",
+      "nome": "Betnacional | Futebol Internacional | Premier League | Real e Barça | Temporada",
+      "empresa": "LMS",
+      "valor_total": 45000000.0
+    },
+    {
       "id": "recblaQHT8jREaumT",
       "nome": "Bet365 | Paulistão | 2027 | Cota Substituição\n",
       "empresa": "LMS",
@@ -186,6 +192,12 @@
       "nome": "Krispy Kreme | Creators Copa | 2026",
       "empresa": "LMS",
       "valor_total": 140000.0
+    },
+    {
+      "id": "recogRMY7puq1wVBq",
+      "nome": "Betnacional | Projeto Especial | Cooling Break 2026",
+      "empresa": "LMS",
+      "valor_total": 10000000.0
     },
     {
       "id": "recp7a4w6nwcrb3n0",
