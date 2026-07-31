@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-07-31T12:51:51.651852",
+  "gerado": "2026-07-31T15:14:42.700063",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -84,6 +84,12 @@
       "nome": "Betano | Paulistão Masculino | Arena | 2027",
       "empresa": "LMS",
       "valor_total": 23000000.0
+    },
+    {
+      "id": "recOTB0GEzaBKSvQF",
+      "nome": "Intelbras | Noche de Copa | 2026",
+      "empresa": "LMS",
+      "valor_total": 5089264.0
     },
     {
       "id": "recQBziNsyjDkUyJT",
