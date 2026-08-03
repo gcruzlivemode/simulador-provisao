@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-03T13:35:49.669100",
+  "gerado": "2026-08-03T17:06:23.433501",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -12,6 +12,12 @@
       "nome": "Casas Bahia | Naming Rights Paulistão Masculino",
       "empresa": "LMS",
       "valor_total": 21000000.0
+    },
+    {
+      "id": "rec3ySZKw3kUn2d52",
+      "nome": "Betnacional | Futebol Internacional | Serie A | 2026",
+      "empresa": "LMS",
+      "valor_total": 1014120.0
     },
     {
       "id": "rec4bCt9DoOOCCmaS",
@@ -60,6 +66,12 @@
       "nome": "Gillete l Upsell 2 Influenciadores l Brasileiro",
       "empresa": "LMS",
       "valor_total": 2684875.0
+    },
+    {
+      "id": "recGC79tzvTNyGByU",
+      "nome": "Betnacional | Premier League | Temporada 26/27",
+      "empresa": "LMS",
+      "valor_total": 7940916.0
     },
     {
       "id": "recJXb7uVL5hWnZJs",
