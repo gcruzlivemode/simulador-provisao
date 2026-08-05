@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-05T18:16:13.682482",
+  "gerado": "2026-08-05T20:21:41.601804",
   "projetos": [
     {
       "id": "rec1WBSXR5YO7OiET",
@@ -12,6 +12,12 @@
       "nome": "Casas Bahia | Naming Rights Paulistão Masculino",
       "empresa": "LMS",
       "valor_total": 21000000.0
+    },
+    {
+      "id": "rec1sFkClXCSH2F3B",
+      "nome": "Caixa | Mutirão Olímpico | 2026",
+      "empresa": "LMS",
+      "valor_total": 14556968.0
     },
     {
       "id": "rec3ySZKw3kUn2d52",
