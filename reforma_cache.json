@@ -1,6 +1,12 @@
 {
-  "gerado": "2026-08-06T15:09:41.690798",
+  "gerado": "2026-08-07T00:37:51.803361",
   "projetos": [
+    {
+      "id": "rec0XvFV5jbgneDe7",
+      "nome": "Petrobras | Patrocínio Paulistão F 2026",
+      "empresa": "LMS",
+      "valor_total": 3500000.0
+    },
     {
       "id": "rec1WBSXR5YO7OiET",
       "nome": "Bet365 | Futebol Feminino | 2026",
