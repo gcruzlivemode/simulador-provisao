@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-07T17:43:18.857760",
+  "gerado": "2026-08-07T19:48:09.439286",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -48,6 +48,12 @@
       "nome": "iFood | Bolão Copa do Mundo | 2026",
       "empresa": "LMS",
       "valor_total": 4000000.0
+    },
+    {
+      "id": "recAeFStej4TL76Ui",
+      "nome": "Wella l Paulistão F l 2026\n",
+      "empresa": "LMS",
+      "valor_total": 61194073.0
     },
     {
       "id": "recBKPsE1JKRsQjL3",
@@ -180,6 +186,12 @@
       "nome": "Casas Bahia | Talentos: Luisinho | 2026 e 2027",
       "empresa": "LMS",
       "valor_total": 600000.0
+    },
+    {
+      "id": "recg61xJIQ654cTn7",
+      "nome": "Wella l Futebol Feminino l 2026",
+      "empresa": "LMS",
+      "valor_total": 58805927.0
     },
     {
       "id": "rech6U5V0U2QWFWfK",
