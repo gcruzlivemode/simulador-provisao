@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-10T11:42:57.161451",
+  "gerado": "2026-08-10T14:17:05.298244",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -116,6 +116,12 @@
       "valor_total": 23000000.0
     },
     {
+      "id": "recO2qbbX84sijwuE",
+      "nome": "Pitaco | Futebol Internacional | La Liga | Real e Barça | 26/27",
+      "empresa": "LMS",
+      "valor_total": 16367480.0
+    },
+    {
       "id": "recOTB0GEzaBKSvQF",
       "nome": "Intelbras | Noche de Copa | 2026",
       "empresa": "LMS",
@@ -162,6 +168,12 @@
       "nome": "Mercado Livre | Casa CazéTV 2026",
       "empresa": "CZTV",
       "valor_total": 4000000.0
+    },
+    {
+      "id": "reca1A0sL8omjVt3W",
+      "nome": "Pitaco | Futebol Internacional | Premier League | 26/27",
+      "empresa": "LMS",
+      "valor_total": 8632520.0
     },
     {
       "id": "recb3KETFFXlX79uI",
