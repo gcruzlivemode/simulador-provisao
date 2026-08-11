@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-11T19:58:05.019756",
+  "gerado": "2026-08-11T21:39:37.758136",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -186,6 +186,12 @@
       "nome": "JBS (Friboi) | Luisinho (junho/julho) | 2026",
       "empresa": "LMS",
       "valor_total": 100000.0
+    },
+    {
+      "id": "recVXpEk9fbEClrM2",
+      "nome": "Betano | Futebol Internacional | Europa e Conference League | 2026",
+      "empresa": "LMS",
+      "valor_total": 210594305.0
     },
     {
       "id": "recXOf6HmU8QBevNj",
