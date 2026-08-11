@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-11T15:55:08.396124",
+  "gerado": "2026-08-11T17:53:29.084869",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -126,6 +126,12 @@
       "nome": "Intelbras | Noche de Copa | 2026",
       "empresa": "LMS",
       "valor_total": 5089264.0
+    },
+    {
+      "id": "recPKuSDyvfarZyDe",
+      "nome": "Bet365 | Paulistão F | 2026",
+      "empresa": "LMS",
+      "valor_total": 500000.0
     },
     {
       "id": "recQBziNsyjDkUyJT",
