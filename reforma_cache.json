@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-18T11:19:17.591584",
+  "gerado": "2026-08-18T13:36:57.140481",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -24,6 +24,12 @@
       "nome": "Caixa | Mutirão Olímpico | 2026",
       "empresa": "LMS",
       "valor_total": 14556968.0
+    },
+    {
+      "id": "rec32R277YATjaoMw",
+      "nome": "Teste - CRM",
+      "empresa": "LMS",
+      "valor_total": 1.0
     },
     {
       "id": "rec3ySZKw3kUn2d52",
