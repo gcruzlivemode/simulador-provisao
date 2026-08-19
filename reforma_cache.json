@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-19T19:19:50.482667",
+  "gerado": "2026-08-19T21:19:34.248911",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -48,6 +48,12 @@
       "nome": "Betano | La Liga | Real e Barça | 2026",
       "empresa": "LMS",
       "valor_total": 1240077686.0
+    },
+    {
+      "id": "rec6uMqJ8UzMTjxfj",
+      "nome": "Sil | Naming Rights Copinha | 2027",
+      "empresa": "LMS",
+      "valor_total": 2579153.0
     },
     {
       "id": "rec8pppKOeu3arutl",
@@ -122,6 +128,12 @@
       "valor_total": 4969875.0
     },
     {
+      "id": "recK0sVaRLQcVRDVn",
+      "nome": "Sil | Paulistão | 2027",
+      "empresa": "LMS",
+      "valor_total": 5510988.0
+    },
+    {
       "id": "recKK4IwwKsq5e8Dc",
       "nome": "Aurora | Paulistão (arena) | 2028",
       "empresa": "LMS",
@@ -150,6 +162,12 @@
       "nome": "Intelbras | Noche de Copa | 2026",
       "empresa": "LMS",
       "valor_total": 5089264.0
+    },
+    {
+      "id": "recOyRQ3PL3Qd5fBM",
+      "nome": "Sil | Paulistão A2, A3, A4, Copa Paulista, Copinha Feminina, Paulistão Sub-23 | 2026",
+      "empresa": "LMS",
+      "valor_total": 1100000.0
     },
     {
       "id": "recPKuSDyvfarZyDe",
@@ -294,6 +312,12 @@
       "nome": "Midea | Libertadores Feminina 2026",
       "empresa": "LMS",
       "valor_total": 5000000.0
+    },
+    {
+      "id": "recslyFdX1iUDDjlu",
+      "nome": "Sil | Paulistão F | 2027",
+      "empresa": "LMS",
+      "valor_total": 489857.0
     },
     {
       "id": "recwsNDI28zQ8ZSjm",
