@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-24T19:23:46.521935",
+  "gerado": "2026-08-24T21:22:31.155510",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -86,6 +86,12 @@
       "valor_total": 2500000.0
     },
     {
+      "id": "recBt7R57W8WdyeZQ",
+      "nome": "GM | Copa do Mundo FIFA CazéTV | 2027",
+      "empresa": "CZTV",
+      "valor_total": 80570103.0
+    },
+    {
       "id": "recCrxy5T70qGKEOu",
       "nome": "Betnacional | Brasileirão | 2026",
       "empresa": "LMS",
@@ -120,6 +126,12 @@
       "nome": "Betnacional | Premier League | Temporada 26/27",
       "empresa": "LMS",
       "valor_total": 7940916.0
+    },
+    {
+      "id": "recGyooI6g96LTUCL",
+      "nome": "Mercado Livre | Copa do Mundo 2027",
+      "empresa": "LMS",
+      "valor_total": 94347073.0
     },
     {
       "id": "recJXb7uVL5hWnZJs",
