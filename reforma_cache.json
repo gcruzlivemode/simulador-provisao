@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-25T15:36:20.806201",
+  "gerado": "2026-08-25T17:25:30.133068",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -42,6 +42,12 @@
       "nome": "Guaraná | Arena Futebol Feminino | 2026",
       "empresa": "LMS",
       "valor_total": 710000.0
+    },
+    {
+      "id": "rec5h3dNi6kVpUoG4",
+      "nome": "GM | La Liga + Premier CazéTV 2026/2027",
+      "empresa": "CZTV",
+      "valor_total": 45000000.0
     },
     {
       "id": "rec6P3HGvHIYrDkIq",
