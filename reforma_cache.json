@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-27T04:10:53.301649",
+  "gerado": "2026-08-27T20:52:37.833888",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -288,6 +288,12 @@
       "nome": "Wella l Futebol Feminino l 2026",
       "empresa": "LMS",
       "valor_total": 58805927.0
+    },
+    {
+      "id": "recgWSqPTJArvpF16",
+      "nome": "Netflix | Fut Inter 2026\n",
+      "empresa": "LMS",
+      "valor_total": 645299.0
     },
     {
       "id": "rech6U5V0U2QWFWfK",
