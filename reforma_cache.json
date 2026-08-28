@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-28T05:03:01.413627",
+  "gerado": "2026-08-28T21:18:36.841404",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -62,10 +62,22 @@
       "valor_total": 2579153.0
     },
     {
+      "id": "rec8Ohfth8hJJN5o7",
+      "nome": "iFood | Copa do Mundo FIFA CazéTV | 2027",
+      "empresa": "CZTV",
+      "valor_total": 80018930.0
+    },
+    {
       "id": "rec8pppKOeu3arutl",
       "nome": "Betnacional | Casa CazéTV | Arena 2026",
       "empresa": "CZTV",
       "valor_total": 8000000.0
+    },
+    {
+      "id": "rec9IXJmpz4PYu1IC",
+      "nome": "iFood | Copa do Mundo FIFA CazéTV | 2027\n",
+      "empresa": "CZTV",
+      "valor_total": 80018930.0
     },
     {
       "id": "recA3mjNkS9YXFuz1",
@@ -102,6 +114,12 @@
       "nome": "Betnacional | Brasileirão | 2026",
       "empresa": "LMS",
       "valor_total": 19000000.0
+    },
+    {
+      "id": "recDVXS6ASwVSRsNJ",
+      "nome": "VIVO | FWWC | 2027",
+      "empresa": "LMS",
+      "valor_total": 80000000.0
     },
     {
       "id": "recEDGgA3ZaIrlNt1",
@@ -224,6 +242,12 @@
       "valor_total": 1000000.0
     },
     {
+      "id": "recSFK8ImuWXsSaAG",
+      "nome": "Coca-Cola | Copa do Mundo FIFA CazéTV | 2027",
+      "empresa": "CZTV",
+      "valor_total": 52924298.0
+    },
+    {
       "id": "recTXW2v937xqcLcN",
       "nome": "JBS (Seara Gourmet) | Tênis CazéTV | 2026",
       "empresa": "CZTV",
@@ -284,6 +308,12 @@
       "valor_total": 600000.0
     },
     {
+      "id": "rece9GXjg93jNls6g",
+      "nome": "Decolar | Copa do Mundo Fem | 2027",
+      "empresa": "LMS",
+      "valor_total": 82408122.0
+    },
+    {
       "id": "recg61xJIQ654cTn7",
       "nome": "Wella l Futebol Feminino l 2026",
       "empresa": "LMS",
@@ -318,6 +348,12 @@
       "nome": "Honda | Mutirão Olímpico | 2026",
       "empresa": "LMS",
       "valor_total": 2400000.0
+    },
+    {
+      "id": "reckoKrnA8LUqKC7N",
+      "nome": "Ambev | Copa do Mundo FIFA CazéTV | 2027",
+      "empresa": "CZTV",
+      "valor_total": 79740371.0
     },
     {
       "id": "reckov01TBAdxMiRP",
