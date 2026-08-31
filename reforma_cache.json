@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-08-31T17:47:10.115986",
+  "gerado": "2026-08-31T23:05:11.382602",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -48,6 +48,12 @@
       "nome": "GM | La Liga + Premier CazéTV 2026/2027",
       "empresa": "CZTV",
       "valor_total": 45000000.0
+    },
+    {
+      "id": "rec5kLKNpeLHcSgFB",
+      "nome": "Betnacional | Premier League | Temporada 26/27 (copy)\n",
+      "empresa": "LMS",
+      "valor_total": 7940916.0
     },
     {
       "id": "rec6P3HGvHIYrDkIq",
@@ -248,6 +254,12 @@
       "valor_total": 52924298.0
     },
     {
+      "id": "recSzC8IutqpJmhPq",
+      "nome": "Betnacional | Real e Barça | La Liga | Temporada 26/27 (copy)\n",
+      "empresa": "LMS",
+      "valor_total": 26044964.0
+    },
+    {
       "id": "recTXW2v937xqcLcN",
       "nome": "JBS (Seara Gourmet) | Tênis CazéTV | 2026",
       "empresa": "CZTV",
@@ -293,7 +305,7 @@
       "id": "recbghw9eueKbqMqJ",
       "nome": "Betnacional | Futebol Internacional | Premier League | Real e Barça | Temporada",
       "empresa": "LMS",
-      "valor_total": 45000000.0
+      "valor_total": 26044964.0
     },
     {
       "id": "recblaQHT8jREaumT",
