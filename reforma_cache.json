@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-01T19:42:51.004537",
+  "gerado": "2026-09-01T22:55:57.378943",
   "projetos": [
     {
       "id": "rec0XvFV5jbgneDe7",
@@ -24,6 +24,12 @@
       "nome": "Caixa | Mutirão Olímpico | 2026",
       "empresa": "LMS",
       "valor_total": 14556968.0
+    },
+    {
+      "id": "rec2LVDX2CNj5eJ5C",
+      "nome": "TikTok | Plataformas | Q1 2026 (copy)\n",
+      "empresa": "LMS",
+      "valor_total": 63692750.0
     },
     {
       "id": "rec32R277YATjaoMw",
@@ -419,7 +425,7 @@
       "id": "recyLxulsCH8FU30h",
       "nome": "TikTok | Plataformas | Mai - Jul 2026 (copy)\n",
       "empresa": "LMS",
-      "valor_total": 458222899.0
+      "valor_total": 63692750.0
     },
     {
       "id": "recyorKFn7UoKyAkG",
