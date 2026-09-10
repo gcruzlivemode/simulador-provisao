@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-10T14:43:21.246632",
+  "gerado": "2026-09-10T17:59:16.687869",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -336,6 +336,12 @@
       "nome": "Decolar | Copa do Mundo Fem | 2027",
       "empresa": "LMS",
       "valor_total": 82408122.0
+    },
+    {
+      "id": "recevhKXRE71iUNKA",
+      "nome": "Hyundai | LibertaSula | 2026\n",
+      "empresa": "LMS",
+      "valor_total": 800000.0
     },
     {
       "id": "recg61xJIQ654cTn7",
