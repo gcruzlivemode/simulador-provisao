@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-11T05:31:59.996300",
+  "gerado": "2026-09-11T14:47:30.150727",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -126,6 +126,12 @@
       "nome": "GM | Copa do Mundo FIFA CazéTV | 2027",
       "empresa": "CZTV",
       "valor_total": 80570103.0
+    },
+    {
+      "id": "recBtyokVCwpMNdYt",
+      "nome": "GM | La Liga + Premier CazéTV 2026/2027",
+      "empresa": "CZTV",
+      "valor_total": 45000000.0
     },
     {
       "id": "recCrxy5T70qGKEOu",
