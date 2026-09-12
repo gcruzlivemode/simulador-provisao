@@ -1,0 +1,1185 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveMode · Simulador de Provisão Tributária</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#111111;--s1:#1A1A1A;--s2:#222222;--s3:#2E2E2E;--s4:#3A3A3A;
+  --g:#6DC93B;--g2:#4EA828;--g3:#1A3A0A;
+  --t1:#FFFFFF;--t2:#BBBBBB;--t3:#666666;--t4:#3A3A3A;
+  --or:#E67E22;--bl:#4A9FD4;--pu:#9B59B6;--am:#F5A623;--re:#E53935;
+  --pi:#E91E8C;--co:#FF6B35;--cs:#00BCD4;
+  --fs:'DM Sans',sans-serif;--fm:'Space Mono',monospace;
+  --radius:12px;--transition:all .18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:var(--bg);color:var(--t1);font-family:var(--fs);min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:3px}
+.app{display:grid;grid-template-columns:380px 1fr;min-height:100vh}
+.sidebar{background:var(--s1);border-right:1px solid var(--s3);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-header{padding:24px 22px 20px;border-bottom:1px solid var(--s3);background:var(--s1);position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo-box{background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:8px 11px;position:relative}
+.logo-box::after{content:'';position:absolute;bottom:-1px;left:11px;width:14px;height:3px;background:var(--g);border-radius:2px}
+.logo-live{font-family:var(--fm);font-size:13px;font-weight:700;color:var(--t1);line-height:1.15;letter-spacing:1px}
+.logo-mode{font-family:var(--fm);font-size:13px;font-weight:700;color:var(--g);line-height:1.15;letter-spacing:1px}
+.brand-name{font-family:var(--fm);font-size:14px;font-weight:700;color:var(--t1);letter-spacing:1.5px}
+.brand-sub{font-size:9px;color:var(--t3);letter-spacing:2px;margin-top:2px;text-transform:uppercase}
+.sidebar-body{padding:0 0 24px;flex:1}
+.fsec{padding:18px 22px 0}
+.fsec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fsec-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--g);flex-shrink:0}
+.frow{margin-bottom:12px}
+.flabel{font-size:10px;font-weight:600;color:var(--t2);margin-bottom:5px;display:block}
+.finput,.fselect{width:100%;background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:9px 12px;font-family:var(--fs);font-size:12px;color:var(--t1);transition:var(--transition);outline:none;-webkit-appearance:none}
+.finput:focus,.fselect:focus{border-color:var(--g);box-shadow:0 0 0 2px rgba(109,201,59,.12)}
+.finput::placeholder{color:var(--t3)}
+.finput.number{font-family:var(--fm);text-align:right}
+.frow-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fhint{font-size:9px;color:var(--t3);margin-top:4px;line-height:1.5}
+.fhint.warn{color:var(--am)}
+.fdivider{height:1px;background:var(--s3);margin:16px 0 0}
+.usd-only{transition:opacity .2s,max-height .3s;overflow:hidden}
+.usd-only.hidden{opacity:0;max-height:0;margin:0;padding:0;pointer-events:none}
+.usd-only.visible{opacity:1;max-height:200px}
+.brl-badge{display:none;background:#1A0D00;border:1px solid var(--or);border-radius:6px;padding:8px 12px;font-size:10px;color:var(--or);margin-bottom:12px;line-height:1.5}
+.brl-badge.show{display:block}
+.parcelas-grid{display:grid;grid-template-columns:55px 1fr 55px;gap:4px 6px;align-items:center;padding:0 22px}
+.pg-hdr{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);padding:4px 0}
+.pg-year{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--t3);padding:6px 8px;border-radius:6px;text-align:center}
+.pg-year.active{color:var(--g);background:rgba(109,201,59,.08);border:1px solid rgba(109,201,59,.2)}
+.pg-year.inactive{color:var(--t4);background:var(--s2);border:1px solid var(--s3)}
+.pg-inp{background:var(--s2);border:1px solid var(--s4);border-radius:6px;padding:7px 8px;font-family:var(--fm);font-size:11px;color:var(--t1);width:100%;text-align:right;outline:none;transition:var(--transition)}
+.pg-inp:focus{border-color:var(--g)}
+.pg-inp.disabled{color:var(--t4);background:var(--bg);cursor:not-allowed;border-color:var(--s3)}
+.pg-est{font-size:9px;text-align:center;font-family:var(--fm);padding:2px 0}
+.calc-btn{margin:18px 22px 0;width:calc(100% - 44px);background:var(--g);color:#111;border:none;border-radius:10px;padding:13px;font-family:var(--fm);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:var(--transition)}
+.calc-btn:hover{background:var(--g2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(109,201,59,.25)}
+
+.main{padding:28px 32px;overflow-y:auto}
+.main-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--s3)}
+.main-title{font-family:var(--fm);font-size:20px;font-weight:700;color:var(--t1);letter-spacing:1.5px}
+.main-sub{font-size:11px;color:var(--t3);margin-top:4px;letter-spacing:2px;text-transform:uppercase}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:16px;color:var(--t3)}
+.empty-icon{font-size:48px;opacity:.3}
+.empty-text{font-size:13px;text-align:center;line-height:1.7;max-width:320px}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.kpi-rates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:var(--s1);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--s3);border-top:3px solid var(--g);position:relative;overflow:hidden}
+.kpi-rate-card{background:var(--s2);border-radius:var(--radius);padding:14px 18px;border:1px solid var(--s3);border-left:4px solid var(--g);position:relative;overflow:hidden}
+.kpi::before,.kpi-rate-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.015) 0%,transparent 60%);pointer-events:none}
+.kpi-lbl{font-size:9px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fm);margin-bottom:6px}
+.kpi-val{font-family:var(--fm);font-size:16px;font-weight:700;line-height:1;margin-bottom:3px;word-break:break-all}
+.kpi-rate-val{font-family:var(--fm);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px;letter-spacing:-1px}
+.kpi-sub{font-size:9px;color:var(--t3);line-height:1.4}
+.kpi-delta{font-size:10px;font-weight:700;font-family:var(--fm);line-height:1.4}
+.charts-row{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:14px}
+.card{background:var(--s1);border-radius:var(--radius);border:1px solid var(--s3);padding:20px 22px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(109,201,59,.25),transparent);pointer-events:none}
+.card-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ct-bar{width:3px;height:15px;border-radius:2px;flex-shrink:0}
+.ct-text{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);font-family:var(--fm)}
+.card-note{font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.7}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:10px}
+.tbl thead th{padding:7px 8px;text-align:right;font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);font-family:var(--fm);border-bottom:1px solid var(--s3);white-space:nowrap}
+.tbl thead th:first-child{text-align:left}
+.tbl tbody td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.03);text-align:right;white-space:nowrap}
+.tbl tbody td:first-child{text-align:left;font-family:var(--fm);font-weight:700}
+.tbl tbody tr:hover{background:rgba(255,255,255,.02)}
+.tbl tbody tr.est td{color:rgba(255,255,255,.6)}
+.tbl-total td{background:var(--s2)!important;font-weight:700!important;border-top:1px solid var(--s4)!important}
+.alerts-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.alert{border-radius:10px;padding:14px 16px;border-width:1px;border-style:solid}
+.al-title{font-size:9px;font-weight:700;font-family:var(--fm);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.al-row{display:flex;gap:6px;margin-bottom:5px;font-size:10px;color:#CCAA66;line-height:1.5}
+.badge{display:inline-block;font-size:8px;font-weight:700;font-family:var(--fm);padding:2px 7px;border-radius:20px;letter-spacing:.5px;vertical-align:middle;margin-left:5px}
+.fade-in{animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g);color:#111;padding:12px 20px;border-radius:10px;font-family:var(--fm);font-size:11px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s ease;pointer-events:none}
+.toast.show{opacity:1}
+/* Auditoria box */
+.audit-box{background:#0A1A0A;border:1px solid var(--g);border-radius:10px;padding:12px 16px;margin:10px 22px 0;font-size:9px;color:var(--t3);line-height:1.8;display:none}
+.audit-box.show{display:block}
+.audit-ok{color:var(--g)}
+.audit-warn{color:var(--am)}
+/* ── ABAS ── */
+.tabs-bar{display:flex;gap:4px;margin-bottom:22px;border-bottom:1px solid var(--s3);padding-bottom:0}
+.tab-btn{background:none;border:none;padding:10px 20px;font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:var(--transition)}
+.tab-btn:hover{color:var(--t2)}
+.tab-btn.active{color:var(--g);border-bottom-color:var(--g)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.ano-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.ano-btn{background:var(--s2);border:1px solid var(--s4);border-radius:8px;padding:7px 14px;font-family:var(--fm);font-size:11px;font-weight:700;color:var(--t3);cursor:pointer;transition:var(--transition)}
+.ano-btn:hover{border-color:var(--g);color:var(--t2)}
+.ano-btn.active{background:var(--g3);border-color:var(--g);color:var(--g)}
+.ano-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.kpi-strip-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.ano-charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.kpi-strip{grid-template-columns:repeat(3,1fr)}.kpi-strip-4{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.alerts-row{grid-template-columns:1fr}.ano-charts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-box">
+        <div class="logo-live">LIVE</div>
+        <div class="logo-mode">MODE</div>
+      </div>
+      <div>
+        <div class="brand-name">SIMULADOR</div>
+        <div class="brand-sub">Provisão Tributária · Reforma</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="fsec" style="padding-top:18px">
+      <div class="fsec-title">Identificação do Contrato</div>
+      <div class="frow">
+        <label class="flabel">Nome do Direito / Evento</label>
+        <input class="finput" id="f-nome" type="text" placeholder="Ex: Brasileirão Série A 2026–2030">
+      </div>
+      <div class="frow-2">
+        <div>
+          <label class="flabel">Classificação</label>
+          <select class="fselect" id="f-classif">
+            <option>Futebol Nacional</option><option>Futebol Internacional</option>
+            <option>Olímpicos</option><option>Tênis</option>
+            <option>Motor Sports</option><option>Vôlei</option>
+            <option>Atletismo</option><option>Patrocínio</option>
+            <option>Naming Rights</option><option>Campanha Publicitária</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel">Moeda</label>
+          <select class="fselect" id="f-moeda" onchange="onMoedaChange()">
+            <option value="BRL">BRL — Real</option>
+            <option value="USD">USD — Dólar</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow-2">
+        <div>
+          <label class="flabel">Fornecedor / Organização</label>
+          <input class="finput" id="f-fornecedor" type="text" placeholder="Ex: CBF, UEFA, Vivo">
+        </div>
+        <div class="usd-only visible" id="campo-pais">
+          <label class="flabel">País de Origem</label>
+          <input class="finput" id="f-pais" type="text" placeholder="Ex: Suíça, Brasil">
+        </div>
+      </div>
+    </div>
+
+    <div class="fdivider"></div>
+
+    <div class="fsec" style="padding-top:16px">
+      <div class="fsec-title">Dados Financeiros</div>
+      <div class="brl-badge" id="brl-info">
+        🇧🇷 Contrato nacional em BRL — IRRF e câmbio não se aplicam.<br>
+        PIS 1,65% + COFINS 7,60% + ISS 3% incidem (Lucro Real Não-Cumulativo).
+      </div>
+      <div class="frow-2">
+        <div class="usd-only visible" id="campo-irrf">
+          <label class="flabel">IRRF / Withholding Tax</label>
+          <input class="finput number" id="f-irrf" type="number" value="15" min="0" max="100" step="1">
+          <div class="fhint">% sobre remessa ao exterior</div>
+        </div>
+        <div class="usd-only visible" id="campo-cambio">
+          <label class="flabel">Câmbio USD/BRL</label>
+          <input class="finput number" id="f-cambio" type="number" value="5.70" step="0.01">
+          <div class="fhint warn">⚠ Atualizar conforme cotação</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fdivider"></div>
+
+    <div class="fsec" style="padding-top:16px">
+      <div class="fsec-title">Vigência do Contrato</div>
+      <div class="frow-2">
+        <div>
+          <label class="flabel">Ano de Início</label>
+          <select class="fselect" id="f-ini">
+            <option>2026</option><option>2027</option><option>2028</option>
+            <option>2029</option><option>2030</option><option>2031</option>
+            <option>2032</option><option>2033</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel">Ano de Término</label>
+          <select class="fselect" id="f-fim">
+            <option>2027</option><option>2028</option><option>2029</option>
+            <option selected>2030</option><option>2031</option>
+            <option>2032</option><option>2033</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="fdivider"></div>
+
+    <div class="fsec" style="padding-top:16px;padding-bottom:4px">
+      <div class="fsec-title">Parcelas Anuais <span style="color:var(--t3);font-weight:400" id="parcela-moeda-label">(R$ — valor do ano)</span></div>
+    </div>
+
+    <div class="parcelas-grid">
+      <div class="pg-hdr">Ano</div>
+      <div class="pg-hdr" style="text-align:center">Valor (R$ ou US$)</div>
+      <div class="pg-hdr" style="text-align:center">Status</div>
+      <div id="parcelas-rows"></div>
+    </div>
+
+    <button class="calc-btn" onclick="calcular()">⚡ CALCULAR PROVISÃO</button>
+
+    <div class="audit-box" id="audit-box"></div>
+
+    <div style="padding:8px 22px 0">
+      <div class="fhint" style="text-align:center">
+        Digite o valor real do contrato em R$ ou US$ (ex: 500000 para R$ 500.000,00)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="main-header">
+    <div>
+      <div class="main-title" id="painel-titulo">PROVISÃO TRIBUTÁRIA</div>
+      <div class="main-sub" id="painel-sub">Preencha o formulário e clique em Calcular</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div id="painel-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+
+  <div id="autoload-banner" style="display:none;background:var(--s1);border:1px solid var(--g);
+    border-radius:10px;padding:14px 18px;margin-bottom:18px;gap:12px;align-items:center;
+    animation:fadeUp .4s ease"></div>
+
+  <div id="painel-empty" class="empty-state fade-in">
+    <div class="empty-icon">⚡</div>
+    <div class="empty-text">
+      Preencha os dados do contrato no painel à esquerda e clique em
+      <strong style="color:var(--g)">Calcular Provisão</strong> para ver o impacto tributário
+      ano a ano de 2026 até 2033.
+    </div>
+  </div>
+
+  <div id="painel-resultado" style="display:none">
+
+    <!-- ABAS -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('consolidado')">📊 Consolidado</button>
+      <button class="tab-btn" onclick="switchTab('porano')">📅 Por Ano</button>
+    </div>
+
+    <!-- ABA CONSOLIDADO -->
+    <div id="tab-consolidado" class="tab-pane active">
+      <div class="kpi-strip fade-in" id="kpi-strip"></div>
+      <div id="inflexao-card" class="fade-in" style="display:none;margin-bottom:14px"></div>
+      <div class="fade-in" style="margin-bottom:14px">
+        <div class="card">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--or)"></div>
+            <span class="ct-text">Composição Tributária por Ano — 2026 → 2033</span>
+          </div>
+          <div class="card-note" id="stack-chart-note">
+            <span style="color:rgba(74,159,212,0.9)">■</span> PIS+COFINS &nbsp;·&nbsp;
+            <span style="color:rgba(109,201,59,0.9)">■</span> CBS &nbsp;·&nbsp;
+            <span style="color:rgba(245,166,35,0.85)">■</span> ISS &nbsp;·&nbsp;
+            <span style="color:rgba(229,57,53,0.9)">■</span> IBS &nbsp;·&nbsp;
+            <span style="color:rgba(155,89,182,0.9)">■</span> IRRF (USD) &nbsp;·&nbsp;
+            <span style="color:#E67E22">●—●</span> Δ vs 2026 (eixo dir.) &nbsp;·&nbsp;
+            <em style="color:var(--t4)">2026: Regime Atual · 2027–28: Transição · 2029–32: IVA Gradual · 2033: IVA Pleno</em>
+          </div>
+          <canvas id="stackChart" height="180"></canvas>
+        </div>
+      </div>
+      <div class="card fade-in" style="margin-bottom:14px">
+        <div class="card-title">
+          <div class="ct-bar" style="background:var(--g)"></div>
+          <span class="ct-text">Detalhe Tributário Ano a Ano — Discriminado por Imposto</span>
+        </div>
+        <div class="tbl-wrap" id="tbl-container"></div>
+      </div>
+    </div>
+
+    <!-- ABA POR ANO -->
+    <div id="tab-porano" class="tab-pane">
+      <div class="ano-selector" id="ano-selector"></div>
+      <!-- Gráfico overview: sempre visível quando há dados -->
+      <div id="porano-overview" style="display:none;margin-bottom:14px" class="fade-in">
+        <div class="card">
+          <div class="card-title" style="flex-wrap:wrap;gap:6px">
+            <div class="ct-bar" style="background:var(--or)"></div>
+            <span class="ct-text" id="comp-chart-title">2026 vs Ano Selecionado — Composição por Imposto</span>
+          </div>
+          <canvas id="compChartAno" height="140"></canvas>
+          <div class="tbl-wrap" id="porano-comp-table" style="margin-top:12px"></div>
+        </div>
+      </div>
+      <!-- Detalhe do ano selecionado -->
+      <div id="porano-empty" style="display:none;color:var(--t3);font-size:12px;padding:20px 0;text-align:center">
+        Selecione um ano acima para ver o detalhamento.
+      </div>
+      <div id="porano-conteudo" style="display:none">
+        <div class="kpi-strip fade-in" id="kpi-ano"></div>
+        <div class="card fade-in" style="margin-bottom:14px">
+          <div class="card-title">
+            <div class="ct-bar" style="background:var(--g)"></div>
+            <span class="ct-text" id="ano-tbl-title">Detalhamento do Ano</span>
+          </div>
+          <div class="tbl-wrap" id="tbl-ano"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast">✔ Contrato salvo no Dashboard!</div>
+
+<script>
+// ── ALÍQUOTAS AUDITADAS (LC 214/2025 + Decreto 12.955/2026) ─────────────────
+// BRL Não-Cumulativo: PIS 1,65% + COFINS 7,60% (Lei 10.637/2002 e 10.833/2003)
+// USD Importação:     PIS 1,65% + COFINS 7,60% (Lei 10.865/2004)
+// ISS: 3% em 2026-2028; reduz -10%/ano de 2029 a 2032; zero em 2033 (LC 214/2025 art.361)
+//
+// CBS (art.343/346 LC 214/2025):
+//   2026 → 0,9% declaratório (sem recolhimento efetivo — ano-teste)
+//   2027 → alíquota cheia efetiva (ref. Resolução Senado, estimada ~8,8%)
+//   2028+ → alíquota cheia
+//
+// IBS (art.343/344 LC 214/2025 + art.18,II):
+//   2026 → 0,1% declaratório (sem recolhimento — ano-teste)
+//   2027-2028 → 0,1% ainda em teste (NÃO é alíquota de referência plena)
+//   2029-2032 → alíquota de referência progressiva (Resolução Senado — art.18,II)
+//   2033 → alíquota plena (~17,7% estimado)
+//
+// IRPJ e CSLL: não incluídos (apuração separada via LALUR)
+const RATES={
+  //         pis     cof    iss    cbs    ibs       confirmed
+  2026:{pis:.0165, cof:.076, iss:.030, cbs:.009, ibs:.001, confirmed:true},   // teste declaratório, sem recolhimento
+  2027:{pis:.000,  cof:.000, iss:.030, cbs:.088, ibs:.001, confirmed:false},  // CBS cheia; IBS ainda 0,1% teste
+  2028:{pis:.000,  cof:.000, iss:.030, cbs:.088, ibs:.001, confirmed:false},  // idem 2027
+  2029:{pis:.000,  cof:.000, iss:.027, cbs:.088, ibs:.032, confirmed:false},  // IBS referência inicia (art.18,II)
+  2030:{pis:.000,  cof:.000, iss:.024, cbs:.088, ibs:.064, confirmed:false},
+  2031:{pis:.000,  cof:.000, iss:.021, cbs:.088, ibs:.096, confirmed:false},
+  2032:{pis:.000,  cof:.000, iss:.018, cbs:.088, ibs:.128, confirmed:false},
+  2033:{pis:.000,  cof:.000, iss:.000, cbs:.088, ibs:.177, confirmed:false},  // ICMS e ISS extintos
+};
+// Para USD importação as alíquotas PIS/COFINS são as mesmas (Lei 10.865/2004)
+const RATES_USD_IMPORT={
+  2026:{pis:.0165, cof:.076},
+  2027:{pis:.000,  cof:.000},
+  2028:{pis:.000,  cof:.000},
+  2029:{pis:.000,  cof:.000},
+  2030:{pis:.000,  cof:.000},
+  2031:{pis:.000,  cof:.000},
+  2032:{pis:.000,  cof:.000},
+  2033:{pis:.000,  cof:.000},
+};
+
+const YEARS=[2026,2027,2028,2029,2030,2031,2032,2033];
+const C={g:'#6DC93B',bg:'#111111',s1:'#1A1A1A',s2:'#222222',s3:'#2E2E2E',s4:'#3A3A3A',
+         t1:'#FFFFFF',t2:'#BBBBBB',t3:'#666666',
+         or:'#E67E22',bl:'#4A9FD4',pu:'#9B59B6',am:'#F5A623',re:'#E53935',g2:'#3A8F1E',
+         pi:'#E91E8C',co:'#FF6B35',cs:'#00BCD4'};
+
+let stackChartInst=null,lastResult=null;
+let compChartAnoInst=null;
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0&&tab==='consolidado')||(i===1&&tab==='porano'));
+  });
+  document.getElementById('tab-consolidado').classList.toggle('active', tab==='consolidado');
+  document.getElementById('tab-porano').classList.toggle('active', tab==='porano');
+}
+
+function renderAnoOverview(selectedAno){
+  if(!lastResult) return;
+  const activeRows = lastResult.rows.filter(r=>r.active&&r.valBase>0);
+  if(!activeRows.length) return;
+  const isBRL = lastResult.moeda==='BRL';
+  const irrf  = lastResult.irrf;
+  const moedaImposto='BRL';
+  const hasusd = irrf > 0;
+
+  // Carga 2026 de referência
+  const rAtual_rate_ano = isBRL
+    ? (RATES[2026].pis + RATES[2026].cof + RATES[2026].iss)*100
+    : (irrf + RATES[2026].iss)*100;
+  const row2026_ao = activeRows.find(r=>r.y===2026);
+  const avgValBRL_ao = lastResult.totValBRL / activeRows.length;
+  const ref2026_ao = row2026_ao ? row2026_ao.total_atual : avgValBRL_ao * rAtual_rate_ano / 100;
+  const selRow = activeRows.find(r=>r.y===selectedAno);
+  if(!selRow) return;
+
+  // Atualiza título do card
+  const compTitle = document.getElementById('comp-chart-title');
+  if(compTitle) compTitle.textContent = selectedAno===2026
+    ? '2026 — Regime Atual por Componente'
+    : `2026 vs ${selectedAno} — Composição por Imposto`;
+
+  // X-axis labels por componente
+  const compLabels = ['PIS+COFINS','ISS','CBS','IBS',...(hasusd?['IRRF']:[])];
+  const data2026 = [
+    row2026_ao ? row2026_ao.pis_v + row2026_ao.cof_v : 0,
+    row2026_ao ? row2026_ao.iss_v : 0,
+    0,
+    0,
+    ...(hasusd ? [row2026_ao ? row2026_ao.irrf_v : 0] : [])
+  ];
+  const dataSel = [
+    selectedAno >= 2027 ? 0 : selRow.pis_v + selRow.cof_v,
+    selRow.iss_v,
+    selRow.cbs_efetiva,
+    selRow.ibs_efetivo,
+    ...(hasusd ? [selRow.irrf_v] : [])
+  ];
+  const compBg2026 = [
+    'rgba(74,159,212,0.75)','rgba(245,166,35,0.70)',
+    'rgba(109,201,59,0.25)','rgba(229,57,53,0.25)',
+    ...(hasusd?['rgba(155,89,182,0.70)']:[])
+  ];
+  const isConf = RATES[selectedAno].confirmed;
+  const compBgSel = [
+    'rgba(74,159,212,0.20)','rgba(245,166,35,0.70)',
+    `rgba(109,201,59,${isConf?'0.65':'0.40'})`,
+    `rgba(229,57,53,${isConf?'0.65':'0.40'})`,
+    ...(hasusd?['rgba(155,89,182,0.65)']:[])
+  ];
+
+  if(compChartAnoInst) compChartAnoInst.destroy();
+  const datasets2026Only = [{
+    label:'2026 — Regime Atual',
+    data:data2026, backgroundColor:compBg2026, borderRadius:5
+  }];
+  const datasetsBoth = [
+    {label:'2026 — Regime Atual', data:data2026, backgroundColor:compBg2026, borderRadius:5},
+    {label:`${selectedAno} — Novo Regime`, data:dataSel, backgroundColor:compBgSel, borderRadius:5}
+  ];
+
+  compChartAnoInst = new Chart(document.getElementById('compChartAno'),{
+    type:'bar',
+    data:{labels:compLabels, datasets:selectedAno===2026?datasets2026Only:datasetsBoth},
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{display:true, position:'top', labels:{color:C.t2, font:{size:10}, boxWidth:12, padding:12}},
+        tooltip:{...TIP, mode:'index', intersect:false,
+          callbacks:{label:ctx=>ctx.raw===0?null:` ${ctx.dataset.label}: ${fmt(ctx.raw,moedaImposto)}`}}
+      },
+      scales:{
+        x:{...SCALE.x},
+        y:{...SCALE.y, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,moedaImposto)}}
+      }
+    }
+  });
+
+  // Tabela de comparação 2026 vs ano selecionado
+  const compTableEl = document.getElementById('porano-comp-table');
+  if(compTableEl){
+    const tot2026  = row2026_ao ? row2026_ao.total_atual : ref2026_ao;
+    const totSel   = selRow.total_novo;
+    const totDeltaC = totSel - tot2026;
+    const base2026  = row2026_ao ? (isBRL?row2026_ao.valBase:row2026_ao.valBRL) : null;
+    const baseSel   = isBRL ? selRow.valBase : selRow.valBRL;
+    const pct2026   = base2026&&base2026>0 ? (tot2026/base2026*100).toFixed(2)+'%' : rAtual_rate_ano.toFixed(2)+'% (ref.)';
+    const pctSel    = baseSel>0 ? (totSel/baseSel*100).toFixed(2)+'%' : '—';
+    const pctDeltaC = tot2026>0 ? ((totDeltaC/tot2026)*100).toFixed(2)+'pp' : '—';
+    const dc = totDeltaC>0?'#FF8080':C.g;
+
+    const compImpRows = [
+      {imp:'PIS+COFINS', v26:row2026_ao?row2026_ao.pis_v+row2026_ao.cof_v:0, vS:selectedAno>=2027?0:selRow.pis_v+selRow.cof_v, note:selectedAno>=2027?'extinto':''},
+      {imp:'ISS',        v26:row2026_ao?row2026_ao.iss_v:0, vS:selRow.iss_v, note:''},
+      {imp:'CBS',        v26:0, vS:selRow.cbs_efetiva, note:selectedAno===2026?'declaratório':'novo'},
+      {imp:'IBS',        v26:0, vS:selRow.ibs_efetivo, note:selectedAno<2029?'0,1% teste':'novo'},
+      ...(hasusd?[{imp:'IRRF',v26:row2026_ao?row2026_ao.irrf_v:0,vS:selRow.irrf_v,note:''}]:[]),
+    ];
+    const compBodyRows = compImpRows.map(rw=>{
+      const d=rw.vS-rw.v26; const dc2=d>0?'#FF8080':d<0?C.g:'var(--t3)';
+      return `<tr>
+        <td style="font-weight:600">${rw.imp}</td>
+        <td>${rw.v26>0.001?fmt(rw.v26,moedaImposto):'<span style="color:var(--t4)">—</span>'}</td>
+        <td>${rw.vS>0.001?fmt(rw.vS,moedaImposto):(rw.note?`<span style="color:var(--t3);font-size:9px">${rw.note}</span>`:'<span style="color:var(--t4)">—</span>')}</td>
+        <td style="color:${dc2}">${d!==0?(d>0?'+':'')+fmt(d,moedaImposto):'—'}</td>
+      </tr>`;
+    }).join('');
+    compTableEl.innerHTML=`
+      <table class="tbl">
+        <thead><tr>
+          <th style="text-align:left">Imposto</th>
+          <th>2026 (Atual)</th>
+          <th>${selectedAno}</th>
+          <th>Δ</th>
+        </tr></thead>
+        <tbody>${compBodyRows}</tbody>
+        <tfoot>
+          <tr class="tbl-total"><td>TOTAL</td><td>${fmt(tot2026,moedaImposto)}</td><td>${fmt(totSel,moedaImposto)}</td><td style="color:${dc}">${(totDeltaC>=0?'+':'')+fmt(totDeltaC,moedaImposto)}</td></tr>
+          <tr class="tbl-total"><td>Carga %</td><td>${pct2026}</td><td>${pctSel}</td><td style="color:${dc}">${(totDeltaC>=0?'+':'')+pctDeltaC}</td></tr>
+        </tfoot>
+      </table>`;
+  }
+}
+
+function renderAno(ano){
+  if(!lastResult) return;
+  const row = lastResult.rows.find(r=>r.y===ano);
+  if(!row||!row.active||row.valBase===0){
+    document.getElementById('porano-empty').style.display='block';
+    document.getElementById('porano-conteudo').style.display='none';
+    renderAnoOverview(ano);
+    return;
+  }
+  document.getElementById('porano-empty').style.display='none';
+  document.getElementById('porano-conteudo').style.display='block';
+
+  document.querySelectorAll('.ano-btn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.dataset.ano)===ano);
+  });
+
+  const isBRL = lastResult.moeda==='BRL';
+  const isCedente = true;
+  const moedaImposto='BRL';
+  const r = row;
+  const confirmed = RATES[ano].confirmed;
+  const estLabel = confirmed
+    ? `<span class="badge" style="background:var(--g3);color:var(--g)">✔ LEI</span>`
+    : `<span class="badge" style="background:#1E1200;color:${C.am}">⚠ EST</span>`;
+
+  document.getElementById('ano-tbl-title').textContent = `Detalhamento ${ano} ${confirmed?'(Lei confirmada)':'(Estimativa)'}`;
+
+  // Calcular ref 2026 para Δ vs 2026
+  const rAtual_rate_r = isBRL
+    ? (RATES[2026].pis + RATES[2026].cof + RATES[2026].iss)*100
+    : (lastResult.irrf + RATES[2026].iss)*100;
+  const activeRows_r = lastResult.rows.filter(rv=>rv.active&&rv.valBase>0);
+  const row2026_r = activeRows_r.find(rv=>rv.y===2026);
+  const avgBRL_r = lastResult.totValBRL / activeRows_r.length;
+  const ref2026_r = row2026_r ? row2026_r.total_atual : avgBRL_r * rAtual_rate_r / 100;
+
+  // KPIs do ano — 4 cards
+  const baseRef   = isBRL ? r.valBase : r.valBRL;
+  const pctNovo   = baseRef > 0 ? (r.total_novo / baseRef * 100).toFixed(2) + '% do contrato' : '—';
+  const deltaVs26 = r.total_novo - ref2026_r;
+  const dv26Color = deltaVs26 > 0 ? '#FF8080' : C.g;
+  const dv26Sign  = deltaVs26 >= 0 ? '+' : '';
+  const dv26Label = ano >= 2027
+    ? `${dv26Sign}${fmt(deltaVs26, moedaImposto)} vs. 2026`
+    : 'Base de comparação (regime atual)';
+
+  const kpisAno=[
+    {lbl:'Valor do Contrato no Ano', val:fmt(r.valBase, lastResult.moeda), sub:isBRL?'em R$':`≈ ${fmt(r.valBRL,'BRL')}`, color:'var(--t1)'},
+    {lbl:'Carga 2026 — Base',        val:fmt(ref2026_r, moedaImposto),     sub:rAtual_rate_r.toFixed(2).replace('.',',')+'% — '+(isBRL?'PIS+COFINS+ISS':'IRRF+ISS'), color:'rgba(255,255,255,.7)'},
+    {lbl:ano>=2027?`Carga ${ano} — Novo Regime`:`Carga ${ano} — Regime Atual`, val:fmt(r.total_novo, moedaImposto), sub:pctNovo+' · '+(ano>=2027?'CBS+IBS+ISS':'PIS+COFINS+ISS'), color: confirmed?'rgba(255,255,255,.7)':'#FFD580'},
+    {lbl:'Δ vs 2026',                val:dv26Sign+fmt(deltaVs26, moedaImposto), sub:dv26Label, color:ano<2027?'var(--t3)':dv26Color},
+  ];
+  document.getElementById('kpi-ano').innerHTML = kpisAno.map(k=>`
+    <div class="kpi" style="border-top-color:${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // Redesenhar overview com destaque no ano selecionado
+  renderAnoOverview(ano);
+
+  // Tabela do ano (discriminada por tributo)
+  const delta_abs = r.total_novo - r.total_atual;
+  const delta_pct = r.total_atual>0 ? delta_abs/r.total_atual : 0;
+  document.getElementById('tbl-ano').innerHTML=`
+    <table class="tbl">
+      <thead><tr>
+        <th style="text-align:left">Tributo</th>
+        <th>Alíquota</th>
+        <th>Base de Cálculo</th>
+        <th>Valor</th>
+        <th>Regime</th>
+      </tr></thead>
+      <tbody>
+        ${r.irrf_v>0?`<tr><td style="color:${C.bl}">IRRF</td><td>${(lastResult.irrf*100).toFixed(0)}%</td><td>${fmt(r.valBRL,moedaImposto)}</td><td>${fmt(r.irrf_v,moedaImposto)}</td><td><span style="color:${C.bl}">Atual</span></td></tr>`:''}
+        ${r.pis_v>0?`<tr><td style="color:${C.pi}">PIS</td><td>1,65%</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.pis_v,moedaImposto)}</td><td><span style="color:${C.pi}">Atual</span></td></tr>`:''}
+        ${r.cof_v>0?`<tr><td style="color:${C.co}">COFINS</td><td>7,60%</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.cof_v,moedaImposto)}</td><td><span style="color:${C.co}">Atual</span></td></tr>`:''}
+        ${r.iss_v>0?`<tr><td style="color:${C.or}">ISS</td><td>${fmtPct(RATES[ano].iss)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.iss_v,moedaImposto)}</td><td><span style="color:${C.or}">Atual/Transição</span></td></tr>`:''}
+        ${r.cbs_efetiva>0?`<tr><td style="color:${C.g2}">CBS</td><td>${fmtPct(RATES[ano].cbs)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.cbs_efetiva,moedaImposto)}</td><td><span style="color:${confirmed?C.g:C.am}">Novo ${confirmed?'✔':'⚠Est'}</span></td></tr>`:''}
+        ${r.ibs_efetivo>0?`<tr><td style="color:${C.g}">IBS</td><td>${fmtPct(RATES[ano].ibs)}</td><td>${fmt(isBRL?r.valBase:r.valBRL,moedaImposto)}</td><td>${fmt(r.ibs_efetivo,moedaImposto)}</td><td><span style="color:${C.am}">Novo ⚠Est</span></td></tr>`:''}
+      </tbody>
+      <tfoot>
+        <tr class="tbl-total"><td>Total Atual</td><td>—</td><td>—</td><td>${fmt(r.total_atual,moedaImposto)}</td><td>—</td></tr>
+        <tr class="tbl-total"><td>Total Novo Regime</td><td>—</td><td>—</td><td style="color:${confirmed?C.t1:'#FFD580'}">${fmt(r.total_novo,moedaImposto)}</td><td>${estLabel}</td></tr>
+        <tr class="tbl-total"><td>Δ Impacto Reforma</td><td>—</td><td>—</td>
+          <td style="color:${delta_abs>0?'#FF8080':C.g};font-weight:700">${(delta_abs>=0?'+':'')+fmt(delta_abs,moedaImposto)} (${(delta_pct>=0?'+':'')+fmtPct(delta_pct)})</td><td>—</td></tr>
+      </tfoot>
+    </table>`;
+}
+
+// ── FORMATAÇÃO BRASILEIRA ─────────────────────────────────────────────────────
+function fmt(val, moeda){
+  const s = (moeda==='BRL') ? 'R$' : 'US$';
+  return s+' '+val.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtPct(val){
+  return (val*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+}
+function dash(val,moeda){
+  return val>0.001 ? fmt(val,moeda) : '<span style="color:var(--t4)">—</span>';
+}
+
+Chart.defaults.font.family="'Space Mono',monospace";
+Chart.defaults.color=C.t3;
+const TIP={backgroundColor:C.s1,borderColor:C.g,borderWidth:1,titleColor:C.g,bodyColor:C.t2,padding:10,cornerRadius:8,
+           titleFont:{family:"'Space Mono',monospace",size:11,weight:'bold'},
+           bodyFont:{family:"'DM Sans',sans-serif",size:10}};
+const SCALE={
+  x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:C.t3,font:{size:10}},border:{color:'transparent'}},
+  y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:C.t3,font:{size:10}},border:{color:'transparent'}},
+};
+
+// ── MOEDA CHANGE ──────────────────────────────────────────────────────────────
+function onMoedaChange(){
+  const isBRL = document.getElementById('f-moeda').value === 'BRL';
+  ['campo-irrf','campo-cambio','campo-pais'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.classList.toggle('hidden', isBRL);
+    el.classList.toggle('visible', !isBRL);
+  });
+  document.getElementById('brl-info').classList.toggle('show', isBRL);
+  document.getElementById('parcela-moeda-label').textContent =
+    isBRL ? '(R$ — valor do ano)' : '(US$ — valor do ano)';
+  if(isBRL){
+    document.getElementById('f-irrf').value = '0';
+    document.getElementById('f-pais').value = 'Brasil';
+  }
+  buildParcelas();
+}
+
+
+// ── PARCELAS ──────────────────────────────────────────────────────────────────
+function buildParcelas(){
+  const ini=parseInt(document.getElementById('f-ini').value);
+  const fim=parseInt(document.getElementById('f-fim').value);
+  const container=document.getElementById('parcelas-rows');
+  const saved={};
+  YEARS.forEach(y=>{const el=document.getElementById(`p-${y}`);if(el)saved[y]=el.value;});
+  container.style.cssText='display:contents';
+  container.innerHTML=YEARS.map(y=>{
+    const active=y>=ini&&y<=fim;
+    const r=RATES[y];const est=!r.confirmed;const savedVal=saved[y]||'0';
+    return `<div class="pg-year ${active?'active':'inactive'}">${y}</div>
+      <input class="pg-inp ${active?'':'disabled'}" id="p-${y}" type="number"
+        min="0" step="1" value="${active?savedVal:'0'}"
+        ${active?'':'disabled readonly'} placeholder="0">
+      <div class="pg-est" style="color:${active?(est?'var(--am)':'var(--g)'):'var(--t4)'}">
+        ${active?(est?'⚠ Est.':'✔ Lei'):'—'}</div>`;
+  }).join('');
+}
+
+['f-ini','f-fim','f-moeda'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',buildParcelas);
+});
+buildParcelas();
+onMoedaChange();
+
+// ── CALCULAR ──────────────────────────────────────────────────────────────────
+function calcular(){
+  const nome      = document.getElementById('f-nome').value||'Contrato';
+  const classif   = document.getElementById('f-classif').value;
+  const moeda     = document.getElementById('f-moeda').value;
+  const fornecedor= document.getElementById('f-fornecedor').value||'—';
+  const pais      = moeda==='BRL'?'Brasil':(document.getElementById('f-pais').value||'—');
+  const irrf      = moeda==='BRL'?0:parseFloat(document.getElementById('f-irrf').value)/100||0;
+  const cambio    = parseFloat(document.getElementById('f-cambio').value)||5.70;
+  const ini       = parseInt(document.getElementById('f-ini').value);
+  const fim       = parseInt(document.getElementById('f-fim').value);
+  if(fim<ini){alert('Ano de término deve ser maior ou igual ao ano de início.');return;}
+  const isBRL = moeda==='BRL';
+  const moedaImposto = 'BRL'; // tributos brasileiros sempre liquidados em R$
+  // Sempre cedente — perspectiva de quem vende / presta serviço
+  const isCedente = true;
+
+  const rows=[];
+  YEARS.forEach(y=>{
+    const r   = RATES[y];
+    const ri  = RATES_USD_IMPORT[y];
+    const active = y>=ini&&y<=fim;
+
+    // ── VALOR BASE: sem conversão — o usuário digita em R$ (BRL) ou US$ (USD) ──
+    const rawVal = active ? parseFloat(document.getElementById(`p-${y}`).value)||0 : 0;
+    const valBase = rawVal; // valor na moeda do contrato
+
+    // Equivalente BRL (para referência interna e exibição)
+    const valBRL = isBRL ? rawVal : rawVal * cambio;
+
+    // ── IMPOSTOS — calculados sobre o valor na moeda do contrato ──────────────
+    let pis_v=0, cof_v=0, irrf_v=0, iss_v=0, cbs_v=0, ibs_v=0;
+
+    if(isBRL){
+      // Contrato BRL — Lucro Real Não-Cumulativo
+      pis_v  = valBase * r.pis;   // 1,65%
+      cof_v  = valBase * r.cof;   // 7,60%
+      iss_v  = valBase * r.iss;   // 3% → reduz a partir de 2029
+      cbs_v  = valBase * r.cbs;
+      ibs_v  = valBase * r.ibs;
+      irrf_v = 0;
+    } else {
+      // Contrato USD — base de cálculo = equivalente BRL (valBRL = valBase × câmbio)
+      irrf_v = valBRL * irrf;
+      pis_v  = valBRL * ri.pis;  // 1,65% só em 2026
+      cof_v  = valBRL * ri.cof;  // 7,60% só em 2026
+      iss_v  = valBRL * r.iss;
+      cbs_v  = valBRL * r.cbs;
+      ibs_v  = valBRL * r.ibs;
+    }
+
+    const total_atual  = irrf_v + pis_v + cof_v + iss_v;
+
+    // Em 2026 CBS e IBS são declaratórios sem recolhimento (art.343/346 LC 214/2025)
+    // → não entram no Total Novo nem no Δ para não distorcer a comparação
+    // Em 2027-2028 IBS ainda é 0,1% teste — também excluído do Total Novo efetivo
+    const cbs_efetiva  = (y === 2026) ? 0 : cbs_v;
+    const ibs_efetivo  = (y <= 2028)  ? 0 : ibs_v;
+
+    const total_novo   = irrf_v + iss_v + cbs_efetiva + ibs_efetivo;
+    // Cedente/Fornecedora: CBS é débito de saída — não há crédito a recuperar
+    // Adquirente: CBS paga na entrada pode ser creditada (arts.47-56 Decreto 12.955/2026)
+    const credito_cbs  = isCedente ? 0 : cbs_efetiva;
+    const custo_liq    = total_novo - credito_cbs;
+    const delta_abs    = total_novo - total_atual;
+    const delta_pct    = total_atual>0 ? delta_abs/total_atual : 0;
+    const cargaBase    = isBRL ? valBase : valBRL; // % sempre sobre equivalente BRL
+    const carga_pct    = cargaBase>0 ? total_novo/cargaBase : 0;
+    const carga_liq    = cargaBase>0 ? custo_liq/cargaBase : 0;
+
+    rows.push({y,active,valBase,valBRL,
+               irrf_v,pis_v,cof_v,iss_v,cbs_v,ibs_v,
+               cbs_efetiva,ibs_efetivo,
+               total_atual,total_novo,credito_cbs,custo_liq,
+               delta_abs,delta_pct,carga_pct,carga_liq,confirmed:r.confirmed});
+  });
+
+  const activeRows = rows.filter(r=>r.active&&r.valBase>0);
+  if(activeRows.length===0){alert('Preencha ao menos uma parcela para calcular.');return;}
+
+  const totVal    = activeRows.reduce((a,r)=>a+r.valBase,0);
+  const totValBRL = isBRL ? totVal : activeRows.reduce((a,r)=>a+r.valBRL,0);
+  const totAtual  = activeRows.reduce((a,r)=>a+r.total_atual,0);
+  const totNovo   = activeRows.reduce((a,r)=>a+r.total_novo,0);
+  const totPIS    = activeRows.reduce((a,r)=>a+r.pis_v,0);
+  const totCOF    = activeRows.reduce((a,r)=>a+r.cof_v,0);
+  const totIRRF   = activeRows.reduce((a,r)=>a+r.irrf_v,0);
+  const totISS    = activeRows.reduce((a,r)=>a+r.iss_v,0);
+  const totCBS    = activeRows.reduce((a,r)=>a+r.cbs_v,0);
+  const totIBS    = activeRows.reduce((a,r)=>a+r.ibs_v,0);
+  const totCredito= activeRows.reduce((a,r)=>a+r.credito_cbs,0);
+  const totLiq    = activeRows.reduce((a,r)=>a+r.custo_liq,0);
+  const totDelta  = totNovo - totAtual;
+
+  lastResult={nome,classif,moeda,fornecedor,pais,irrf,cambio,ini,fim,
+    totVal,totValBRL,totAtual,totNovo,totPIS,totCOF,totIRRF,totISS,totCBS,totIBS,
+    totCredito,totLiq,totDelta,rows,savedAt:new Date().toISOString()};
+
+  // ── AUDITORIA AUTOMÁTICA ──────────────────────────────────────────────────
+  const audits=[];
+  activeRows.forEach(r=>{
+    const baseAudit    = isBRL ? r.valBase : r.valBRL;
+    const esperadoPIS  = isBRL ? r.valBase*RATES[r.y].pis  : r.valBRL*RATES_USD_IMPORT[r.y].pis;
+    const esperadoCOF  = isBRL ? r.valBase*RATES[r.y].cof  : r.valBRL*RATES_USD_IMPORT[r.y].cof;
+    const esperadoISS  = baseAudit*RATES[r.y].iss;
+    const tol=0.01;
+    if(Math.abs(r.pis_v-esperadoPIS)>tol) audits.push(`⚠ ${r.y}: PIS calculado ${fmt(r.pis_v,moedaImposto)} ≠ esperado ${fmt(esperadoPIS,moedaImposto)}`);
+    if(Math.abs(r.cof_v-esperadoCOF)>tol) audits.push(`⚠ ${r.y}: COFINS calculado ${fmt(r.cof_v,moedaImposto)} ≠ esperado ${fmt(esperadoCOF,moedaImposto)}`);
+    if(Math.abs(r.iss_v-esperadoISS)>tol) audits.push(`⚠ ${r.y}: ISS calculado ${fmt(r.iss_v,moedaImposto)} ≠ esperado ${fmt(esperadoISS,moedaImposto)}`);
+  });
+  const auditBox=document.getElementById('audit-box');
+  if(audits.length===0){
+    auditBox.className='audit-box show';
+    auditBox.innerHTML='<span class="audit-ok">✔ AUDITORIA OK</span> — Todos os cálculos conferidos automaticamente.';
+  } else {
+    auditBox.className='audit-box show';
+    auditBox.innerHTML='<strong style="color:var(--am)">⚠ DIVERGÊNCIAS:</strong><br>'+audits.join('<br>');
+  }
+
+  // ── HEADER ────────────────────────────────────────────────────────────────
+  document.getElementById('painel-titulo').textContent=nome.toUpperCase();
+  document.getElementById('painel-sub').textContent=`${classif} · ${fornecedor} · ${pais} · ${ini}–${fim} · ${moeda}`;
+  document.getElementById('painel-tags').innerHTML=[
+    {t:moeda,c:isBRL?'var(--or)':'var(--bl)',bg:isBRL?'#1A0D00':'#0A1520'},
+    {t:isBRL?'ISS 3%':`IRRF ${(irrf*100).toFixed(0)}%`,c:isBRL?'var(--or)':'#4A9FD4',bg:isBRL?'#1A0D00':'#0A1520'},
+    {t:`${ini}–${fim}`,c:'var(--g)',bg:'var(--g3)'},
+    {t:'📤 CEDENTE',c:'var(--re)',bg:'#1A0000'},
+  ].map(x=>`<span style="background:${x.bg};border:1px solid ${x.c};border-radius:20px;padding:3px 10px;font-size:9px;font-weight:700;color:${x.c};font-family:'Space Mono',monospace">${x.t}</span>`).join('');
+
+  // ── KPI — 4 cards (perspectiva cedente) ──────────────────────────────────
+  const rAtual_rate = isBRL
+    ? (RATES[2026].pis + RATES[2026].cof + RATES[2026].iss)*100
+    : (irrf + RATES[2026].iss)*100;
+
+  // Ponto de inflexão: compara alíquota efetiva do novo regime contra a taxa de 2026 (12,25% BRL).
+  // ERRO a evitar: total_atual em 2027+ reflete apenas ISS (PIS/COFINS = 0 nas RATES),
+  // então comparar total_novo > total_atual(ano) seria sempre verdadeiro em 2027 — incorreto.
+  // Comparação correta: taxa efetiva do novo regime vs taxa de referência de 2026.
+  const rate2026_decimal = rAtual_rate / 100; // 0.1225 BRL ou irrf+iss para USD
+  let inflexaoContrato = activeRows.find(r => {
+    if(r.y < 2027) return false;
+    const base = isBRL ? r.valBase : r.valBRL;
+    return base > 0 && (r.total_novo / base) > rate2026_decimal;
+  });
+
+  const infKpiVal = inflexaoContrato
+    ? `A partir de <span style="color:#FF4444">${inflexaoContrato.y}</span>`
+    : 'Sem inflexão no período';
+  const infKpiColor  = inflexaoContrato ? '#FF8080' : C.g;
+  const deltaKpiColor = totDelta > 0 ? '#FF8080' : C.g;
+
+  document.getElementById('kpi-strip').innerHTML=[
+    {lbl:'Valor Total do Contrato',
+     val:fmt(totVal,moeda),
+     sub:isBRL?'Total em R$':`US$ · ≈ ${fmt(totValBRL,'BRL')}`,
+     color:'var(--t1)'},
+    {lbl:'Carga Tributária 2026 — Base',
+     val:rAtual_rate.toFixed(2).replace('.',',')+'%',
+     sub:isBRL?'PIS+COFINS+ISS (regime atual)':'IRRF+ISS (regime atual)',
+     color:'rgba(255,255,255,.7)'},
+    {lbl:'Δ Total do Período',
+     val:(totDelta>=0?'+':'')+fmt(totDelta,moedaImposto),
+     sub:fmtPct(Math.abs(totDelta)/Math.max(totAtual,0.001))+' sobre regime atual',
+     color:deltaKpiColor},
+    {lbl:'Ponto de Inflexão',
+     val:infKpiVal,
+     sub:inflexaoContrato?'Novo regime supera o regime atual':'Dentro do período do contrato',
+     color:infKpiColor},
+  ].map(k=>`
+    <div class="kpi" style="border-top-color:${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // ── PONTO DE INFLEXÃO ─────────────────────────────────────────────────────
+  // inflexaoContrato já computado acima no bloco de KPIs
+  const inflexaoCard = document.getElementById('inflexao-card');
+  if(inflexaoContrato){
+    const anoInf = inflexaoContrato.y;
+    // Delta vs o que custaria em 2026 com o mesmo valor de contrato (base correta)
+    const baseInf     = isBRL ? inflexaoContrato.valBase : inflexaoContrato.valBRL;
+    const custo2026eq = rate2026_decimal * baseInf;
+    const delta  = inflexaoContrato.total_novo - custo2026eq;
+    const pctDif = custo2026eq > 0 ? delta/custo2026eq*100 : 0;
+    inflexaoCard.style.display = 'block';
+    inflexaoCard.innerHTML = `
+      <div style="background:#1A0800;border:1px solid #E53935;border-left:4px solid #E53935;
+        border-radius:var(--radius);padding:16px 20px;display:flex;align-items:flex-start;gap:16px">
+        <div style="font-size:22px;line-height:1;flex-shrink:0">⚠</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1px;
+            color:#E53935;text-transform:uppercase;margin-bottom:4px">Ponto de Inflexão Tributária</div>
+          <div style="font-family:var(--fm);font-size:18px;font-weight:700;color:#FF8080;margin-bottom:4px">
+            A reforma supera o regime atual a partir de <span style="color:#FF4444">${anoInf}</span></div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.6">
+            Em ${anoInf} o Novo Regime custa <strong style="color:#FF8080">+${fmt(delta,moedaImposto)}</strong>
+            (+${pctDif.toFixed(1)}%) a mais que o regime atual neste contrato.
+            ${!RATES[anoInf].confirmed ? '<span style="color:var(--am)"> ⚠ Estimativa — sujeito à Res. Senado.</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // Dentro do período do contrato, novo regime não ultrapassa o atual
+    inflexaoCard.style.display = 'block';
+    inflexaoCard.innerHTML = `
+      <div style="background:var(--g3);border:1px solid var(--g);border-left:4px solid var(--g);
+        border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:20px;line-height:1;flex-shrink:0">✔</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1px;
+            color:var(--g);text-transform:uppercase;margin-bottom:3px">Sem Inflexão no Período</div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.5">
+            Dentro do período deste contrato (${ini}–${fim}), o Novo Regime não supera o custo do Regime Atual.
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const ar = activeRows; // alias usado pela tabela e pelo gráfico
+
+  // ── GRÁFICO BARRAS EMPILHADAS + LINHA Δ ─────────────────────────────────
+  const rowByY  = y => ar.find(r => r.y === y);
+  const dataFor = (y, fn) => { const r = rowByY(y); return r ? fn(r) : null; };
+  const hasusd  = irrf > 0;
+
+  // Valor de referência 2026 em R$ (para calcular Δ)
+  const ref2026Row = ar.find(r => r.y === 2026);
+  const avgValBRL2 = totValBRL / ar.length;
+  const ref2026val = ref2026Row ? ref2026Row.total_atual : avgValBRL2 * rAtual_rate / 100;
+
+  const dsPisCof = {
+    type:'bar', label:'PIS+COFINS', stack:'impostos', yAxisID:'y',
+    backgroundColor:'rgba(74,159,212,0.75)', borderRadius:3, order:3,
+    data: YEARS.map(y => { const r=rowByY(y); if(!r)return null; return y===2026?+(r.pis_v+r.cof_v).toFixed(2):0; })
+  };
+  const dsCBS_s = {
+    type:'bar', label:'CBS', stack:'impostos', yAxisID:'y',
+    backgroundColor:'rgba(109,201,59,0.65)', borderRadius:3, order:3,
+    data: YEARS.map(y => { const r=rowByY(y); if(!r)return null; return y===2026?0:+r.cbs_efetiva.toFixed(2); })
+  };
+  const dsISS_s = {
+    type:'bar', label:'ISS', stack:'impostos', yAxisID:'y',
+    backgroundColor:'rgba(245,166,35,0.70)', borderRadius:3, order:3,
+    data: YEARS.map(y => dataFor(y, r=>+r.iss_v.toFixed(2)))
+  };
+  const dsIBS_s = {
+    type:'bar', label:'IBS', stack:'impostos', yAxisID:'y',
+    backgroundColor:'rgba(229,57,53,0.65)', borderRadius:3, order:3,
+    data: YEARS.map(y => { const r=rowByY(y); if(!r)return null; return y<2029?0:+r.ibs_efetivo.toFixed(2); })
+  };
+  const dsIRRF_s = hasusd ? {
+    type:'bar', label:'IRRF', stack:'impostos', yAxisID:'y',
+    backgroundColor:'rgba(155,89,182,0.65)', borderRadius:3, order:3,
+    data: YEARS.map(y => dataFor(y, r=>+r.irrf_v.toFixed(2)))
+  } : null;
+
+  // Linha de referência 2026 — horizontal pelos anos ativos
+  const dsRef2026 = {
+    type:'line', label:'Referência 2026',
+    data: YEARS.map(y => rowByY(y) ? +ref2026val.toFixed(2) : null),
+    borderColor:'rgba(255,255,255,0.28)', borderWidth:1.5, borderDash:[6,3],
+    pointRadius:0, fill:false, tension:0, spanGaps:false, yAxisID:'y', order:1
+  };
+
+  // Linha Δ vs 2026 — eixo direito
+  const deltaArr  = YEARS.map(y => { const r=rowByY(y); return r ? +(r.total_novo-ref2026val).toFixed(2) : null; });
+  const validDels = deltaArr.filter(v=>v!==null);
+  const maxDelVal = validDels.length ? Math.max(...validDels) : 0;
+  const dsDelta_s = {
+    type:'line', label:'Δ vs 2026',
+    data: deltaArr,
+    borderColor:'#E67E22', borderWidth:2, fill:false,
+    pointRadius: YEARS.map(y => { const r=rowByY(y); if(!r)return 0; return +(r.total_novo-ref2026val).toFixed(2)===maxDelVal?8:6; }),
+    pointBackgroundColor: YEARS.map(y => { const r=rowByY(y); if(!r)return '#E67E22'; return +(r.total_novo-ref2026val).toFixed(2)===maxDelVal?'#fff':'#E67E22'; }),
+    pointBorderColor:'#E67E22', pointBorderWidth:2,
+    spanGaps:false, tension:0.2,
+    segment:{borderDash:ctx=>{ const y=YEARS[ctx.p0DataIndex]; return (y&&!RATES[y]?.confirmed)?[5,4]:[]; }},
+    yAxisID:'y2', order:0
+  };
+
+  const stackDatasets=[dsPisCof,dsCBS_s,dsISS_s,dsIBS_s,...(hasusd&&dsIRRF_s?[dsIRRF_s]:[]),dsRef2026,dsDelta_s];
+
+  if(stackChartInst) stackChartInst.destroy();
+  stackChartInst=new Chart(document.getElementById('stackChart'),{
+    data:{labels:YEARS.map(String), datasets:stackDatasets},
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{display:true, position:'top', labels:{color:C.t2,font:{size:10},boxWidth:12,padding:12}},
+        subtitle:{
+          display:true,
+          text:'2026: Regime Atual  ·  2027–28: Transição (CBS plena)  ·  2029–32: IVA Gradual  ·  2033: IVA Pleno',
+          color:'rgba(255,255,255,.2)', font:{size:8,family:"'Space Mono',monospace"}, padding:{top:0,bottom:8}
+        },
+        tooltip:{...TIP, mode:'index', intersect:false,
+          callbacks:{
+            title:items=>{ const y=YEARS[items[0]?.dataIndex]; return rowByY(y)?`${y}  ◉ dentro do contrato`:`${y}  ○ fora do contrato`; },
+            label:ctx=>{
+              if(ctx.raw===null) return null;
+              if(ctx.dataset.yAxisID==='y2') return ` Δ vs 2026: ${ctx.raw>=0?'+':''}${fmt(ctx.raw,'BRL')}`;
+              if(ctx.dataset.label==='Referência 2026') return ` Ref. 2026: ${fmt(ctx.raw,'BRL')}`;
+              if(ctx.raw===0) return null;
+              return ` ${ctx.dataset.label}: ${fmt(ctx.raw,'BRL')}`;
+            },
+            afterBody:items=>{
+              const y=YEARS[items[0]?.dataIndex]; const r=rowByY(y); if(!r)return[];
+              const base=isBRL?r.valBase:r.valBRL;
+              const carga=base>0?`${(r.total_novo/base*100).toFixed(2)}%`:'—';
+              return ['',` Total Novo: ${fmt(r.total_novo,'BRL')} · Carga: ${carga}`];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{...SCALE.x},
+        y:{...SCALE.y, stacked:true, ticks:{...SCALE.y.ticks, callback:v=>fmt(v,'BRL')}},
+        y2:{
+          type:'linear', position:'right',
+          grid:{drawOnChartArea:false},
+          ticks:{color:'#E67E22', font:{size:9}, callback:v=>(v>=0?'+':'')+fmt(v,'BRL')},
+          border:{color:'rgba(230,126,34,0.25)'}
+        }
+      }
+    }
+  });
+
+  // ── TABELA DISCRIMINADA ────────────────────────────────────────────────────
+  // Status legal por ano:
+  // 2026       → ✔ LEI  (declaratório confirmado, sem recolhimento)
+  // 2027–2028  → ⚡ CBS  (CBS cheia efetiva; IBS ainda 0,1% teste)
+  // 2029–2032  → ⚠ EST  (IBS referência — Res. Senado pendente art.18,II)
+  // 2033       → ⚠ PROJ (alíquota plena projetada)
+  function statusAno(y, confirmed){
+    if(y === 2026) return {badge:`<span class="badge" style="background:#0A1A2A;color:${C.bl};border:1px solid ${C.bl}">✔ TESTE</span>`, cor:C.bl};
+    if(y <= 2028)  return {badge:`<span class="badge" style="background:#0E2208;color:${C.g}">⚡ CBS LEI</span>`, cor:C.g};
+    if(y <= 2032)  return {badge:`<span class="badge" style="background:#1E1200;color:${C.am}">⚠ IBS EST</span>`, cor:C.am};
+    return             {badge:`<span class="badge" style="background:#1A0000;color:#FF8080">⚠ PROJ</span>`, cor:'#FF8080'};
+  }
+
+  const tbody=rows.filter(r=>r.active).map((r,i)=>{
+    const bg=i%2===0?'background:rgba(255,255,255,.015)':'';
+    const st=statusAno(r.y, r.confirmed);
+    // IBS só exibe valor a partir de 2029 (referência real); antes é teste declaratório
+    const ibsExibe = r.y >= 2029 ? dash(r.ibs_v,moedaImposto) : `<span style="color:var(--t4);font-size:9px">0,1% teste</span>`;
+    // CBS exibe valor a partir de 2027 (cheia efetiva); 2026 é declaratório
+    const cbsExibe = r.y === 2026
+      ? `<span style="color:var(--t4);font-size:9px">0,9% decl.</span>`
+      : dash(r.cbs_v,moedaImposto);
+    return `<tr style="${bg}">
+      <td style="font-family:'Space Mono',monospace;font-weight:700;color:${st.cor}">
+        ${r.y} ${st.badge}
+      </td>
+      <td>
+        ${fmt(r.valBase,moeda)}
+        ${!isBRL?`<br><span style="font-size:9px;color:var(--t3);font-weight:400">≈ ${fmt(r.valBRL,'BRL')}</span>`:''}
+      </td>
+      <td style="color:${C.bl}">${dash(r.irrf_v,moedaImposto)}</td>
+      <td style="color:${C.pi}">${dash(r.pis_v+r.cof_v,moedaImposto)}</td>
+      <td style="color:${C.or}">${dash(r.iss_v,moedaImposto)}</td>
+      <td style="font-weight:700">${fmt(r.total_atual,moedaImposto)}</td>
+      <td style="color:${r.y===2026?'var(--t3)':C.g2}">${cbsExibe}</td>
+      <td style="color:${r.y<2029?'var(--t3)':C.am}">${ibsExibe}</td>
+      <td style="font-weight:700;color:${r.y===2026?C.or:r.y>=2027?'#FFD580':C.t1}">
+        ${r.y===2026
+          ? `${fmt(r.total_novo,moedaImposto)}<br><span style="font-size:8px;color:var(--t3);font-weight:400">só ISS (CBS/IBS sem recolhimento)</span>`
+          : r.y<=2028
+          ? `${fmt(r.total_novo,moedaImposto)}<br><span style="font-size:8px;color:var(--t3);font-weight:400">ISS+CBS (IBS ainda teste)</span>`
+          : fmt(r.total_novo,moedaImposto)
+        }
+      </td>
+      <td style="color:${r.delta_abs>0?'#FF8080':C.g};font-weight:700">${r.delta_abs===0?'—':(r.delta_abs>0?'+':'')+fmt(r.delta_abs,moedaImposto)}</td>
+      <td style="color:${r.delta_pct>0.05?'#FF8080':r.delta_pct<0?C.g:'var(--t2)'}">${r.delta_pct===0?'—':(r.delta_pct>0?'+':'')+fmtPct(r.delta_pct)}</td>
+      <td>${fmtPct(r.carga_pct)}</td>
+    </tr>`;
+  }).join('');
+
+  const totRow=`<tr class="tbl-total">
+    <td style="font-family:'Space Mono',monospace;color:var(--t1)">TOTAL</td>
+    <td>
+      ${fmt(totVal,moeda)}
+      ${!isBRL?`<br><span style="font-size:9px;color:var(--t3);font-weight:400">≈ ${fmt(totValBRL,'BRL')}</span>`:''}
+    </td>
+    <td style="color:${C.bl}">${dash(totIRRF,moedaImposto)}</td>
+    <td style="color:${C.pi}">${dash(totPIS+totCOF,moedaImposto)}</td>
+    <td style="color:${C.or}">${dash(totISS,moedaImposto)}</td>
+    <td style="font-weight:700">${fmt(totAtual,moedaImposto)}</td>
+    <td style="color:#FFD580">${dash(totCBS,moedaImposto)}</td>
+    <td style="color:#FFD580">${dash(totIBS,moedaImposto)}</td>
+    <td style="font-weight:700">${fmt(totNovo,moedaImposto)}</td>
+    <td style="color:${totDelta>0?'#FF8080':C.g};font-weight:700">${(totDelta>0?'+':'')+fmt(totDelta,moedaImposto)}</td>
+    <td style="color:${totAtual>0?(totDelta/totAtual)>0.05?'#FF8080':C.g:'var(--t2)'}">${totAtual>0?fmtPct(totDelta/totAtual):'—'}</td>
+    <td>${totValBRL>0?fmtPct(totNovo/totValBRL):'—'}</td>
+  </tr>`;
+
+  document.getElementById('tbl-container').innerHTML=`<table class="tbl">
+    <thead><tr>
+      <th style="text-align:left">Ano</th>
+      <th>Valor Contrato${!isBRL?`<br><span style="color:var(--t3);font-weight:400;font-size:8px">/ Equiv. R$</span>`:''}</th>
+      <th style="color:${C.bl}">IRRF</th>
+      <th style="color:${C.pi}">PIS+COFINS</th>
+      <th style="color:${C.or}">ISS</th>
+      <th>Total Atual</th>
+      <th style="color:${C.g2}">CBS*</th>
+      <th style="color:${C.g}">IBS** (2029+)</th>
+      <th>Total Novo</th>
+      <th>Δ Abs.</th><th>Δ %</th><th>Carga %</th>
+    </tr></thead>
+    <tbody>${tbody}</tbody><tfoot>${totRow}</tfoot>
+  </table>
+  <div style="font-size:9px;color:var(--t3);margin-top:10px;line-height:2;border-top:1px solid var(--s3);padding-top:10px">
+    <span style="color:${C.bl}">✔ TESTE</span> <strong>2026</strong> — CBS 0,9% + IBS 0,1% declaratórios. Sem recolhimento efetivo (art.343/346 LC 214/2025).<br>
+    <span style="color:${C.g}">⚡ CBS LEI</span> <strong>2027–2028</strong> — CBS cheia efetiva (~8,8%). IBS permanece 0,1% teste (art.344 LC 214/2025).<br>
+    <span style="color:${C.am}">⚠ IBS EST</span> <strong>2029–2032</strong> — Alíquota IBS estimada — Res. Senado pendente (art.18,II LC 214/2025).<br>
+    <span style="color:#FF8080">⚠ PROJ</span> <strong>2033</strong> — IVA Dual pleno: CBS ~8,8% + IBS ~17,7%. ISS extinto.
+  </div>`;
+
+
+  document.getElementById('painel-empty').style.display='none';
+  document.getElementById('painel-resultado').style.display='block';
+
+  // Montar seletor de anos na aba Por Ano
+  const activeYears = rows.filter(r=>r.active&&r.valBase>0).map(r=>r.y);
+  document.getElementById('ano-selector').innerHTML =
+    `<span style="font-size:10px;color:var(--t3);font-family:var(--fm);letter-spacing:1px;margin-right:4px">ANO:</span>` +
+    YEARS.map(y=>{
+      const isActive = activeYears.includes(y);
+      return `<button class="ano-btn ${isActive?'':'disabled'}" data-ano="${y}" onclick="renderAno(${y})">${y}</button>`;
+    }).join('');
+
+  // Selecionar automaticamente o primeiro ano ativo
+  if(activeYears.length>0){
+    document.getElementById('porano-overview').style.display='block';
+    document.getElementById('porano-empty').style.display='none';
+    renderAno(activeYears[0]);
+  } else {
+    document.getElementById('porano-overview').style.display='none';
+    document.getElementById('porano-empty').style.display='block';
+    document.getElementById('porano-conteudo').style.display='none';
+  }
+
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── AUTOLOAD via URL ──────────────────────────────────────────────────────────
+function autoloadFromURL(){
+  const p=new URLSearchParams(window.location.search);
+  if(!p.has('nome'))return;
+  if(p.get('nome'))document.getElementById('f-nome').value=decodeURIComponent(p.get('nome'));
+  if(p.get('fornecedor'))document.getElementById('f-fornecedor').value=decodeURIComponent(p.get('fornecedor'));
+  if(p.get('pais'))document.getElementById('f-pais').value=decodeURIComponent(p.get('pais'));
+  if(p.get('moeda')){document.getElementById('f-moeda').value=p.get('moeda');onMoedaChange();}
+  if(p.get('cambio'))document.getElementById('f-cambio').value=p.get('cambio');
+  if(p.get('irrf'))document.getElementById('f-irrf').value=p.get('irrf');
+  if(p.get('ini'))document.getElementById('f-ini').value=p.get('ini');
+  if(p.get('fim'))document.getElementById('f-fim').value=p.get('fim');
+  if(p.get('tipo')){
+    const sel=document.getElementById('f-classif');const tipo=decodeURIComponent(p.get('tipo'));
+    for(let i=0;i<sel.options.length;i++){
+      if(sel.options[i].text.toLowerCase().includes(tipo.toLowerCase())){sel.selectedIndex=i;break;}
+    }
+  }
+  buildParcelas();
+  YEARS.forEach(y=>{const val=p.get(`p_${y}`);const el=document.getElementById(`p-${y}`);if(el&&val)el.value=val;});
+  const confianca=parseFloat(p.get('confianca')||'0');
+  const resumo=decodeURIComponent(p.get('resumo')||'');
+  const banner=document.getElementById('autoload-banner');
+  if(banner){
+    const pct=Math.round(confianca*100);
+    const color=pct>=80?'var(--g)':pct>=50?'var(--am)':'var(--re)';
+    banner.style.display='flex';
+    banner.innerHTML=`<div style="display:flex;align-items:center;gap:12px;flex:1"><span style="font-size:18px">⚡</span><div><div style="font-size:11px;font-weight:700;color:var(--t1);margin-bottom:2px">Dados preenchidos automaticamente via email comercial</div><div style="font-size:10px;color:var(--t3)">${resumo||'Email processado pelo agente LiveMode'}</div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:9px;color:var(--t3);margin-bottom:2px">CONFIANÇA</div><div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:${color}">${pct}%</div></div><div style="margin-left:16px;flex-shrink:0"><button onclick="document.getElementById('autoload-banner').style.display='none'" style="background:var(--s3);border:none;border-radius:6px;padding:6px 10px;color:var(--t3);cursor:pointer;font-size:11px">✕</button></div>`;
+  }
+  setTimeout(()=>calcular(),400);
+}
+
+window.addEventListener('DOMContentLoaded',autoloadFromURL);
+</script>
+</body>
+</html>
+
