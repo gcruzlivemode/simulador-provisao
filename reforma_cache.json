@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-21T05:46:58.451617",
+  "gerado": "2026-09-21T16:44:23.068427",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -150,6 +150,12 @@
       "nome": "Petrobras | Patrocínio Base Feminina FPF 2026",
       "empresa": "LMS",
       "valor_total": 6068900.0
+    },
+    {
+      "id": "recFVqaWK55CCcrkw",
+      "nome": "Itaú | Talentos (João Barreto) 2026\n",
+      "empresa": "LMS",
+      "valor_total": 150000.0
     },
     {
       "id": "recFe6metCEYHxQYh",
