@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-22T15:20:37.924646",
+  "gerado": "2026-09-22T19:59:05.567136",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -180,6 +180,12 @@
       "nome": "Mercado Livre | Copa do Mundo 2027",
       "empresa": "LMS",
       "valor_total": 94347073.0
+    },
+    {
+      "id": "recItsnZCudSu67hV",
+      "nome": "Avianca | Semi e Finais_Liberta - Sula | 2026_V8",
+      "empresa": "LMS",
+      "valor_total": 29125166.0
     },
     {
       "id": "recJXb7uVL5hWnZJs",
