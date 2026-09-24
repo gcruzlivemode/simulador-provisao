@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-24T05:45:28.131983",
+  "gerado": "2026-09-24T15:40:08.209686",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -48,6 +48,12 @@
       "nome": "Betnacional | Futebol Internacional | Serie A | 2026",
       "empresa": "LMS",
       "valor_total": 1014120.0
+    },
+    {
+      "id": "rec43kT93wQrZSrvS",
+      "nome": "Pitaco | Futebol Internacional | 2027\n",
+      "empresa": "LMS",
+      "valor_total": 4076450.0
     },
     {
       "id": "rec4bCt9DoOOCCmaS",
@@ -182,6 +188,12 @@
       "valor_total": 94347073.0
     },
     {
+      "id": "recHqxTOxoO2ERtbC",
+      "nome": "Pitaco | Tenis | 2027\n",
+      "empresa": "LMS",
+      "valor_total": 9840000.0
+    },
+    {
       "id": "recItsnZCudSu67hV",
       "nome": "Avianca | Semi e Finais_Liberta - Sula | 2026_V8",
       "empresa": "LMS",
@@ -210,6 +222,12 @@
       "nome": "Casas Bahia | Paulistão Masculino 2028 | Naming Rights",
       "empresa": "LMS",
       "valor_total": 24000000.0
+    },
+    {
+      "id": "recNF91YQL7GZDDRF",
+      "nome": "Novo(a) Oportunidade\n",
+      "empresa": "LMS",
+      "valor_total": 1.0
     },
     {
       "id": "recNNCiuLfrk1gBiO",
@@ -266,10 +284,22 @@
       "valor_total": 1625000.0
     },
     {
+      "id": "recRSnBbVn73TwLx4",
+      "nome": "Pitaco | Mundial de Clubes | 2026\n",
+      "empresa": "LMS",
+      "valor_total": 7840000.0
+    },
+    {
       "id": "recRXr58qymWvhlbt",
       "nome": "Betano | Paulistão Feminino | Arena | 2026",
       "empresa": "LMS",
       "valor_total": 1000000.0
+    },
+    {
+      "id": "recRyQqLQ8MxSqzhc",
+      "nome": "Pitaco | Paulistão | CazéTV | 2027\n",
+      "empresa": "CZTV",
+      "valor_total": 9815803.0
     },
     {
       "id": "recSFK8ImuWXsSaAG",
@@ -296,6 +326,12 @@
       "valor_total": 18720000.0
     },
     {
+      "id": "recUOHMoEX4UpCIuE",
+      "nome": "Pitaco | Brasileirão | 2027 | Cota Master\n",
+      "empresa": "LMS",
+      "valor_total": 40627747.0
+    },
+    {
       "id": "recUaTAAfSykqgceS",
       "nome": "JBS (Friboi) | Luisinho (junho/julho) | 2026",
       "empresa": "LMS",
@@ -312,6 +348,12 @@
       "nome": "Mercado Livre | Casa CazéTV 2026",
       "empresa": "CZTV",
       "valor_total": 4000000.0
+    },
+    {
+      "id": "recZqatIpoO1Qf9Jn",
+      "nome": "Pitaco | La Liga + Premier | Real e Barça | 2027\n",
+      "empresa": "LMS",
+      "valor_total": 37800000.0
     },
     {
       "id": "reca1A0sL8omjVt3W",
