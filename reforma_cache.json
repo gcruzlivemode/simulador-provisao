@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-09-30T16:37:11.215281",
+  "gerado": "2026-09-30T21:10:19.077020",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -84,6 +84,12 @@
       "nome": "Sil | Naming Rights Copinha | 2027",
       "empresa": "LMS",
       "valor_total": 2579153.0
+    },
+    {
+      "id": "rec7rGqaLklslbJbF",
+      "nome": "Vivo | Cooling Break | 2026\n",
+      "empresa": "LMS",
+      "valor_total": 6019874.0
     },
     {
       "id": "rec8Ohfth8hJJN5o7",
