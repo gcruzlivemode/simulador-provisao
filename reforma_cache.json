@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-10-02T16:27:10.445453",
+  "gerado": "2026-10-02T21:07:26.765847",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -452,6 +452,12 @@
       "valor_total": 140000.0
     },
     {
+      "id": "recncEWlh8oNVQLzA",
+      "nome": "Gillette l Upsell Noche de Copa + Brasileiro l 2026\n",
+      "empresa": "LMS",
+      "valor_total": 1430000.0
+    },
+    {
       "id": "recogRMY7puq1wVBq",
       "nome": "Betnacional | Projeto Especial | Cooling Break 2026",
       "empresa": "LMS",
@@ -492,6 +498,12 @@
       "nome": "GOOGLE | Talentos  | 2026",
       "empresa": "LMS",
       "valor_total": 73000.0
+    },
+    {
+      "id": "recyGWqyEi964rScQ",
+      "nome": "Kayak | Flight Fut Inter | Novembro 2026\n",
+      "empresa": "LMS",
+      "valor_total": 190000.0
     },
     {
       "id": "recyLxulsCH8FU30h",
