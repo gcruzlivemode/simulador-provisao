@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-10-15T05:28:19.767737",
+  "gerado": "2026-10-15T15:27:08.041952",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -486,6 +486,12 @@
       "nome": "Itaú | Igor Rodrigues 2026\n",
       "empresa": "LMS",
       "valor_total": 120000.0
+    },
+    {
+      "id": "rectrFzWllKRJl3A4",
+      "nome": "iFood | Black Friday | 2026\n",
+      "empresa": "CZTV",
+      "valor_total": 1235141.0
     },
     {
       "id": "recwhSp3FXKRHSoBX",
