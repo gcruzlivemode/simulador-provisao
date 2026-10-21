@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-10-21T15:47:25.750445",
+  "gerado": "2026-10-21T20:25:43.296582",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -474,6 +474,12 @@
       "nome": "Midea | Libertadores Feminina 2026",
       "empresa": "LMS",
       "valor_total": 5000000.0
+    },
+    {
+      "id": "recptLrNTatRFkxwj",
+      "nome": "Itaú | Super Match Tênis 2026\n",
+      "empresa": "CZTV",
+      "valor_total": 1263582.0
     },
     {
       "id": "recslyFdX1iUDDjlu",
