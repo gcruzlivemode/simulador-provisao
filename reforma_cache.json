@@ -1,5 +1,5 @@
 {
-  "gerado": "2026-10-22T15:45:44.616938",
+  "gerado": "2026-10-22T20:22:05.478768",
   "projetos": [
     {
       "id": "rec0AJS54COCzDPHH",
@@ -510,6 +510,12 @@
       "nome": "GOOGLE | Talentos  | 2026",
       "empresa": "LMS",
       "valor_total": 73000.0
+    },
+    {
+      "id": "recxUK8pV9GHG7nYz",
+      "nome": "Gemini | FWWC | 2027",
+      "empresa": "CZTV",
+      "valor_total": 66081715.0
     },
     {
       "id": "recyGWqyEi964rScQ",
